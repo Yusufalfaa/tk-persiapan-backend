@@ -1,123 +1,175 @@
-# Auth API Spec
+# Auth API Specification
 
 ---
 
-## Login
+# Login
 
-**Endpoint:** POST /api/auth/login
+**Endpoint**
 
-**Request Body:**
-
-```json
-{
-  "username": "admin",
-  "password": "123456"
-}
+```
+POST /api/auth/login
 ```
 
-**Response Body (Success):**
+## Request Body
 
 ```json
 {
-  "data": {
-    "access_token": "JWT_TOKEN"
-  }
-}
-```
-
-**Response Body (Failed):**
-
-```json
-{
-  "message": "invalid username or password"
-}
-```
-
----
-
-## Get Current User
-
-**Endpoint:** GET /api/auth/me
-
-**Headers:**
-
-- Authorization: Bearer token
-
-**Response Body (Success):**
-
-```json
-{
-  "data": {
-    "id": 1,
     "username": "admin",
-    "createdAt": "2026-01-01T10:00:00Z",
-    "updatedAt": "2026-01-01T10:00:00Z"
-  }
+    "password": "123456"
 }
 ```
 
-**Response Body (Failed):**
+## Response Body (200 OK)
 
 ```json
 {
-  "message": "unauthorized"
+    "data": {
+        "accessToken": "JWT_ACCESS_TOKEN"
+    }
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Invalid username or password"
 }
 ```
 
 ---
 
-## Update Current User
+# Get Current User
 
-**Endpoint:** PUT /api/auth/me
+**Endpoint**
 
-**Headers:**
+```
+GET /api/auth/me
+```
 
-- Authorization: Bearer token
+## Headers
 
-**Request Body:**
+```
+Authorization: Bearer <access_token>
+```
+
+## Response Body (200 OK)
 
 ```json
 {
-  "username": "admin_updated",
-  "password": "newpassword"
+    "data": {
+        "id": 1,
+        "username": "admin",
+        "role": "ADMIN",
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "updatedAt": "2026-01-01T10:00:00.000Z"
+    }
 }
 ```
 
-**Response Body (Success):**
+## Response Body (401 Unauthorized)
 
 ```json
 {
-  "data": {
-    "id": 1,
+    "message": "Unauthorized"
+}
+```
+
+---
+
+# Update Current User
+
+**Endpoint**
+
+```
+PUT /api/auth/me
+```
+
+## Headers
+
+```
+Authorization: Bearer <access_token>
+```
+
+## Request Body
+
+Semua field bersifat **opsional**.
+
+```json
+{
     "username": "admin_updated",
-    "createdAt": "2026-01-01T10:00:00Z",
-    "updatedAt": "2026-01-02T12:00:00Z"
-  }
+    "password": "newpassword"
 }
 ```
 
-**Response Body (Failed):**
+## Response Body (200 OK)
 
 ```json
 {
-  "message": "failed to update user"
+    "data": {
+        "id": 1,
+        "username": "admin_updated",
+        "role": "ADMIN",
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "updatedAt": "2026-01-02T12:00:00.000Z"
+    }
+}
+```
+
+## Response Body (400 Bad Request)
+
+```json
+{
+    "message": "Nothing to update"
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (409 Conflict)
+
+```json
+{
+    "message": "Username already exists"
 }
 ```
 
 ---
 
-## Logout
+# Logout
 
-**Endpoint:** POST /api/auth/logout
+> JWT bersifat stateless, sehingga logout dilakukan dengan menghapus access token di sisi client. Endpoint ini disediakan untuk menjaga konsistensi API.
 
-**Headers:**
+**Endpoint**
 
-- Authorization: Bearer token
+```
+POST /api/auth/logout
+```
 
-**Response Body (Success):**
+## Headers
+
+```
+Authorization: Bearer <access_token>
+```
+
+## Response Body (200 OK)
 
 ```json
 {
-  "message": "logout successful"
+    "message": "Logout successful"
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
 }
 ```

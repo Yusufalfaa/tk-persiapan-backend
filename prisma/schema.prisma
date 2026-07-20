@@ -13,7 +13,7 @@ datasource db {
 }
 
 model Admin {
-  id String @id @default(uuid()) @db.VarChar(36)
+  id Int @id @default(autoincrement())
 
   username     String @unique @db.VarChar(50)
   passwordHash String @db.VarChar(255)
@@ -27,7 +27,7 @@ model Admin {
 }
 
 model GalleryPhoto {
-  id String @id @default(uuid()) @db.VarChar(36)
+  id Int @id @default(autoincrement())
 
   imagePath String @db.VarChar(500)
   caption   String @db.VarChar(255)
@@ -42,7 +42,7 @@ model GalleryPhoto {
 }
 
 model News {
-  id String @id @default(uuid()) @db.VarChar(36)
+  id Int @id @default(autoincrement())
 
   title String @db.VarChar(255)
   slug  String @unique @db.VarChar(255)
@@ -61,7 +61,7 @@ model News {
 }
 
 model SchoolProfile {
-  id String @id @default(uuid()) @db.VarChar(36)
+  id Int @id @default(autoincrement())
 
   name    String @db.VarChar(100)
   vision  String @db.Text
@@ -85,14 +85,13 @@ model SchoolProfile {
   @@map("school_profile")
 }
 
-// Dipecah dari field Json jadi tabel sendiri biar admin bisa CRUD tiap poin misi lewat form
 model Mission {
-  id String @id @default(uuid()) @db.VarChar(36)
+  id Int @id @default(autoincrement())
 
   content String @db.VarChar(500)
   order   Int    @default(0)
 
-  schoolId String        @db.VarChar(36)
+  schoolId Int           @default(1)
   school   SchoolProfile @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
   @@index([schoolId])
