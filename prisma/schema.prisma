@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Admin {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  username     String @unique @db.VarChar(50)
+  passwordHash String @db.VarChar(255)
+
+  role String @default("ADMIN") @db.VarChar(20)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model GalleryPhoto {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  imagePath String @db.VarChar(500)
+  caption   String @db.VarChar(255)
+
+  order Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+  @@map("gallery_photos")
+}
+
+model News {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  title String @db.VarChar(255)
+  slug  String @unique @db.VarChar(255)
+
+  content String @db.Text
+
+  imagePath String @db.VarChar(500)
+
+  isPublished Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+  @@map("news")
+}
+
+model SchoolProfile {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  name    String @db.VarChar(100)
+  vision  String @db.Text
+  address String @db.VarChar(500)
+
+  latitude  Decimal @db.Decimal(9, 6)
+  longitude Decimal @db.Decimal(9, 6)
+
+  googleMapsUrl String @db.VarChar(500)
+
+  phone String @db.VarChar(20)
+  email String @db.VarChar(100)
+
+  videoUrl String? @db.VarChar(500)
+
+  missions Mission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("school_profile")
+}
+
+// Dipecah dari field Json jadi tabel sendiri biar admin bisa CRUD tiap poin misi lewat form
+model Mission {
+  id String @id @default(uuid()) @db.VarChar(36)
+
+  content String @db.VarChar(500)
+  order   Int    @default(0)
+
+  schoolId String        @db.VarChar(36)
+  school   SchoolProfile @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId])
+  @@map("school_missions")
+}
