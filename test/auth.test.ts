@@ -38,3 +38,28 @@ describe('POST /api/auth/login', () => {
 
     
 });
+
+describe('GET /api/auth/me', () => {
+
+    beforeEach(async () => {
+        await AuthTest.create();
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete();
+    })
+
+    it('should be able to get current', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web).get("/api/auth/me").set("Authorization", `Bearer ${accessToken}`)
+
+        logger.debug(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.username).toBe("Admin")
+        expect(response.body.data.name).toBe("Admin satu")
+
+        console.log(response.body.data)
+    })
+
+})

@@ -1,6 +1,7 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
-import type { LoginRequest, LoginResponse } from "../models/auth-model.js";
+import type { Admin } from "../generated/prisma/client.js";
+import { toCurrentUserResponse, type CurrentUserResponse, type LoginRequest, type LoginResponse } from "../models/auth-model.js";
 import { AuthValidation } from "../validations/auth-validation.js";
 import { Validation } from "../validations/validation.js";
 import bcrypt from "bcrypt";
@@ -43,6 +44,10 @@ export class AuthService {
             accessToken,
         };
 
+    }
+
+    static async get(admin: Admin): Promise<CurrentUserResponse> {
+        return toCurrentUserResponse(admin);
     }
 
 }

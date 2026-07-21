@@ -18,12 +18,6 @@ export type CurrentUserResponse = {
     updatedAt: Date;
 }
 
-export type UpdateMeRequest = {
-    username?: string;
-    name?: string;
-    password?: string;
-};
-
 export function toCurrentUserResponse(admin: Admin): CurrentUserResponse {
     return {
         id: admin.id,
@@ -34,3 +28,9 @@ export function toCurrentUserResponse(admin: Admin): CurrentUserResponse {
         updatedAt: admin.updatedAt,
     };
 }
+
+export type UpdateMeRequest = {
+    username?: string;
+    name?: string;
+    password?: string;
+};
