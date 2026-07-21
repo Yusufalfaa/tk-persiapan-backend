@@ -62,4 +62,16 @@ describe('GET /api/auth/me', () => {
         console.log(response.body.data)
     })
 
+    it('should reject get current if token is invalid', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web).get("/api/auth/me").set("Authorization", `Bearer ${accessToken}salah`)
+
+        logger.debug(response.body);
+        expect(response.status).toBe(401);
+        expect(response.body.errors).toBeDefined()
+
+        console.log(response.body.data)
+    })
+
 })
