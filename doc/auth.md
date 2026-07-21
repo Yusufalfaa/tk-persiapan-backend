@@ -60,6 +60,7 @@ Authorization: Bearer <access_token>
     "data": {
         "id": 1,
         "username": "admin",
+        "name": "Admin Satu",
         "role": "ADMIN",
         "createdAt": "2026-01-01T10:00:00.000Z",
         "updatedAt": "2026-01-01T10:00:00.000Z"
@@ -98,6 +99,7 @@ Semua field bersifat **opsional**.
 ```json
 {
     "username": "admin_updated",
+    "name": "admin satu",
     "password": "newpassword"
 }
 ```
@@ -109,9 +111,10 @@ Semua field bersifat **opsional**.
     "data": {
         "id": 1,
         "username": "admin_updated",
+        "name": "Admin Satu",
         "role": "ADMIN",
         "createdAt": "2026-01-01T10:00:00.000Z",
-        "updatedAt": "2026-01-02T12:00:00.000Z"
+        "updatedAt": "2026-01-01T10:00:00.000Z"
     }
 }
 ```

@@ -12,13 +12,18 @@ datasource db {
   provider = "mysql"
 }
 
+enum AdminRole {
+  ADMIN
+  SUPER_ADMIN
+}
+
 model Admin {
   id Int @id @default(autoincrement())
 
-  username     String @unique @db.VarChar(50)
-  passwordHash String @db.VarChar(255)
-
-  role String @default("ADMIN") @db.VarChar(20)
+  username     String    @unique @db.VarChar(50)
+  passwordHash String    @db.VarChar(255)
+  name         String    @db.VarChar(100)
+  role         AdminRole @default(ADMIN)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
