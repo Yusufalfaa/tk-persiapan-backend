@@ -1,4 +1,4 @@
-import type { Admin } from "../generated/prisma/client.js";
+import type { Admin, AdminRole } from "../generated/prisma/client.js";
 
 export type LoginRequest = {
     username: string;
@@ -13,7 +13,7 @@ export type CurrentUserResponse = {
     id: number;
     username: string;
     name: string;
-    role: "ADMIN" | "SUPER_ADMIN";
+    role: AdminRole;
     createdAt: Date;
     updatedAt: Date;
 }

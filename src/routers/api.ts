@@ -3,6 +3,8 @@ import { authMiddleware } from "../middleware/auth-middleware.js";
 import { AuthController } from "../controllers/auth-controller.js";
 import { SchoolController } from "../controllers/school-controller.js";
 import { TeacherController } from "../controllers/teacher-controller.js";
+import { requireRole } from "../middleware/role-middleware.js";
+import { AdminController } from "../controllers/admin-controller.js";
 
 export const apiRouter = express.Router();
 apiRouter.use(authMiddleware);
@@ -19,3 +21,7 @@ apiRouter.put("/api/school", SchoolController.update)
 apiRouter.post("/api/teachers", TeacherController.create)
 apiRouter.put("/api/teachers/:id", TeacherController.update)
 apiRouter.delete("/api/teachers/:id", TeacherController.delete)
+
+// Admins
+apiRouter.get("/api/admins", requireRole("SUPER_ADMIN"),AdminController.get)
+apiRouter.post("/api/admins", requireRole("SUPER_ADMIN"), AdminController.create)

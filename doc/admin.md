@@ -69,6 +69,8 @@ Authorization: Bearer <access_token>
 POST /api/admins
 ```
 
+> Role selalu dibuat sebagai `ADMIN`. Endpoint ini tidak menerima field `role` dari request — pembuatan akun `SUPER_ADMIN` hanya dilakukan lewat seed/database, agar tidak ada jalur untuk membuat super admin tambahan lewat API.
+
 ## Headers
 
 ```
@@ -77,14 +79,11 @@ Authorization: Bearer <access_token>
 
 ## Request Body
 
-`role` bersifat **opsional**, default `ADMIN` kalau tidak diisi.
-
 ```json
 {
     "username": "admin2",
     "password": "password123",
-    "name": "Admin Dua",
-    "role": "ADMIN"
+    "name": "Admin Dua"
 }
 ```
 
@@ -107,11 +106,7 @@ Authorization: Bearer <access_token>
 
 ```json
 {
-    "message": "Validation error",
-    "errors": {
-        "username": "Username minimal 3 karakter",
-        "password": "Password minimal 6 karakter"
-    }
+    "message": "Validation error"
 }
 ```
 
@@ -136,6 +131,72 @@ Authorization: Bearer <access_token>
 ```json
 {
     "message": "Username already exists"
+}
+```
+
+---
+
+# Reset Admin Password
+
+> SUPER_ADMIN dapat mereset password admin lain, karena tidak ada mekanisme forgot password berbasis email di sistem ini.
+
+**Endpoint**
+
+```
+PATCH /api/admins/:id/reset-password
+```
+
+## Headers
+
+```
+Authorization: Bearer <access_token>
+```
+
+## Request Body
+
+```json
+{
+    "newPassword": "newpassword123"
+}
+```
+
+## Response Body (200 OK)
+
+```json
+{
+    "message": "Password reset successfully"
+}
+```
+
+## Response Body (400 Bad Request)
+
+```json
+{
+    "message": "Validation error"
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (403 Forbidden)
+
+```json
+{
+    "message": "Forbidden: requires SUPER_ADMIN role"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "Admin not found"
 }
 ```
 
