@@ -1,5 +1,5 @@
 import { z, ZodType } from "zod";
-import type { AdminRequest, ResetPasswordRequest } from "../models/admin-models.js";
+import type { AdminRequest, ResetPasswordRequest } from "../models/admin-model.js";
 
 export class AdminValidation {
 

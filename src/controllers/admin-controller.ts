@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import type { AuthRequest } from "../type/auth-request.js";
 import { AdminService } from "../services/admin-service.js";
-import type { AdminRequest } from "../models/admin-models.js";
+import type { AdminRequest } from "../models/admin-model.js";
 
 
 export class AdminController {

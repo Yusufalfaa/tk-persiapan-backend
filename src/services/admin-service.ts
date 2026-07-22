@@ -1,7 +1,7 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
 import { AdminRole } from "../generated/prisma/enums.js";
-import { toAdminResponse, type AdminRequest, type AdminResponse, type ResetPasswordRequest } from "../models/admin-models.js";
+import { toAdminResponse, type AdminRequest, type AdminResponse, type ResetPasswordRequest } from "../models/admin-model.js";
 import { AdminValidation } from "../validations/admin-validation.js";
 import { Validation } from "../validations/validation.js";
 import bcrypt from "bcrypt";
