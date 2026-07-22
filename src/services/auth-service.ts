@@ -1,7 +1,8 @@
+import { userInfo } from "node:os";
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
 import type { Admin } from "../generated/prisma/client.js";
-import { toCurrentUserResponse, type CurrentUserResponse, type LoginRequest, type LoginResponse } from "../models/auth-model.js";
+import { toCurrentUserResponse, type CurrentUserResponse, type LoginRequest, type LoginResponse, type UpdateCurrentRequest } from "../models/auth-model.js";
 import { AuthValidation } from "../validations/auth-validation.js";
 import { Validation } from "../validations/validation.js";
 import bcrypt from "bcrypt";
@@ -48,6 +49,36 @@ export class AuthService {
 
     static async get(admin: Admin): Promise<CurrentUserResponse> {
         return toCurrentUserResponse(admin);
+    }
+
+    static async update(admin: Admin, request: UpdateCurrentRequest): Promise<CurrentUserResponse> {
+        const updateRequest = Validation.validate(AuthValidation.UPDATE, request);
+
+        const data: {
+            name?: string;
+            passwordHash?: string;
+        } = {};
+
+        if(updateRequest.name) {
+            data.name = updateRequest.name;
+        }
+
+        if(updateRequest.password) {
+            data.passwordHash = await bcrypt.hash(updateRequest.password, 10);
+        }
+
+        const result = await prismaClient.admin.update({
+            where: {
+                username: admin.username
+            },
+            data,
+        });
+
+        return toCurrentUserResponse(result);
+    }
+
+    static async logout(admin: Admin): Promise<void> {
+
     }
 
 }

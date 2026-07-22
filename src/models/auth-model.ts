@@ -29,8 +29,7 @@ export function toCurrentUserResponse(admin: Admin): CurrentUserResponse {
     };
 }
 
-export type UpdateMeRequest = {
-    username?: string;
-    name?: string;
-    password?: string;
+export type UpdateCurrentRequest = {
+    name?: string | undefined;
+    password?: string | undefined;
 };

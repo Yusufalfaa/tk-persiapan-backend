@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import type { LoginRequest } from "../models/auth-model.js";
+import type { LoginRequest, UpdateCurrentRequest } from "../models/auth-model.js";
 import { AuthService } from "../services/auth-service.js";
 import type { AuthRequest } from "../type/auth-request.js";
 
@@ -23,6 +23,30 @@ export class AuthController {
             res.status(200).json({
                 data: response
             })
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async update(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const request : UpdateCurrentRequest = req.body as UpdateCurrentRequest;
+            const response = await AuthService.update(req.admin!, request);
+            res.status(200).json({
+                data: response
+            })
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async logout(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            await AuthService.logout(req.admin!);
+
+            res.status(200).json({
+                data: "Logout successful"
+            });
         } catch (e) {
             next(e);
         }

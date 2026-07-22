@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import supertest from "supertest";
 import { web } from "../src/application/web.js";
 import { prismaClient } from "../src/application/database.js";
+import type { Admin } from "../src/generated/prisma/client.js";
 
 export class AuthTest {
     
@@ -34,6 +35,21 @@ export class AuthTest {
         expect(response.status).toBe(200);
 
         return response.body.data.accessToken;
+    }
+
+    static async get(): Promise<Admin> {
+        const admin = await prismaClient.admin.findFirst({
+            where: {
+                username: "Admin"
+            }
+        })
+
+        if(!admin) {
+            throw new Error("User is not found");
+        }
+
+        return admin;
+
     }
 
 }

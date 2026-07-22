@@ -98,7 +98,6 @@ Semua field bersifat **opsional**.
 
 ```json
 {
-    "username": "admin_updated",
     "name": "admin satu",
     "password": "newpassword"
 }
