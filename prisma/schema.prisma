@@ -96,6 +96,7 @@ model Mission {
   content String @db.VarChar(500)
   order   Int    @default(0)
 
+  // Single school application, always references school_profile id 1
   schoolId Int           @default(1)
   school   SchoolProfile @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
