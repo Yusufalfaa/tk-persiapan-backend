@@ -50,4 +50,22 @@ export class TeacherService {
         return toTeacherResponse(updatedTeacher)
     }
 
+    static async delete(teacherId: number) {
+        const teacher = await prismaClient.teacher.findUnique({
+            where: {
+                id: teacherId
+            }
+        });
+
+        if (!teacher) {
+            throw new ResponseError(404, "Teacher not found");
+        }
+
+        await prismaClient.teacher.delete({
+            where: {
+                id: teacherId
+            }
+        })
+    }
+
 }

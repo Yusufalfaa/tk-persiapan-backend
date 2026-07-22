@@ -172,3 +172,52 @@ describe('PUT /api/teachers/:id', () => {
         expect(response.body.errors).toBeDefined();
     });
 });
+
+describe('DELETE /api/teachers/:id', () => {
+    
+    beforeEach(async () => {
+        await AuthTest.create();
+        await TeacherTest.create();
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete();
+        await TeacherTest.deleteAll();
+    })
+
+    it('should be delete teachers by id', async () =>{
+        const accessToken = await AuthTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .delete(`/api/teachers/1`)
+            .set("Authorization", `Bearer ${accessToken}`)      
+        
+        console.log(response.body)
+        expect(response.status).toBe(200);
+        expect(response.body).toBeDefined();
+    })
+
+    it('should reject delete teachers due to invalid token', async () =>{
+        const accessToken = await AuthTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .delete(`/api/teachers/0`)
+            .set("Authorization", `Bearer ${accessToken}1234`)      
+        
+        console.log(response.body)
+        expect(response.status).toBe(401);
+        expect(response.body.errors).toBeDefined();
+    })
+
+    it('should reject delete teachers due to invalid id', async () =>{
+        const accessToken = await AuthTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .delete(`/api/teachers/0`)
+            .set("Authorization", `Bearer ${accessToken}`)      
+        
+        console.log(response.body)
+        expect(response.status).toBe(404);
+        expect(response.body.errors).toBeDefined();
+    })
+})

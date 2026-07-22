@@ -46,4 +46,16 @@ export class TeacherController {
         }
     }
 
-}
+    static async delete(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const teacherId = Number(req.params.id);
+            const response = await TeacherService.delete(teacherId)
+
+            res.status(200).json({
+                data: response,
+            })
+        } catch (e) {
+            next(e);
+        };
+    };
+};

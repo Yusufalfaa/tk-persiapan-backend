@@ -18,3 +18,4 @@ apiRouter.put("/api/school", SchoolController.update)
 // Teacher API
 apiRouter.post("/api/teachers", TeacherController.create)
 apiRouter.put("/api/teachers/:id", TeacherController.update)
+apiRouter.delete("/api/teachers/:id", TeacherController.delete)
