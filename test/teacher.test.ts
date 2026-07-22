@@ -89,3 +89,86 @@ describe('POST /api/teachers', () => {
     })
 
 })
+
+describe('PUT /api/teachers/:id', () => {
+    beforeEach(async () => {
+        await AuthTest.create();
+        await TeacherTest.create();
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete();
+        await TeacherTest.deleteAll();
+    })
+
+    it('should be able to update teachers', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .put(`/api/teachers/1`)
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                name: "Muhamad Yusuf",
+                position: "Guru Kelas B",
+                photoPath: null,
+                order: 1, 
+            });       
+        
+        expect(response.status).toBe(200);
+        expect(response.body.data).toBeDefined();
+        expect(response.body.data.name).toBe("Muhamad Yusuf");
+    })
+
+    it('should reject teacher update due to invalid token', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .put(`/api/teachers/1`)
+            .set("Authorization", `Bearer ${accessToken}1234`)
+            .send({
+                name: "Muhamad Yusuf",
+                position: "Guru Kelas B",
+                photoPath: null,
+                order: 1, 
+            });       
+        
+        expect(response.status).toBe(401);
+        expect(response.body.errors).toBeDefined();
+    })
+
+    it('should reject teacher not found', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .put(`/api/teachers/9999`)
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                name: "Muhamad Yusuf",
+                position: "Guru Kelas B",
+                photoPath: null,
+                order: 1, 
+            });       
+        
+        console.log(response.body)
+        expect(response.status).toBe(404);
+        expect(response.body.errors).toBe("Teacher not found");
+    })
+
+    it('should reject teacher update due to invalid input', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .put(`/api/teachers/1`)
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                name: "Muhamad Yusuf",
+                position: "",
+                photoPath: null,
+                order: 1, 
+            });       
+        
+        console.log(response.body)
+        expect(response.status).toBe(400);
+        expect(response.body.errors).toBeDefined();
+    });
+});

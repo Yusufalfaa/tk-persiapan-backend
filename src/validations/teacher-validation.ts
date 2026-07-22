@@ -10,4 +10,11 @@ export class TeacherValidation {
         order: z.number().int().min(0),
     })
 
+    static readonly UPDATE: ZodType<TeacherRequest> = z.object({
+        name: z.string().trim().min(3).max(100),
+        position: z.string().trim().min(3).max(100),
+        photoPath: z.url().nullable(),
+        order: z.number().int().min(0),
+    })
+
 }
