@@ -165,6 +165,21 @@ export class AdminTest {
         })
     }
 
+    static async get(): Promise<Admin> {
+        const admin = await prismaClient.admin.findFirst({
+            where: {
+                id: 2,
+            }
+        })
+
+        if(!admin) {
+            throw new Error("User is not found");
+        }
+
+        return admin;
+
+    }
+
     static async getAccessToken(): Promise<string> {
         const response = await supertest(web)
             .post("/api/auth/login")

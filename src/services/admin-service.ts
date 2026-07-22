@@ -63,4 +63,26 @@ export class AdminService {
         });
     }
 
+    static async delete(adminId: number) {
+        const admin = await prismaClient.admin.findUnique({
+            where: {
+                id: adminId
+            }
+        });
+
+        if (!admin) {
+            throw new ResponseError(404, "Admin not found");
+        }
+
+        if (admin.role === "SUPER_ADMIN") {
+            throw new ResponseError(400, "Cannot delete SUPER ADMIN")
+        }
+
+        await prismaClient.admin.delete({
+            where: {
+                id: adminId
+            }
+        })
+    }
+
 }

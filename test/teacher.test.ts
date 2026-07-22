@@ -192,7 +192,6 @@ describe('DELETE /api/teachers/:id', () => {
             .delete(`/api/teachers/1`)
             .set("Authorization", `Bearer ${accessToken}`)      
         
-        console.log(response.body)
         expect(response.status).toBe(200);
         expect(response.body).toBeDefined();
     })
@@ -204,7 +203,6 @@ describe('DELETE /api/teachers/:id', () => {
             .delete(`/api/teachers/0`)
             .set("Authorization", `Bearer ${accessToken}1234`)      
         
-        console.log(response.body)
         expect(response.status).toBe(401);
         expect(response.body.errors).toBeDefined();
     })
@@ -216,7 +214,6 @@ describe('DELETE /api/teachers/:id', () => {
             .delete(`/api/teachers/0`)
             .set("Authorization", `Bearer ${accessToken}`)      
         
-        console.log(response.body)
         expect(response.status).toBe(404);
         expect(response.body.errors).toBeDefined();
     })

@@ -1,6 +1,7 @@
 import supertest from "supertest";
 import { AdminTest, AuthTest } from "./test-util.js";
 import { web } from "../src/application/web.js";
+import bcrypt from "bcrypt";
 
 describe('GET /api/admins', () => {
 
@@ -171,8 +172,13 @@ describe('PATCH /api/admins/:id/reset-password', async () => {
                     newPassword: "password123",
                 })
 
+            const updated = await AdminTest.get();
+
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("Password reset successfully");
+            expect(await bcrypt.compare("password123", updated.passwordHash));
+
+
     });
 
     it('should reject due to validation error', async () => {
@@ -232,5 +238,73 @@ describe('PATCH /api/admins/:id/reset-password', async () => {
             expect(response.status).toBe(404);
             expect(response.body.errors).toBeDefined();
     });
+
+})
+
+describe('DELETE /api/admins/:id', async () => {
+
+    beforeEach(async () => {
+        await AuthTest.create();
+        await AdminTest.createSuperAdmin();
+    });
+
+    afterEach(async () => {
+        await AdminTest.deleteAll();
+    });
+
+    it('should be able to delete admin', async () => {
+        const accessToken = await AdminTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .delete(`/api/admins/2`)
+            .set("Authorization", `Bearer ${accessToken}`)      
+        
+        expect(response.status).toBe(200);
+        expect(response.body).toBeDefined();
+    })
+
+    it('should reject delete own account (super admin)', async () => {
+        const accessToken = await AdminTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .delete(`/api/admins/1`)
+            .set("Authorization", `Bearer ${accessToken}`)      
+        
+        expect(response.status).toBe(400);
+        expect(response.body).toBeDefined();
+    })
+
+    it('should reject delete due to invalid token', async () => {
+        const accessToken = await AdminTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .delete(`/api/admins/2`)
+            .set("Authorization", `Bearer ${accessToken}1234`)      
+        
+        expect(response.status).toBe(401);
+        expect(response.body).toBeDefined();
+    })
+
+    it('should reject due to forbidden role', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .delete(`/api/admins/1`)
+            .set("Authorization", `Bearer ${accessToken}`)      
+        
+        expect(response.status).toBe(403);
+        expect(response.body).toBeDefined();
+    })
+
+    it('should reject due to admin not found', async () => {
+        const accessToken = await AdminTest.getAccessToken();
+        
+        const response = await supertest(web)
+            .delete(`/api/admins/9999`)
+            .set("Authorization", `Bearer ${accessToken}`)      
+        
+        expect(response.status).toBe(404);
+        expect(response.body).toBeDefined();
+    })
 
 })
