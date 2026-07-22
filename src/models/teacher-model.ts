@@ -21,3 +21,10 @@ export function toTeacherResponse(teacher: Teacher) : TeacherResponse {
         updatedAt: teacher.updatedAt,
     };
 }
+
+export type TeacherRequest = {
+    name: string,
+    position: string,
+    photoPath: string | null,
+    order: number,
+}

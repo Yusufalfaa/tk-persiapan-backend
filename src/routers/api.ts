@@ -2,6 +2,7 @@ import express from "express";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import { AuthController } from "../controllers/auth-controller.js";
 import { SchoolController } from "../controllers/school-controller.js";
+import { TeacherController } from "../controllers/teacher-controller.js";
 
 export const apiRouter = express.Router();
 apiRouter.use(authMiddleware);
@@ -13,3 +14,6 @@ apiRouter.post("/api/auth/logout", AuthController.logout);
 
 // School API
 apiRouter.put("/api/school", SchoolController.update)
+
+// Teacher API
+apiRouter.post("/api/teachers", TeacherController.create)

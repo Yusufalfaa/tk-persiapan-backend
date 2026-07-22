@@ -134,7 +134,6 @@ describe('PUT /api/auth/me', () => {
                 name: "Admin dua",
             })
 
-        logger.debug(response.body);
         expect(response.status).toBe(200);
         expect(response.body.data.name).toBe("Admin dua");
     });
@@ -150,7 +149,6 @@ describe('PUT /api/auth/me', () => {
                 password: "Admin132",
             })
 
-        logger.debug(response.body);
         expect(response.status).toBe(200);
         
         const admin = await AuthTest.get();
@@ -178,8 +176,6 @@ describe('POST /api/auth/logout', () => {
         .post("/api/auth/logout")
         .set("Authorization", `Bearer ${accessToken}`);
 
-        console.log(response.body)
-        logger.debug(response.body);
         expect(response.status).toBe(200);
         expect(response.body.data).toBe("Logout successful");
     })
@@ -192,7 +188,6 @@ describe('POST /api/auth/logout', () => {
         .post("/api/auth/logout")
         .set("Authorization", `Bearer ${accessToken} 1234`);
 
-        logger.debug(response.body);
         expect(response.status).toBe(401);
         expect(response.body.errors).toBeDefined();
     })

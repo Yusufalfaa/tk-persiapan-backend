@@ -1,5 +1,7 @@
 import { prismaClient } from "../application/database.js";
-import { toTeacherResponse, type TeacherResponse } from "../models/teacher-model.js";
+import { toTeacherResponse, type TeacherRequest, type TeacherResponse } from "../models/teacher-model.js";
+import { TeacherValidation } from "../validations/teacher-validation.js";
+import { Validation } from "../validations/validation.js";
 
 
 export class TeacherService {
@@ -12,6 +14,16 @@ export class TeacherService {
         });
 
         return teachers.map(toTeacherResponse);
+    }
+
+    static async create(request: TeacherRequest): Promise<TeacherResponse> {
+        const createRequest = Validation.validate(TeacherValidation.CREATE, request);
+
+        const teacher = await prismaClient.teacher.create({
+            data: createRequest
+        });
+
+        return toTeacherResponse(teacher)
     }
 
 }
