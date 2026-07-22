@@ -30,6 +30,7 @@ export function toCurrentUserResponse(admin: Admin): CurrentUserResponse {
 }
 
 export type UpdateCurrentRequest = {
-    name?: string | undefined;
-    password?: string | undefined;
+    name?: string | undefined ;
+    oldPassword?: string | undefined;
+    newPassword?: string | undefined;
 };

@@ -10,7 +10,8 @@ export class AuthValidation {
 
     static readonly UPDATE : ZodType<UpdateCurrentRequest> = z.object({
         name: z.string().min(3).max(100).optional(),
-        password: z.string().min(6).max(255).optional(),
+        oldPassword: z.string().min(6).max(255).optional(),
+        newPassword: z.string().min(6).max(255).optional(),
     })
 
 

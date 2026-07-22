@@ -146,7 +146,8 @@ describe('PUT /api/auth/me', () => {
             .put("/api/auth/me")
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
-                password: "Admin132",
+                oldPassword: "Admin123",
+                newPassword: "Admin132"
             })
 
         expect(response.status).toBe(200);

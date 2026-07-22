@@ -4,7 +4,7 @@ import type { Admin } from "../generated/prisma/client.js";
 import { toCurrentUserResponse, type CurrentUserResponse, type LoginRequest, type LoginResponse, type UpdateCurrentRequest } from "../models/auth-model.js";
 import { AuthValidation } from "../validations/auth-validation.js";
 import { Validation } from "../validations/validation.js";
-import bcrypt from "bcrypt";
+import bcrypt, { compare } from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export class AuthService {
@@ -62,13 +62,28 @@ export class AuthService {
             data.name = updateRequest.name;
         }
 
-        if(updateRequest.password) {
-            data.passwordHash = await bcrypt.hash(updateRequest.password, 10);
+        if(updateRequest.newPassword) {
+
+            if(!updateRequest.oldPassword) {
+                throw new ResponseError(400, "Old password is required");
+            }
+
+            const isPassowrdValid = await bcrypt.compare(updateRequest.oldPassword, admin.passwordHash);
+
+            if(!isPassowrdValid) {
+                throw new ResponseError(400, "Old password is incorrect");
+            }
+
+            data.passwordHash = await bcrypt.hash(updateRequest.newPassword, 10);
+        }
+
+        if(Object.keys(data).length === 0) {
+            throw new ResponseError(400, "No changes provided");
         }
 
         const result = await prismaClient.admin.update({
             where: {
-                username: admin.username
+                id: admin.id,
             },
             data,
         });
