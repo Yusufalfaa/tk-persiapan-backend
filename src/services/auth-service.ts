@@ -1,4 +1,3 @@
-import { userInfo } from "node:os";
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
 import type { Admin } from "../generated/prisma/client.js";

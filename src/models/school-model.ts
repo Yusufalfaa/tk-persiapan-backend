@@ -43,11 +43,7 @@ export type SchoolProfileUpdateRequest = {
     missions: MissionRequest[];
 };
 
-export function toSchoolProfileResponse(
-    school: SchoolProfile & {
-        missions: Mission[];
-    }
-): SchoolProfileResponse {
+export function toSchoolProfileResponse(school: SchoolProfile & {missions: Mission[];}): SchoolProfileResponse {
     return {
         id: school.id,
         name: school.name,
@@ -75,11 +71,7 @@ export function toSchoolProfileResponse(
     };
 }
 
-export function toSchoolProfileUpdateRequest(
-    school: SchoolProfile & {
-        missions: Mission[];
-    }
-): SchoolProfileUpdateRequest {
+export function toSchoolProfileUpdateRequest(school: SchoolProfile & {missions: Mission[];}): SchoolProfileUpdateRequest {
     return {
         name: school.name,
         vision: school.vision,
