@@ -103,3 +103,20 @@ model Mission {
   @@index([schoolId])
   @@map("school_missions")
 }
+
+model Teacher {
+  id Int @id @default(autoincrement())
+
+  name     String @db.VarChar(100)
+  position String @db.VarChar(100)
+
+  photoPath String? @db.VarChar(500)
+
+  order Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+  @@map("teachers")
+}
