@@ -1,5 +1,5 @@
 import { z, ZodType } from "zod";
-import type { AdminRequest } from "../models/admin-models.js";
+import type { AdminRequest, ResetPasswordRequest } from "../models/admin-models.js";
 
 export class AdminValidation {
 
@@ -7,6 +7,10 @@ export class AdminValidation {
         username: z.string().min(3).max(50),
         password: z.string().min(6).max(255),
         name: z.string().min(3).max(100),
+    })
+
+    static readonly PATCH : ZodType<ResetPasswordRequest> = z.object ({
+        newPassword: z.string().min(6).max(255),
     })
 
 }

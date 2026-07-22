@@ -26,3 +26,7 @@ export function toAdminResponse(admin: Admin): AdminResponse {
         updatedAt: admin.updatedAt,
     };
 }
+
+export type ResetPasswordRequest = {
+    newPassword: string;
+}

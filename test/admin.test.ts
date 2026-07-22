@@ -149,3 +149,88 @@ describe('POST /api/admins', () => {
     })
 
 })
+
+describe('PATCH /api/admins/:id/reset-password', async () => {
+
+    beforeEach(async () => {
+        await AuthTest.create();
+        await AdminTest.createSuperAdmin();
+    });
+
+    afterEach(async () => {
+        await AdminTest.deleteAll();
+    });
+
+    it('should be able to reset admin password', async () => {
+        const token = await AdminTest.getAccessToken();
+
+            const response = await supertest(web)
+                .patch("/api/admins/2/reset-password")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    newPassword: "password123",
+                })
+
+            expect(response.status).toBe(200);
+            expect(response.body.message).toBe("Password reset successfully");
+    });
+
+    it('should reject due to validation error', async () => {
+        const token = await AdminTest.getAccessToken();
+
+            const response = await supertest(web)
+                .patch("/api/admins/2/reset-password")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    newPassword: "",
+                })
+
+            expect(response.status).toBe(400);
+            expect(response.body.errors).toBeDefined();
+    });
+
+    it('should reject due to invalid token', async () => {
+        const token = await AdminTest.getAccessToken();
+
+            const response = await supertest(web)
+                .patch("/api/admins/2/reset-password")
+                .set("Authorization", `Bearer ${token}1234`)
+                .send({
+                    newPassword: "password123",
+                })
+
+            expect(response.status).toBe(401);
+            expect(response.body.errors).toBeDefined();
+    });
+
+    it('should reject due to forbidden role', async () => {
+        const token = await AuthTest.getAccessToken();
+
+            const response = await supertest(web)
+                .patch("/api/admins/2/reset-password")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    newPassword: "password123",
+                })
+
+            expect(response.status).toBe(403);
+            expect(response.body.errors).toBeDefined();
+    });
+
+    it('should reject due to admin not found', async () => {
+        const token = await AdminTest.getAccessToken();
+
+            const response = await supertest(web)
+                .patch("/api/admins/4/reset-password")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    newPassword: "password123",
+                })
+
+            console.log(response.body)
+
+            expect(response.status).toBe(404);
+            expect(response.body.errors).toBeDefined();
+    });
+
+})

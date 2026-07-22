@@ -9,6 +9,7 @@ export class AuthTest {
     static async create(){
         await prismaClient.admin.create({
             data: {
+                id: 2,
                 username: "Admin",
                 name: "Admin satu",
                 passwordHash: await bcrypt.hash("Admin123", 10)
@@ -155,6 +156,7 @@ export class AdminTest {
     static async createSuperAdmin() {
         await prismaClient.admin.create({
             data: {
+                id: 1,
                 username: "superadmin",
                 passwordHash: await bcrypt.hash("superadmin123", 10),
                 name: "Super Admin",

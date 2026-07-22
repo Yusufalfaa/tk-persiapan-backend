@@ -1,6 +1,7 @@
 import { prismaClient } from "../application/database.js";
+import { ResponseError } from "../errors/response-error.js";
 import { AdminRole } from "../generated/prisma/enums.js";
-import { toAdminResponse, type AdminRequest, type AdminResponse } from "../models/admin-models.js";
+import { toAdminResponse, type AdminRequest, type AdminResponse, type ResetPasswordRequest } from "../models/admin-models.js";
 import { AdminValidation } from "../validations/admin-validation.js";
 import { Validation } from "../validations/validation.js";
 import bcrypt from "bcrypt";
@@ -29,6 +30,37 @@ export class AdminService {
 
         return toAdminResponse(admin);
 
+    }
+
+    static async resetPassword(request: ResetPasswordRequest, adminId: number) {
+        const resetRequest = Validation.validate(AdminValidation.PATCH, request);
+
+        const admin = await prismaClient.admin.findUnique({
+            where: {
+                id: adminId
+            }
+        });
+
+        if(!admin) {
+            throw new ResponseError(404, "Admin not found");
+        }
+
+        const isSamePassowrd = await bcrypt.compare(resetRequest.newPassword, admin.passwordHash);
+        
+        if(isSamePassowrd) {
+            throw new ResponseError(400, "New password cannot be same as old password")
+        };
+
+        const passwordHash = await bcrypt.hash(resetRequest.newPassword, 10);
+
+        await prismaClient.admin.update({
+            where: {
+                id: adminId,
+            },
+            data: {
+                passwordHash
+            }
+        });
     }
 
 }
