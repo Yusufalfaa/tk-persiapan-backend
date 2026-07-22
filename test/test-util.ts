@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import supertest from "supertest";
 import { web } from "../src/application/web.js";
 import { prismaClient } from "../src/application/database.js";
-import type { Admin, SchoolProfile } from "../src/generated/prisma/client.js";
+import type { Admin, SchoolProfile, Mission } from "../src/generated/prisma/client.js";
 
 export class AuthTest {
     
@@ -93,10 +93,14 @@ export class SchoolTest {
         });
     }
 
-    static async get(): Promise<SchoolProfile> {
+    static async get(): Promise<
+        SchoolProfile & {
+            missions: Mission[];
+        }
+    > {
         const school = await prismaClient.schoolProfile.findUnique({
             where: {
-                id: 1
+                id: 1,
             },
             include: {
                 missions: {
@@ -107,11 +111,10 @@ export class SchoolTest {
             }
         });
 
-        if(!school){
+        if (!school) {
             throw new Error("School is not found");
         }
 
         return school;
     }
-
 }
