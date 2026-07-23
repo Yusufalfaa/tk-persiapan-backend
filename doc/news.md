@@ -32,6 +32,15 @@ GET /api/news
             "isPublished": true,
             "createdAt": "2026-01-01T10:00:00.000Z",
             "updatedAt": "2026-01-01T10:00:00.000Z"
+        },
+        {
+            "id": 2,
+            "title": "Penerimaan Peserta Didik Baru",
+            "slug": "ppdb-2026",
+            "imagePath": "https://your-storage.com/news/ppdb-2026.jpg",
+            "isPublished": true,
+            "createdAt": "2026-01-01T10:00:00.000Z",
+            "updatedAt": "2026-01-01T10:00:00.000Z"
         }
     ],
     "meta": {

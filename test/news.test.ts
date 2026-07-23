@@ -20,3 +20,31 @@ describe('GET /api/news', () => {
     })
 
 })
+
+describe('GET /api/news/:id', () => {
+    beforeEach(async () => {
+        await NewsTest.create();
+    })
+
+    afterEach(async () => {
+        await NewsTest.deleteAll();
+    })
+
+    it('should be able to get news by id', async () => {
+        const response = await supertest(web)
+            .get("/api/news/1")
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.id).toBe(1);
+        expect(response.body.data.title).toBe("Lomba TK 2026");
+    })
+
+    it('should reject news not found', async () => {
+        const response = await supertest(web)
+            .get("/api/news/3")
+
+        expect(response.status).toBe(404);
+        expect(response.body.errors).toBe("News not found")
+    })
+
+})

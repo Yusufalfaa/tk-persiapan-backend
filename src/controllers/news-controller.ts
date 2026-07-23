@@ -17,4 +17,18 @@ export class NewsController {
         }
     }
 
+    static async get(req: Request, res: Response, next: NextFunction) {
+        try {
+            const id = Number(req.params.id);
+            const response = await NewsService.get(id);
+
+            res.status(200).json({
+                data: response
+            });
+
+        } catch (e) {
+            next(e);
+        }
+    }
+
 }
