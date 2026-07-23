@@ -1,20 +1,49 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
-import { toTeacherResponse, type TeacherRequest, type TeacherResponse } from "../models/teacher-model.js";
+import { toTeacherListResponse, toTeacherResponse, type TeacherListResponse, type TeacherRequest, type TeacherResponse } from "../models/teacher-model.js";
 import { TeacherValidation } from "../validations/teacher-validation.js";
 import { Validation } from "../validations/validation.js";
+import type { PageResponse } from "./page-model.js";
 
 
 export class TeacherService {
 
-    static async get() : Promise<TeacherResponse[]> {
+    static async get(id: number): Promise<TeacherResponse> {
+        const teacher = await prismaClient.teacher.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (!teacher) {
+            throw new ResponseError(404, "Teacher not found");
+        }
+
+        return toTeacherResponse(teacher);
+    }
+
+    static async getList(page: number, size: number) : Promise<PageResponse<TeacherListResponse>> {
+        const skip = (page - 1) * size;
+        
         const teachers = await prismaClient.teacher.findMany({
             orderBy: {
                 order: "asc",
             },
+            skip,
+            take: size,
         });
 
-        return teachers.map(toTeacherResponse);
+        const total = await prismaClient.teacher.count();
+
+        return {
+            data: toTeacherListResponse(teachers),
+            meta: {
+                page,
+                size,
+                total,
+                totalPages: Math.ceil(total / size),
+            }
+        }
     }
 
     static async create(request: TeacherRequest): Promise<TeacherResponse> {

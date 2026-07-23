@@ -18,7 +18,7 @@ describe('GET /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins")
+            .get("/api/admins?page=1&size=10")
             .set("Authorization", `Bearer ${token}`);
 
         console.log(response.body);
@@ -30,7 +30,7 @@ describe('GET /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins")
+            .get("/api/admins?page=1&size=10")
             .set("Authorization", `Bearer ${token}1234`);
 
         expect(response.status).toBe(401);
@@ -40,7 +40,7 @@ describe('GET /api/admins', () => {
         const token = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins")
+            .get("/api/admins?page=1&size=10")
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.status).toBe(403);
@@ -50,11 +50,76 @@ describe('GET /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins")
+            .get("/api/admins?page=1&size=10")
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.body.data[0].passwordHash)
             .toBeUndefined();
+    });
+})
+
+describe('GET /api/admins/:id', () => {
+
+    beforeEach(async () => {
+        await AuthTest.create();
+        await AdminTest.createSuperAdmin();
+    });
+    
+    afterEach(async () => {
+        await AdminTest.deleteAll();
+    })
+
+    it('should allow super admin', async () => {
+        const token = await AdminTest.getAccessToken();
+
+        const response = await supertest(web)
+            .get("/api/admins/2")
+            .set("Authorization", `Bearer ${token}`);
+
+        console.log(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.data.role).toBe("ADMIN");
+    });
+    
+    it('should reject invalid token', async () => {
+        const token = await AdminTest.getAccessToken();
+
+        const response = await supertest(web)
+            .get("/api/admins/2")
+            .set("Authorization", `Bearer ${token}1234`);
+
+        expect(response.status).toBe(401);
+    });
+
+    it('should reject admin role', async () => {
+        const token = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .get("/api/admins/2")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.status).toBe(403);
+    });
+
+    it('should reject admin not found', async () => {
+        const token = await AdminTest.getAccessToken();
+
+        const response = await supertest(web)
+            .get("/api/admins/3")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.status).toBe(404);
+        expect(response.body.errors).toBe("Admin not found");
+    });
+
+    it('should not return password hash', async () => {
+        const token = await AdminTest.getAccessToken();
+
+        const response = await supertest(web)
+            .get("/api/admins/2")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(response.body.data.passwordHash).toBeUndefined();
     });
 })
 

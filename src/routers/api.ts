@@ -23,7 +23,8 @@ apiRouter.put("/api/teachers/:id", TeacherController.update)
 apiRouter.delete("/api/teachers/:id", TeacherController.delete)
 
 // Admins
-apiRouter.get("/api/admins", requireRole("SUPER_ADMIN"),AdminController.get)
+apiRouter.get("/api/admins", requireRole("SUPER_ADMIN"),AdminController.getList)
+apiRouter.get("/api/admins/:id", requireRole("SUPER_ADMIN"),AdminController.get)
 apiRouter.post("/api/admins", requireRole("SUPER_ADMIN"), AdminController.create)
 apiRouter.patch("/api/admins/:id/reset-password", requireRole("SUPER_ADMIN"), AdminController.resetPassword)
 apiRouter.delete("/api/admins/:id", requireRole("SUPER_ADMIN"), AdminController.delete)

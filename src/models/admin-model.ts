@@ -1,11 +1,24 @@
 import type { Admin } from "../generated/prisma/client.js";
-import type { AdminRole } from "../generated/prisma/enums.js"
+import type { AdminRole } from "../generated/prisma/enums.js";
 
 export type AdminRequest = {
-    username: string,
-    password: string,
-    name: string,
-}
+    username: string;
+    password: string;
+    name: string;
+};
+
+export type ResetPasswordRequest = {
+    newPassword: string;
+};
+
+export type AdminListResponse = {
+    id: number;
+    username: string;
+    name: string;
+    role: AdminRole;
+    createdAt: Date;
+    updatedAt: Date;
+};
 
 export type AdminResponse = {
     id: number;
@@ -14,6 +27,17 @@ export type AdminResponse = {
     role: AdminRole;
     createdAt: Date;
     updatedAt: Date;
+};
+
+export function toAdminListResponse(admins: Admin[]): AdminListResponse[] {
+    return admins.map((admin) => ({
+        id: admin.id,
+        username: admin.username,
+        name: admin.name,
+        role: admin.role,
+        createdAt: admin.createdAt,
+        updatedAt: admin.updatedAt,
+    }));
 }
 
 export function toAdminResponse(admin: Admin): AdminResponse {
@@ -25,8 +49,4 @@ export function toAdminResponse(admin: Admin): AdminResponse {
         createdAt: admin.createdAt,
         updatedAt: admin.updatedAt,
     };
-}
-
-export type ResetPasswordRequest = {
-    newPassword: string;
 }

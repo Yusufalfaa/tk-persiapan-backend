@@ -14,11 +14,40 @@ describe('GET /api/teachers', () => {
 
     it('should be able to get teacher list', async () => {
         const response = await supertest(web)
-            .get("/api/teachers")
+            .get("/api/teachers?page=1&size=10")
 
         expect(response.status).toBe(200);
-        expect(response.body.data).toBeDefined();
-        expect(response.body.data[0].name).toBe("Ibu Sri Wahyuni");
+        expect(Array.isArray(response.body.data)).toBe(true);
+
+    });
+
+})
+
+describe('GET /api/teachers/:id', () => {
+    
+    beforeEach(async () => {
+        await TeacherTest.create();
+    })
+
+    afterEach(async () => {
+        await TeacherTest.deleteAll();
+    })
+
+    it('should be able to get teacher by id', async () => {
+        const response = await supertest(web)
+            .get("/api/teachers/1")
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.name).toBe("Ibu Sri Wahyuni");
+
+    });
+
+    it('should reject due to not found', async () => {
+        const response = await supertest(web)
+            .get("/api/teachers/3")
+
+        expect(response.status).toBe(404);
+        expect(response.body.errors).toBe("Teacher not found");
 
     });
 

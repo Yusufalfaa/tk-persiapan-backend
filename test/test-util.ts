@@ -194,3 +194,58 @@ export class AdminTest {
     }
 
 }
+
+export class NewsTest {
+    static async deleteAll() {
+        await prismaClient.news.deleteMany();
+    }
+
+    static async create() {
+        await prismaClient.news.createMany({
+            data: [
+                {
+                    id: 1,
+                    title: "Lomba TK 2026",
+                    slug: "lomba-tk-2026",
+                    content: "Deskripsi lomba TK tahun 2026.",
+                    imagePath: "https://your-storage.com/news/lomba-tk-2026.jpg",
+                    isPublished: true,
+                },
+                {
+                    id: 2,
+                    title: "Penerimaan Peserta Didik Baru",
+                    slug: "ppdb-2026",
+                    content: "Pendaftaran peserta didik baru telah dibuka.",
+                    imagePath: "https://your-storage.com/news/ppdb-2026.jpg",
+                    isPublished: true,
+                },
+                {
+                    id: 3,
+                    title: "Kegiatan Outing Class",
+                    slug: "outing-class-2026",
+                    content: "Outing class ke kebun binatang.",
+                    imagePath: "https://your-storage.com/news/outing-class.jpg",
+                    isPublished: false,
+                },
+            ],
+        });
+    }
+
+
+    static async getAll() {
+        const News = await prismaClient.news.findMany({
+            where: {
+                isPublished: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            }
+        });
+
+        if(!News) {
+            throw new Error("News Not Found")
+        }
+
+        return News
+    }
+}

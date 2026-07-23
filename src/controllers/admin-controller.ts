@@ -8,10 +8,22 @@ export class AdminController {
 
     static async get(req: AuthRequest, res: Response, next: NextFunction) {
         try {
-            const response = await AdminService.get();
+            const id = Number(req.params.id)
+            const response = await AdminService.get(id);
             res.status(200).json({
                 data: response,
             })
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async getList(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const page = Number(req.query.page ?? 1);
+            const size = Number(req.query.size ?? 10);
+            const response = await AdminService.getList(page, size);
+            res.status(200).json(response);
         } catch (e) {
             next(e);
         }

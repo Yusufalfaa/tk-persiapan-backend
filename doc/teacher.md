@@ -12,6 +12,13 @@
 GET /api/teachers
 ```
 
+## Query Parameters
+
+| Parameter | Type   | Required | Description |
+| --------- | ------ | -------- | ----------- |
+| page      | Number | No       | Default: 1  |
+| size      | Number | No       | Default: 10 |
+
 ## Response Body (200 OK)
 
 ```json
@@ -35,7 +42,49 @@ GET /api/teachers
             "createdAt": "2026-01-02T09:00:00.000Z",
             "updatedAt": "2026-01-02T09:00:00.000Z"
         }
-    ]
+    ],
+    "meta": {
+        "page": 1,
+        "size": 10,
+        "total": 2,
+        "totalPages": 1
+    }
+}
+```
+
+---
+
+# Get Teacher
+
+> Endpoint publik, tidak memerlukan autentikasi.
+
+**Endpoint**
+
+```
+GET /api/teachers/:id
+```
+
+## Response Body (200 OK)
+
+```json
+{
+    "data": {
+        "id": 1,
+        "name": "Ibu Sri Wahyuni",
+        "position": "Kepala Sekolah",
+        "photoPath": "/uploads/teachers/sri-wahyuni.jpg",
+        "order": 0,
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "updatedAt": "2026-01-01T10:00:00.000Z"
+    }
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "Teacher not found"
 }
 ```
 

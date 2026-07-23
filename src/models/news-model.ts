@@ -21,16 +21,16 @@ export type NewsDetailResponse = {
     updatedAt: Date;
 }
 
-export function toNewsListResponse(news: News): NewsListResponse {
-    return {
-        id: news.id,
-        title: news.title,
-        slug: news.slug,
-        imagePath: news.imagePath,
-        isPublished: news.isPublished,
-        createdAt: news.createdAt,
-        updatedAt: news.updatedAt,
-    };
+export function toNewsListResponse(news: News[]): NewsListResponse[] {
+    return news.map((item) => ({
+        id: item.id,
+        title: item.title,
+        slug: item.slug,
+        imagePath: item.imagePath,
+        isPublished: item.isPublished,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+    }));
 }
 
 export function toNewsDetailResponse(news: News): NewsDetailResponse {

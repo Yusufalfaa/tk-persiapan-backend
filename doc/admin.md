@@ -18,6 +18,13 @@ GET /api/admins
 Authorization: Bearer <access_token>
 ```
 
+## Query Parameters
+
+| Parameter | Type   | Required | Description |
+| --------- | ------ | -------- | ----------- |
+| page      | Number | No       | Default: 1  |
+| size      | Number | No       | Default: 10 |
+
 ## Response Body (200 OK)
 
 ```json
@@ -39,7 +46,13 @@ Authorization: Bearer <access_token>
             "createdAt": "2026-01-02T09:00:00.000Z",
             "updatedAt": "2026-01-02T09:00:00.000Z"
         }
-    ]
+    ],
+    "meta": {
+        "page": 1,
+        "size": 10,
+        "total": 2,
+        "totalPages": 1
+    }
 }
 ```
 
@@ -56,6 +69,61 @@ Authorization: Bearer <access_token>
 ```json
 {
     "message": "Forbidden: requires SUPER_ADMIN role"
+}
+```
+
+---
+
+# Get Admin
+
+**Endpoint**
+
+```
+GET /api/admins/:id
+```
+
+## Headers
+
+```
+Authorization: Bearer <access_token>
+```
+
+## Response Body (200 OK)
+
+```json
+{
+    "data": {
+        "id": 2,
+        "username": "admin1",
+        "name": "Admin Satu",
+        "role": "ADMIN",
+        "createdAt": "2026-01-02T09:00:00.000Z",
+        "updatedAt": "2026-01-02T09:00:00.000Z"
+    }
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (403 Forbidden)
+
+```json
+{
+    "message": "Forbidden: requires SUPER_ADMIN role"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "Admin not found"
 }
 ```
 

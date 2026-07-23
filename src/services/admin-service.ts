@@ -1,17 +1,50 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
 import { AdminRole } from "../generated/prisma/enums.js";
-import { toAdminResponse, type AdminRequest, type AdminResponse, type ResetPasswordRequest } from "../models/admin-model.js";
+import { toAdminListResponse, toAdminResponse, type AdminListResponse, type AdminRequest, type AdminResponse, type ResetPasswordRequest } from "../models/admin-model.js";
 import { AdminValidation } from "../validations/admin-validation.js";
 import { Validation } from "../validations/validation.js";
 import bcrypt from "bcrypt";
+import type { PageResponse } from "./page-model.js";
 
 export class AdminService {
 
-    static async get(): Promise<AdminResponse[]> {
-        const admins = await prismaClient.admin.findMany()
+    static async get(id: number): Promise<AdminResponse> {
+        const admin = await prismaClient.admin.findUnique({
+            where: {
+                id: id,
+            },
+        })
 
-        return admins.map(toAdminResponse);
+        if (!admin) {
+            throw new ResponseError(404, "Admin not found")
+        }
+
+        return toAdminResponse(admin);
+    }
+
+    static async getList(page: number, size: number): Promise<PageResponse<AdminListResponse>> {
+        const skip = (page - 1) * size;
+        
+        const admins = await prismaClient.admin.findMany({
+            orderBy: {
+                id: "asc",
+            },
+            skip,
+            take: size,
+        })
+        
+        const total = await prismaClient.admin.count();
+
+        return {
+            data: toAdminListResponse(admins),
+            meta: {
+                page,
+                size,
+                total,
+                totalPages: Math.ceil(total / size),
+            }
+        }   
     }
 
     static async create(request: AdminRequest) : Promise<AdminResponse> {
