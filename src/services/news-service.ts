@@ -98,10 +98,14 @@ export class NewsService {
     }
 
     // static async create(request: NewsRequest) : Promise<NewsDetailResponse>{
-    //     const createRequest = Validation.validate(NewsValidation.CREATE)
+    //     const createRequest = Validation.validate(NewsValidation.CREATE, request)
+
+    //     const slug = createRequest.title.replace(" ","-")
 
     //     const news = await prismaClient.news.create({
-    //         data: createRequest
+    //         data: {
+    //             createdRequest,
+    //         }
     //     })
 
     // }

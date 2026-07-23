@@ -9,3 +9,4 @@ web.use(express.json());
 web.use(publicRouter)
 web.use(apiRouter)
 web.use(errorMiddleware)
+web.use("/uploads", express.static("uploads"));
