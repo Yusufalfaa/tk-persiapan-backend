@@ -1,6 +1,8 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
-import { toNewsDetailResponse, toNewsListResponse, type NewsDetailResponse, type NewsListResponse } from "../models/news-model.js";
+import { toNewsDetailResponse, toNewsListResponse, type NewsDetailResponse, type NewsListResponse, type NewsRequest } from "../models/news-model.js";
+import { NewsValidation } from "../validations/news-validation.js";
+import { Validation } from "../validations/validation.js";
 import type { PageResponse } from "./page-model.js";
 
 
@@ -94,5 +96,14 @@ export class NewsService {
 
         return toNewsDetailResponse(news);
     }
+
+    // static async create(request: NewsRequest) : Promise<NewsDetailResponse>{
+    //     const createRequest = Validation.validate(NewsValidation.CREATE)
+
+    //     const news = await prismaClient.news.create({
+    //         data: createRequest
+    //     })
+
+    // }
 
 }

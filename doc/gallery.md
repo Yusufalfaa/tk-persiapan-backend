@@ -46,7 +46,7 @@ GET /api/gallery
 
 ---
 
-# Get Gallery Detail
+## Get Gallery Detail
 
 > Endpoint publik, tidak memerlukan autentikasi.
 
@@ -93,7 +93,7 @@ Authorization: Bearer <access_token>
 
 ---
 
-# Admin Get Gallery List
+## Admin Get Gallery List
 
 > Menampilkan seluruh data gallery untuk dashboard admin.
 
@@ -133,9 +133,17 @@ GET /api/admin/gallery
 }
 ```
 
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
 ---
 
-# Admin Get Gallery Detail
+## Admin Get Gallery Detail
 
 > Menampilkan detail gallery untuk dashboard admin.
 
@@ -160,6 +168,14 @@ GET /api/admin/gallery/:id
 }
 ```
 
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
 ## Response Body (404 Not Found)
 
 ```json
@@ -170,7 +186,7 @@ GET /api/admin/gallery/:id
 
 ---
 
-# Create Gallery
+## Create Gallery
 
 > Memerlukan autentikasi admin.
 
@@ -189,11 +205,13 @@ Content-Type: multipart/form-data
 
 ## Request Body
 
-| Field   | Type   | Required | Description           |
-| ------- | ------ | -------- | --------------------- |
-| image   | File   | Yes      | Image file (Max 2 MB) |
-| caption | String | Yes      | Image caption         |
-| order   | Number | No       | Display order         |
+```json
+{
+    "image": "(file, max 2MB)",
+    "caption": "Kegiatan belajar mengajar",
+    "order": 1
+}
+```
 
 ## Response Body (201 Created)
 
@@ -210,11 +228,27 @@ Content-Type: multipart/form-data
 }
 ```
 
+## Response Body (400 Bad Request)
+
+```json
+{
+    "message": "Image must be less than 2 MB"
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
 ---
 
-# Update Gallery
+## Update Gallery
 
-> Memerlukan autentikasi admin.
+> Memerlukan autentikasi admin. Semua field bersifat opsional.
 
 **Endpoint**
 
@@ -231,11 +265,13 @@ Content-Type: multipart/form-data
 
 ## Request Body
 
-| Field   | Type   | Required |
-| ------- | ------ | -------- |
-| image   | File   | No       |
-| caption | String | No       |
-| order   | Number | No       |
+```json
+{
+    "image": "(file, max 2MB)",
+    "caption": "Updated caption",
+    "order": 2
+}
+```
 
 ## Response Body (200 OK)
 
@@ -252,9 +288,25 @@ Content-Type: multipart/form-data
 }
 ```
 
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "Gallery not found"
+}
+```
+
 ---
 
-# Delete Gallery
+## Delete Gallery
 
 > Memerlukan autentikasi admin.
 
@@ -278,4 +330,18 @@ Authorization: Bearer <access_token>
 }
 ```
 
----
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "Gallery not found"
+}
+```

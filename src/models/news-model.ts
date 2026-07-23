@@ -45,3 +45,9 @@ export function toNewsDetailResponse(news: News): NewsDetailResponse {
         updatedAt: news.updatedAt,
     };
 }
+
+export type NewsRequest = {
+    title: string;
+    content: string;
+    isPublished: boolean;
+}

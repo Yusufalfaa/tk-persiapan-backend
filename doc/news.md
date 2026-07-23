@@ -47,7 +47,7 @@ GET /api/news
 
 ---
 
-# Get Published News Detail
+## Get Published News Detail
 
 > Endpoint publik, hanya dapat mengakses news yang sudah dipublish.
 
@@ -96,7 +96,7 @@ Authorization: Bearer <access_token>
 
 ---
 
-# Admin List News
+## Admin List News
 
 > Menampilkan seluruh news termasuk draft.
 
@@ -146,9 +146,17 @@ GET /api/admin/news
 }
 ```
 
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
 ---
 
-# Admin Get News Detail
+## Admin Get News Detail
 
 > Menampilkan detail news termasuk draft.
 
@@ -175,6 +183,14 @@ GET /api/admin/news/:id
 }
 ```
 
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
 ## Response Body (404 Not Found)
 
 ```json
@@ -185,7 +201,7 @@ GET /api/admin/news/:id
 
 ---
 
-# Create News
+## Create News
 
 > Memerlukan autentikasi admin.
 
@@ -204,18 +220,53 @@ Content-Type: multipart/form-data
 
 ## Request Body
 
-| Field       | Type    | Required |
-| ----------- | ------- | -------- |
-| title       | String  | Yes      |
-| content     | String  | Yes      |
-| image       | File    | Yes      |
-| isPublished | Boolean | No       |
+```json
+{
+    "title": "Lomba TK 2026",
+    "content": "Deskripsi kegiatan...",
+    "image": "(file, max 2MB)",
+    "isPublished": true
+}
+```
+
+## Response Body (201 Created)
+
+```json
+{
+    "data": {
+        "id": 1,
+        "title": "Lomba TK 2026",
+        "slug": "lomba-tk-2026",
+        "content": "Deskripsi kegiatan...",
+        "imagePath": "https://your-storage.com/news/photo.jpg",
+        "isPublished": true,
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "updatedAt": "2026-01-01T10:00:00.000Z"
+    }
+}
+```
+
+## Response Body (400 Bad Request)
+
+```json
+{
+    "message": "Image must be less than 2 MB"
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
 
 ---
 
-# Update News
+## Update News
 
-> Memerlukan autentikasi admin.
+> Memerlukan autentikasi admin. Semua field bersifat opsional.
 
 **Endpoint**
 
@@ -232,16 +283,51 @@ Content-Type: multipart/form-data
 
 ## Request Body
 
-| Field       | Type    |
-| ----------- | ------- |
-| title       | String  |
-| content     | String  |
-| image       | File    |
-| isPublished | Boolean |
+```json
+{
+    "title": "Updated title",
+    "content": "Updated content",
+    "image": "(file, max 2MB)",
+    "isPublished": false
+}
+```
+
+## Response Body (200 OK)
+
+```json
+{
+    "data": {
+        "id": 1,
+        "title": "Updated title",
+        "slug": "updated-title",
+        "content": "Updated content",
+        "imagePath": "https://your-storage.com/news/new-photo.jpg",
+        "isPublished": false,
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "updatedAt": "2026-01-02T12:00:00.000Z"
+    }
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "News not found"
+}
+```
 
 ---
 
-# Delete News
+## Delete News
 
 > Memerlukan autentikasi admin.
 
@@ -265,4 +351,18 @@ Authorization: Bearer <access_token>
 }
 ```
 
----
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "News not found"
+}
+```
