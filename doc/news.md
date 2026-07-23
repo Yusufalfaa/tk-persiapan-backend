@@ -2,9 +2,11 @@
 
 ---
 
-# List News
+# Public News API
 
-> Endpoint publik, tidak memerlukan autentikasi.
+## List Published News
+
+> Endpoint publik, hanya menampilkan news yang sudah dipublish.
 
 **Endpoint**
 
@@ -14,10 +16,10 @@ GET /api/news
 
 ## Query Parameters
 
-| Parameter | Type   | Required | Description |
-| --------- | ------ | -------- | ----------- |
-| page      | Number | No       | Default: 1  |
-| size      | Number | No       | Default: 10 |
+| Parameter | Type   | Required | Default |
+| --------- | ------ | -------- | ------- |
+| page      | Number | No       | 1       |
+| size      | Number | No       | 10      |
 
 ## Response Body (200 OK)
 
@@ -29,15 +31,6 @@ GET /api/news
             "title": "Lomba TK 2026",
             "slug": "lomba-tk-2026",
             "imagePath": "https://your-storage.com/news/photo.jpg",
-            "isPublished": true,
-            "createdAt": "2026-01-01T10:00:00.000Z",
-            "updatedAt": "2026-01-01T10:00:00.000Z"
-        },
-        {
-            "id": 2,
-            "title": "Penerimaan Peserta Didik Baru",
-            "slug": "ppdb-2026",
-            "imagePath": "https://your-storage.com/news/ppdb-2026.jpg",
             "isPublished": true,
             "createdAt": "2026-01-01T10:00:00.000Z",
             "updatedAt": "2026-01-01T10:00:00.000Z"
@@ -54,9 +47,9 @@ GET /api/news
 
 ---
 
-# Get News Detail
+# Get Published News Detail
 
-> Endpoint publik, tidak memerlukan autentikasi.
+> Endpoint publik, hanya dapat mengakses news yang sudah dipublish.
 
 **Endpoint**
 
@@ -91,6 +84,107 @@ GET /api/news/:id
 
 ---
 
+# Admin News API
+
+> Seluruh endpoint berikut membutuhkan autentikasi admin.
+
+Headers:
+
+```
+Authorization: Bearer <access_token>
+```
+
+---
+
+# Admin List News
+
+> Menampilkan seluruh news termasuk draft.
+
+**Endpoint**
+
+```
+GET /api/admin/news
+```
+
+## Query Parameters
+
+| Parameter | Type   | Required | Default |
+| --------- | ------ | -------- | ------- |
+| page      | Number | No       | 1       |
+| size      | Number | No       | 10      |
+
+## Response Body (200 OK)
+
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "title": "Lomba TK 2026",
+            "slug": "lomba-tk-2026",
+            "imagePath": "https://your-storage.com/news/photo.jpg",
+            "isPublished": true,
+            "createdAt": "2026-01-01T10:00:00.000Z",
+            "updatedAt": "2026-01-01T10:00:00.000Z"
+        },
+        {
+            "id": 2,
+            "title": "Draft Berita",
+            "slug": "draft-berita",
+            "imagePath": null,
+            "isPublished": false,
+            "createdAt": "2026-01-02T10:00:00.000Z",
+            "updatedAt": "2026-01-02T10:00:00.000Z"
+        }
+    ],
+    "meta": {
+        "page": 1,
+        "size": 10,
+        "total": 50,
+        "totalPages": 5
+    }
+}
+```
+
+---
+
+# Admin Get News Detail
+
+> Menampilkan detail news termasuk draft.
+
+**Endpoint**
+
+```
+GET /api/admin/news/:id
+```
+
+## Response Body (200 OK)
+
+```json
+{
+    "data": {
+        "id": 2,
+        "title": "Draft Berita",
+        "slug": "draft-berita",
+        "content": "Isi berita draft",
+        "imagePath": null,
+        "isPublished": false,
+        "createdAt": "2026-01-02T10:00:00.000Z",
+        "updatedAt": "2026-01-02T10:00:00.000Z"
+    }
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "News not found"
+}
+```
+
+---
+
 # Create News
 
 > Memerlukan autentikasi admin.
@@ -98,7 +192,7 @@ GET /api/news/:id
 **Endpoint**
 
 ```
-POST /api/news
+POST /api/admin/news
 ```
 
 ## Headers
@@ -110,56 +204,23 @@ Content-Type: multipart/form-data
 
 ## Request Body
 
-| Field       | Type    | Required | Description      |
-| ----------- | ------- | -------- | ---------------- |
-| title       | String  | Yes      | News title       |
-| content     | String  | Yes      | News content     |
-| image       | File    | Yes      | Image (Max 2 MB) |
-| isPublished | Boolean | No       | Default: true    |
-
-## Response Body (201 Created)
-
-```json
-{
-    "data": {
-        "id": 1,
-        "title": "Lomba TK 2026",
-        "slug": "lomba-tk-2026",
-        "content": "Deskripsi kegiatan...",
-        "imagePath": "https://your-storage.com/news/photo.jpg",
-        "isPublished": true,
-        "createdAt": "2026-01-01T10:00:00.000Z",
-        "updatedAt": "2026-01-01T10:00:00.000Z"
-    }
-}
-```
-
-## Response Body (400 Bad Request)
-
-```json
-{
-    "message": "Image must be less than 2 MB"
-}
-```
-
-## Response Body (401 Unauthorized)
-
-```json
-{
-    "message": "Unauthorized"
-}
-```
+| Field       | Type    | Required |
+| ----------- | ------- | -------- |
+| title       | String  | Yes      |
+| content     | String  | Yes      |
+| image       | File    | Yes      |
+| isPublished | Boolean | No       |
 
 ---
 
 # Update News
 
-> Memerlukan autentikasi admin. Semua field bersifat opsional.
+> Memerlukan autentikasi admin.
 
 **Endpoint**
 
 ```
-PUT /api/news/:id
+PUT /api/admin/news/:id
 ```
 
 ## Headers
@@ -178,39 +239,6 @@ Content-Type: multipart/form-data
 | image       | File    |
 | isPublished | Boolean |
 
-## Response Body (200 OK)
-
-```json
-{
-    "data": {
-        "id": 1,
-        "title": "Updated title",
-        "slug": "updated-title",
-        "content": "Updated content",
-        "imagePath": "https://your-storage.com/news/new-photo.jpg",
-        "isPublished": false,
-        "createdAt": "2026-01-01T10:00:00.000Z",
-        "updatedAt": "2026-01-02T12:00:00.000Z"
-    }
-}
-```
-
-## Response Body (401 Unauthorized)
-
-```json
-{
-    "message": "Unauthorized"
-}
-```
-
-## Response Body (404 Not Found)
-
-```json
-{
-    "message": "News not found"
-}
-```
-
 ---
 
 # Delete News
@@ -220,7 +248,7 @@ Content-Type: multipart/form-data
 **Endpoint**
 
 ```
-DELETE /api/news/:id
+DELETE /api/admin/news/:id
 ```
 
 ## Headers
@@ -237,18 +265,4 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (401 Unauthorized)
-
-```json
-{
-    "message": "Unauthorized"
-}
-```
-
-## Response Body (404 Not Found)
-
-```json
-{
-    "message": "News not found"
-}
-```
+---

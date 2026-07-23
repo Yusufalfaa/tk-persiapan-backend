@@ -53,7 +53,7 @@ describe('GET /api/teachers/:id', () => {
 
 })
 
-describe('POST /api/teachers', () => {
+describe('POST /api/admin/teachers', () => {
 
     beforeEach(async () => {
         await AuthTest.create();
@@ -68,7 +68,7 @@ describe('POST /api/teachers', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .post("/api/teachers")
+            .post("/api/admin/teachers")
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
                 name: "Muhamad Yusuf",
@@ -87,7 +87,7 @@ describe('POST /api/teachers', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .post("/api/teachers")
+            .post("/api/admin/teachers")
             .set("Authorization", `Bearer ${accessToken}1234`)
             .send({
                 name: "Muhamad Yusuf",
@@ -104,7 +104,7 @@ describe('POST /api/teachers', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .post("/api/teachers")
+            .post("/api/admin/teachers")
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
                 name: "",
@@ -119,7 +119,7 @@ describe('POST /api/teachers', () => {
 
 })
 
-describe('PUT /api/teachers/:id', () => {
+describe('PUT /api/admin/teachers/:id', () => {
     beforeEach(async () => {
         await AuthTest.create();
         await TeacherTest.create();
@@ -134,7 +134,7 @@ describe('PUT /api/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .put(`/api/teachers/1`)
+            .put(`/api/admin/teachers/1`)
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
                 name: "Muhamad Yusuf",
@@ -152,7 +152,7 @@ describe('PUT /api/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .put(`/api/teachers/1`)
+            .put(`/api/admin/teachers/1`)
             .set("Authorization", `Bearer ${accessToken}1234`)
             .send({
                 name: "Muhamad Yusuf",
@@ -169,7 +169,7 @@ describe('PUT /api/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .put(`/api/teachers/9999`)
+            .put(`/api/admin/teachers/9999`)
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
                 name: "Muhamad Yusuf",
@@ -187,7 +187,7 @@ describe('PUT /api/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .put(`/api/teachers/1`)
+            .put(`/api/admin/teachers/1`)
             .set("Authorization", `Bearer ${accessToken}`)
             .send({
                 name: "Muhamad Yusuf",
@@ -202,7 +202,7 @@ describe('PUT /api/teachers/:id', () => {
     });
 });
 
-describe('DELETE /api/teachers/:id', () => {
+describe('DELETE /api/admin/teachers/:id', () => {
     
     beforeEach(async () => {
         await AuthTest.create();
@@ -218,7 +218,7 @@ describe('DELETE /api/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .delete(`/api/teachers/1`)
+            .delete(`/api/admin/teachers/1`)
             .set("Authorization", `Bearer ${accessToken}`)      
         
         expect(response.status).toBe(200);
@@ -229,7 +229,7 @@ describe('DELETE /api/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .delete(`/api/teachers/0`)
+            .delete(`/api/admin/teachers/0`)
             .set("Authorization", `Bearer ${accessToken}1234`)      
         
         expect(response.status).toBe(401);
@@ -240,7 +240,7 @@ describe('DELETE /api/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .delete(`/api/teachers/0`)
+            .delete(`/api/admin/teachers/0`)
             .set("Authorization", `Bearer ${accessToken}`)      
         
         expect(response.status).toBe(404);

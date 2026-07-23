@@ -3,7 +3,7 @@ import { AdminTest, AuthTest } from "./test-util.js";
 import { web } from "../src/application/web.js";
 import bcrypt from "bcrypt";
 
-describe('GET /api/admins', () => {
+describe('GET /api/admin', () => {
 
     beforeEach(async () => {
         await AuthTest.create();
@@ -18,7 +18,7 @@ describe('GET /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins?page=1&size=10")
+            .get("/api/admin?page=1&size=10")
             .set("Authorization", `Bearer ${token}`);
 
         console.log(response.body);
@@ -30,7 +30,7 @@ describe('GET /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins?page=1&size=10")
+            .get("/api/admin?page=1&size=10")
             .set("Authorization", `Bearer ${token}1234`);
 
         expect(response.status).toBe(401);
@@ -40,7 +40,7 @@ describe('GET /api/admins', () => {
         const token = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins?page=1&size=10")
+            .get("/api/admin?page=1&size=10")
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.status).toBe(403);
@@ -50,7 +50,7 @@ describe('GET /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins?page=1&size=10")
+            .get("/api/admin?page=1&size=10")
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.body.data[0].passwordHash)
@@ -58,7 +58,7 @@ describe('GET /api/admins', () => {
     });
 })
 
-describe('GET /api/admins/:id', () => {
+describe('GET /api/admin/:id', () => {
 
     beforeEach(async () => {
         await AuthTest.create();
@@ -73,7 +73,7 @@ describe('GET /api/admins/:id', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins/2")
+            .get("/api/admin/2")
             .set("Authorization", `Bearer ${token}`);
 
         console.log(response.body);
@@ -85,7 +85,7 @@ describe('GET /api/admins/:id', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins/2")
+            .get("/api/admin/2")
             .set("Authorization", `Bearer ${token}1234`);
 
         expect(response.status).toBe(401);
@@ -95,7 +95,7 @@ describe('GET /api/admins/:id', () => {
         const token = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins/2")
+            .get("/api/admin/2")
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.status).toBe(403);
@@ -105,7 +105,7 @@ describe('GET /api/admins/:id', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins/3")
+            .get("/api/admin/3")
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.status).toBe(404);
@@ -116,14 +116,14 @@ describe('GET /api/admins/:id', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admins/2")
+            .get("/api/admin/2")
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.body.data.passwordHash).toBeUndefined();
     });
 })
 
-describe('POST /api/admins', () => {
+describe('POST /api/admin', () => {
 
     beforeEach(async () => {
         await AuthTest.create()
@@ -138,7 +138,7 @@ describe('POST /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .post("/api/admins")
+            .post("/api/admin")
             .set("Authorization", `Bearer ${token}`)
             .send({
                 username: "admin2",
@@ -154,7 +154,7 @@ describe('POST /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .post("/api/admins")
+            .post("/api/admin")
             .set("Authorization", `Bearer ${token}`)
             .send({
                 username: "",
@@ -170,7 +170,7 @@ describe('POST /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .post("/api/admins")
+            .post("/api/admin")
             .set("Authorization", `Bearer ${token}1234`)
             .send({
                 username: "admin2",
@@ -186,7 +186,7 @@ describe('POST /api/admins', () => {
         const token = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .post("/api/admins")
+            .post("/api/admin")
             .set("Authorization", `Bearer ${token}`)
             .send({
                 username: "admin2",
@@ -202,7 +202,7 @@ describe('POST /api/admins', () => {
         const token = await AdminTest.getAccessToken();
 
         const response = await supertest(web)
-            .post("/api/admins")
+            .post("/api/admin")
             .set("Authorization", `Bearer ${token}`)
             .send({
                 username: "Admin",
@@ -216,7 +216,7 @@ describe('POST /api/admins', () => {
 
 })
 
-describe('PATCH /api/admins/:id/reset-password', async () => {
+describe('PATCH /api/admin/:id/reset-password', async () => {
 
     beforeEach(async () => {
         await AuthTest.create();
@@ -231,7 +231,7 @@ describe('PATCH /api/admins/:id/reset-password', async () => {
         const token = await AdminTest.getAccessToken();
 
             const response = await supertest(web)
-                .patch("/api/admins/2/reset-password")
+                .patch("/api/admin/2/reset-password")
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     newPassword: "password123",
@@ -250,7 +250,7 @@ describe('PATCH /api/admins/:id/reset-password', async () => {
         const token = await AdminTest.getAccessToken();
 
             const response = await supertest(web)
-                .patch("/api/admins/2/reset-password")
+                .patch("/api/admin/2/reset-password")
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     newPassword: "",
@@ -264,7 +264,7 @@ describe('PATCH /api/admins/:id/reset-password', async () => {
         const token = await AdminTest.getAccessToken();
 
             const response = await supertest(web)
-                .patch("/api/admins/2/reset-password")
+                .patch("/api/admin/2/reset-password")
                 .set("Authorization", `Bearer ${token}1234`)
                 .send({
                     newPassword: "password123",
@@ -278,7 +278,7 @@ describe('PATCH /api/admins/:id/reset-password', async () => {
         const token = await AuthTest.getAccessToken();
 
             const response = await supertest(web)
-                .patch("/api/admins/2/reset-password")
+                .patch("/api/admin/2/reset-password")
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     newPassword: "password123",
@@ -292,7 +292,7 @@ describe('PATCH /api/admins/:id/reset-password', async () => {
         const token = await AdminTest.getAccessToken();
 
             const response = await supertest(web)
-                .patch("/api/admins/4/reset-password")
+                .patch("/api/admin/4/reset-password")
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     newPassword: "password123",
@@ -306,7 +306,7 @@ describe('PATCH /api/admins/:id/reset-password', async () => {
 
 })
 
-describe('DELETE /api/admins/:id', async () => {
+describe('DELETE /api/admin/:id', async () => {
 
     beforeEach(async () => {
         await AuthTest.create();
@@ -321,7 +321,7 @@ describe('DELETE /api/admins/:id', async () => {
         const accessToken = await AdminTest.getAccessToken();
         
         const response = await supertest(web)
-            .delete(`/api/admins/2`)
+            .delete(`/api/admin/2`)
             .set("Authorization", `Bearer ${accessToken}`)      
         
         expect(response.status).toBe(200);
@@ -332,7 +332,7 @@ describe('DELETE /api/admins/:id', async () => {
         const accessToken = await AdminTest.getAccessToken();
         
         const response = await supertest(web)
-            .delete(`/api/admins/1`)
+            .delete(`/api/admin/1`)
             .set("Authorization", `Bearer ${accessToken}`)      
         
         expect(response.status).toBe(400);
@@ -343,7 +343,7 @@ describe('DELETE /api/admins/:id', async () => {
         const accessToken = await AdminTest.getAccessToken();
         
         const response = await supertest(web)
-            .delete(`/api/admins/2`)
+            .delete(`/api/admin/2`)
             .set("Authorization", `Bearer ${accessToken}1234`)      
         
         expect(response.status).toBe(401);
@@ -354,7 +354,7 @@ describe('DELETE /api/admins/:id', async () => {
         const accessToken = await AuthTest.getAccessToken();
         
         const response = await supertest(web)
-            .delete(`/api/admins/1`)
+            .delete(`/api/admin/1`)
             .set("Authorization", `Bearer ${accessToken}`)      
         
         expect(response.status).toBe(403);
@@ -365,7 +365,7 @@ describe('DELETE /api/admins/:id', async () => {
         const accessToken = await AdminTest.getAccessToken();
         
         const response = await supertest(web)
-            .delete(`/api/admins/9999`)
+            .delete(`/api/admin/9999`)
             .set("Authorization", `Bearer ${accessToken}`)      
         
         expect(response.status).toBe(404);

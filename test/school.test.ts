@@ -48,7 +48,7 @@ describe('PUT /api/school', () => {
         request.name = "TK Persiapan Updated";
 
         const response = await supertest(web)
-            .put("/api/school")
+            .put("/api/admin/school")
             .set("Authorization", `Bearer ${accessToken}`)
             .send(request);
 
@@ -67,7 +67,7 @@ describe('PUT /api/school', () => {
         request.name = "TK";
 
         const response = await supertest(web)
-            .put("/api/school")
+            .put("/api/admin/school")
             .set("Authorization", `Bearer ${accessToken}`)
             .send(request);
 
@@ -86,7 +86,7 @@ describe('PUT /api/school', () => {
         request.name = "TK Persiapan Updated";
 
         const response = await supertest(web)
-            .put("/api/school")
+            .put("/api/admin/school")
             .set("Authorization", `Bearer ${accessToken} 1234`)
             .send(request);
 

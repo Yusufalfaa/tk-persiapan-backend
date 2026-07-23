@@ -2,9 +2,11 @@
 
 ---
 
-# List Teachers
+# Public Teacher API
 
-> Endpoint publik, tidak memerlukan autentikasi. Digunakan untuk menampilkan daftar guru di halaman profil sekolah.
+## List Teachers
+
+> Endpoint publik, tidak memerlukan autentikasi.
 
 **Endpoint**
 
@@ -14,10 +16,10 @@ GET /api/teachers
 
 ## Query Parameters
 
-| Parameter | Type   | Required | Description |
-| --------- | ------ | -------- | ----------- |
-| page      | Number | No       | Default: 1  |
-| size      | Number | No       | Default: 10 |
+| Parameter | Type   | Required | Default |
+| --------- | ------ | -------- | ------- |
+| page      | Number | No       | 1       |
+| size      | Number | No       | 10      |
 
 ## Response Body (200 OK)
 
@@ -32,15 +34,6 @@ GET /api/teachers
             "order": 0,
             "createdAt": "2026-01-01T10:00:00.000Z",
             "updatedAt": "2026-01-01T10:00:00.000Z"
-        },
-        {
-            "id": 2,
-            "name": "Ibu Dewi Lestari",
-            "position": "Guru Kelas A",
-            "photoPath": null,
-            "order": 1,
-            "createdAt": "2026-01-02T09:00:00.000Z",
-            "updatedAt": "2026-01-02T09:00:00.000Z"
         }
     ],
     "meta": {
@@ -54,9 +47,9 @@ GET /api/teachers
 
 ---
 
-# Get Teacher
+# Get Teacher Detail
 
-> Endpoint publik, tidak memerlukan autentikasi.
+> Endpoint publik.
 
 **Endpoint**
 
@@ -80,11 +73,84 @@ GET /api/teachers/:id
 }
 ```
 
-## Response Body (404 Not Found)
+---
+
+# Admin Teacher API
+
+> Semua endpoint berikut membutuhkan autentikasi admin.
+
+Headers:
+
+```
+Authorization: Bearer <access_token>
+```
+
+---
+
+# Admin List Teachers
+
+> Digunakan untuk dashboard admin.
+
+**Endpoint**
+
+```
+GET /api/admin/teachers
+```
+
+## Query Parameters
+
+| Parameter | Type   | Required | Default |
+| --------- | ------ | -------- | ------- |
+| page      | Number | No       | 1       |
+| size      | Number | No       | 10      |
+
+## Response Body (200 OK)
 
 ```json
 {
-    "message": "Teacher not found"
+    "data": [
+        {
+            "id": 1,
+            "name": "Ibu Sri Wahyuni",
+            "position": "Kepala Sekolah",
+            "photoPath": "/uploads/teachers/sri-wahyuni.jpg",
+            "order": 0,
+            "createdAt": "2026-01-01T10:00:00.000Z",
+            "updatedAt": "2026-01-01T10:00:00.000Z"
+        }
+    ],
+    "meta": {
+        "page": 1,
+        "size": 10,
+        "total": 2,
+        "totalPages": 1
+    }
+}
+```
+
+---
+
+# Admin Get Teacher Detail
+
+**Endpoint**
+
+```
+GET /api/admin/teachers/:id
+```
+
+## Response Body (200 OK)
+
+```json
+{
+    "data": {
+        "id": 1,
+        "name": "Ibu Sri Wahyuni",
+        "position": "Kepala Sekolah",
+        "photoPath": "/uploads/teachers/sri-wahyuni.jpg",
+        "order": 0,
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "updatedAt": "2026-01-01T10:00:00.000Z"
+    }
 }
 ```
 
@@ -92,23 +158,13 @@ GET /api/teachers/:id
 
 # Create Teacher
 
-> Memerlukan autentikasi admin.
-
 **Endpoint**
 
 ```
-POST /api/teachers
-```
-
-## Headers
-
-```
-Authorization: Bearer <access_token>
+POST /api/admin/teachers
 ```
 
 ## Request Body
-
-`photoPath` bersifat **opsional**.
 
 ```json
 {
@@ -119,58 +175,14 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (201 Created)
-
-```json
-{
-    "data": {
-        "id": 2,
-        "name": "Ibu Dewi Lestari",
-        "position": "Guru Kelas A",
-        "photoPath": "/uploads/teachers/dewi-lestari.jpg",
-        "order": 1,
-        "createdAt": "2026-01-02T09:00:00.000Z",
-        "updatedAt": "2026-01-02T09:00:00.000Z"
-    }
-}
-```
-
-## Response Body (400 Bad Request)
-
-```json
-{
-    "message": "Validation error",
-    "errors": {
-        "name": "Nama wajib diisi",
-        "position": "Jabatan wajib diisi"
-    }
-}
-```
-
-## Response Body (401 Unauthorized)
-
-```json
-{
-    "message": "Unauthorized"
-}
-```
-
 ---
 
 # Update Teacher
 
-> Memerlukan autentikasi admin. Semua field bersifat opsional.
-
 **Endpoint**
 
 ```
-PUT /api/teachers/:id
-```
-
-## Headers
-
-```
-Authorization: Bearer <access_token>
+PUT /api/admin/teachers/:id
 ```
 
 ## Request Body
@@ -183,76 +195,20 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (200 OK)
-
-```json
-{
-    "data": {
-        "id": 2,
-        "name": "Ibu Dewi Lestari, S.Pd.",
-        "position": "Wali Kelas A",
-        "photoPath": "/uploads/teachers/dewi-lestari.jpg",
-        "order": 2,
-        "createdAt": "2026-01-02T09:00:00.000Z",
-        "updatedAt": "2026-01-03T11:00:00.000Z"
-    }
-}
-```
-
-## Response Body (401 Unauthorized)
-
-```json
-{
-    "message": "Unauthorized"
-}
-```
-
-## Response Body (404 Not Found)
-
-```json
-{
-    "message": "Teacher not found"
-}
-```
-
 ---
 
 # Delete Teacher
 
-> Memerlukan autentikasi admin.
-
 **Endpoint**
 
 ```
-DELETE /api/teachers/:id
+DELETE /api/admin/teachers/:id
 ```
 
-## Headers
-
-```
-Authorization: Bearer <access_token>
-```
-
-## Response Body (200 OK)
+## Response Body
 
 ```json
 {
     "message": "Teacher deleted successfully"
-}
-```
-
-## Response Body (401 Unauthorized)
-
-```json
-{
-    "message": "Unauthorized"
-}
-```
-
-## Response Body (404 Not Found)
-
-```json
-{
-    "message": "Teacher not found"
 }
 ```
