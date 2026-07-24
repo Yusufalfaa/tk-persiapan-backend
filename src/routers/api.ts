@@ -29,6 +29,7 @@ apiRouter.get("/api/admin/news", NewsController.getAdminList);
 apiRouter.get("/api/admin/news/:slug", NewsController.getAdminDetail);
 apiRouter.post("/api/admin/news", NewsController.createNews);
 apiRouter.patch("/api/admin/news/:id", NewsController.updateNews);
+apiRouter.delete("/api/admin/news/:id", NewsController.deleteNews);
 
 
 // Admins

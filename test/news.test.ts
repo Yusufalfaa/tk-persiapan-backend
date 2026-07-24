@@ -251,3 +251,48 @@ describe('PATCH /api/admin/news', () => {
     })
     
 })
+
+describe('DELETE /api/admin/news/:id', () => {
+    beforeEach(async () => {
+        await AuthTest.create()
+        await NewsTest.createDraftNews()
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete()
+        await NewsTest.deleteAll()
+    })
+    
+    it('should be delete selected news', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .delete("/api/admin/news/3")
+            .set("Authorization", `Bearer ${accessToken}`)
+
+        expect(response.status).toBe(200)
+        expect(response.body.message).toBe("News deleted successfully");
+    })
+
+    it('should reject delete news due to unauthorized', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .delete("/api/admin/news/3")
+            .set("Authorization", `Bearer ${accessToken}1234`)
+
+        expect(response.status).toBe(401)
+        expect(response.body.message).toBe("Unauthorized");
+    })
+
+    it('should reject delete news due to news not found', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .delete("/api/admin/news/4")
+            .set("Authorization", `Bearer ${accessToken}`)
+
+        expect(response.status).toBe(404)
+        expect(response.body.message).toBe("News not found");
+    })
+})

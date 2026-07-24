@@ -5,6 +5,7 @@ import { toNewsDetailResponse, toNewsListResponse, type CreateNewsRequest, type 
 import type { PageResponse } from "../models/page-model.js";
 import { NewsValidation } from "../validations/news-validation.js";
 import { Validation } from "../validations/validation.js";
+import { StorageService } from "./storage-service.js";
 
 
 export class NewsService {
@@ -221,11 +222,11 @@ export class NewsService {
         return toNewsDetailResponse(response)
     }
 
-    static async updateNews(request: UpdateNewsRequest, id: number): Promise<NewsDetailResponse> {
+    static async updateNews(request: UpdateNewsRequest, newsId: number): Promise<NewsDetailResponse> {
         const updateRequest = Validation.validate<UpdateNewsRequest>(NewsValidation.UPDATE, request);
 
         const existingNews = await prismaClient.news.findUnique({
-            where: { id },
+            where: { id: newsId },
         });
 
         if (!existingNews) {
@@ -233,11 +234,11 @@ export class NewsService {
         }
 
         const slug = updateRequest.title
-            ? await this.generateUniqueSlug(updateRequest.title, id)
+            ? await this.generateUniqueSlug(updateRequest.title, newsId)
             : undefined;
 
         const response = await prismaClient.news.update({
-            where: { id },
+            where: { id: newsId },
             data: {
                 ...(updateRequest.title !== undefined && { title: updateRequest.title }),
                 ...(slug !== undefined && { slug }),
@@ -255,4 +256,36 @@ export class NewsService {
 
         return toNewsDetailResponse(response);
     }
+
+    static async deleteNews(newsId: number) {
+        const news = await prismaClient.news.findUnique({
+            where: { id: newsId},
+            include: {
+                sections: {
+                    include: {
+                        images: true,
+                    }
+                }
+            }
+        })
+
+        if (!news) {
+            throw new ResponseError(404, "News not found");
+        }
+
+        for (const section of news.sections) {
+            if (section.type !== "IMAGE") continue;
+                
+            for (const image of section.images) {
+                await StorageService.delete(image.imagePath);
+            }
+        }
+
+        await prismaClient.news.delete({
+            where: {
+                id: newsId,
+            },
+        });
+    }
+
 }

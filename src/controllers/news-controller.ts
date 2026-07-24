@@ -92,4 +92,16 @@ export class NewsController {
         }
     }
 
+    static async deleteNews(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            await NewsService.deleteNews(Number(req.params.id));
+
+            res.status(200).json({
+                message: "News deleted successfully"
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
 }
