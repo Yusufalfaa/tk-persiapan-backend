@@ -25,12 +25,6 @@ enum NewsSectionType {
   YOUTUBE
 }
 
-enum NewsImageLayout {
-  SINGLE
-  GRID
-  CAROUSEL
-}
-
 // ADMIN
 
 model Admin {
@@ -57,6 +51,9 @@ model News {
 
   isPublished Boolean @default(true)
 
+  thumbnail String? @db.VarChar(500)
+  excerpt   String? @db.VarChar(500)
+
   sections NewsSection[]
 
   createdAt DateTime @default(now())
@@ -69,18 +66,17 @@ model News {
 model NewsSection {
   id Int @id @default(autoincrement())
 
-  // TEXT / IMAGE / YOUTUBE
   type  NewsSectionType
   order Int             @default(0)
 
-  // digunakan jika type TEXT
+  // TEXT
   text String? @db.Text
 
-  // digunakan jika type YOUTUBE
+  // YOUTUBE
   youtubeUrl String? @db.VarChar(500)
 
-  // digunakan jika type IMAGE
-  imageLayout NewsImageLayout?
+  // IMAGE only (1-4)
+  columns Int? @db.TinyInt
 
   newsId Int
   news   News @relation(fields: [newsId], references: [id], onDelete: Cascade)
@@ -100,7 +96,6 @@ model NewsSectionImage {
 
   imagePath String @db.VarChar(500)
 
-  // urutan gambar dalam section
   order Int @default(0)
 
   sectionId Int
@@ -112,6 +107,8 @@ model NewsSectionImage {
   @@index([order])
   @@map("news_section_images")
 }
+
+// SCHOOL PROFILE
 
 model SchoolProfile {
   id Int @id @default(autoincrement())
@@ -151,6 +148,8 @@ model Mission {
   @@index([schoolId])
   @@map("school_missions")
 }
+
+// TEACHER
 
 model Teacher {
   id Int @id @default(autoincrement())

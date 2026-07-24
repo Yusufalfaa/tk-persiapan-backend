@@ -30,6 +30,8 @@ GET /api/news
             "id": 1,
             "title": "Lomba TK 2026",
             "slug": "lomba-tk-2026",
+            "thumbnail": "https://your-storage.com/news/photo1.jpg",
+            "excerpt": "Deskripsi kegiatan lomba TK tahun ini akan diadakan di halaman sekolah dengan berbagai...",
             "isPublished": true,
             "createdAt": "2026-01-01T10:00:00.000Z",
             "updatedAt": "2026-01-01T10:00:00.000Z"
@@ -72,7 +74,7 @@ GET /api/news/:slug
                 "order": 0,
                 "text": "Deskripsi kegiatan lomba TK tahun ini...",
                 "youtubeUrl": null,
-                "imageLayout": null,
+                "columns": null,
                 "images": []
             },
             {
@@ -81,7 +83,7 @@ GET /api/news/:slug
                 "order": 1,
                 "text": null,
                 "youtubeUrl": null,
-                "imageLayout": "GRID",
+                "columns": 2,
                 "images": [
                     {
                         "id": 1,
@@ -101,7 +103,7 @@ GET /api/news/:slug
                 "order": 2,
                 "text": null,
                 "youtubeUrl": "https://www.youtube.com/watch?v=xxxxxxx",
-                "imageLayout": null,
+                "columns": null,
                 "images": []
             }
         ],
@@ -159,6 +161,8 @@ GET /api/admin/news
             "id": 1,
             "title": "Lomba TK 2026",
             "slug": "lomba-tk-2026",
+            "thumbnail": "https://your-storage.com/news/photo1.jpg",
+            "excerpt": "Deskripsi kegiatan lomba TK tahun ini akan diadakan di halaman sekolah dengan berbagai...",
             "isPublished": true,
             "createdAt": "2026-01-01T10:00:00.000Z",
             "updatedAt": "2026-01-01T10:00:00.000Z"
@@ -167,6 +171,8 @@ GET /api/admin/news
             "id": 2,
             "title": "Draft Berita",
             "slug": "draft-berita",
+            "thumbnail": null,
+            "excerpt": null,
             "isPublished": false,
             "createdAt": "2026-01-02T10:00:00.000Z",
             "updatedAt": "2026-01-02T10:00:00.000Z"
@@ -217,7 +223,7 @@ GET /api/admin/news/:id
                 "order": 0,
                 "text": "Isi berita draft",
                 "youtubeUrl": null,
-                "imageLayout": null,
+                "columns": null,
                 "images": []
             }
         ],
@@ -419,7 +425,7 @@ Authorization: Bearer <access_token>
 >
 > - `TEXT` → wajib isi `text`
 > - `YOUTUBE` → wajib isi `youtubeUrl`
-> - `IMAGE` → wajib isi `imageLayout` dan minimal 1 file di `images`
+> - `IMAGE` → wajib isi `columns` (angka 1–4) dan minimal 1 file di `images`
 
 **Endpoint**
 
@@ -440,7 +446,7 @@ Content-Type: multipart/form-data
 {
     "type": "IMAGE",
     "order": 1,
-    "imageLayout": "GRID",
+    "columns": 2,
     "images": "(file[], max 2MB per file)"
 }
 ```
@@ -455,7 +461,7 @@ Content-Type: multipart/form-data
         "order": 1,
         "text": null,
         "youtubeUrl": null,
-        "imageLayout": "GRID",
+        "columns": 2,
         "images": [
             {
                 "id": 1,
@@ -480,7 +486,7 @@ Content-Type: multipart/form-data
 {
     "message": "Validation error",
     "errors": {
-        "imageLayout": "imageLayout wajib diisi untuk section bertipe IMAGE"
+        "columns": "columns wajib diisi (1-4) untuk section bertipe IMAGE"
     }
 }
 ```
@@ -505,7 +511,7 @@ Content-Type: multipart/form-data
 
 ## Update Section
 
-> Mengubah isi section (misal ganti teks, ganti link YouTube, atau ganti layout gambar). Semua field bersifat opsional.
+> Mengubah isi section (misal ganti teks, ganti link YouTube, atau ganti jumlah kolom gambar). Semua field bersifat opsional.
 
 **Endpoint**
 
@@ -538,7 +544,7 @@ Content-Type: multipart/form-data
         "order": 0,
         "text": "Teks yang sudah diperbarui",
         "youtubeUrl": null,
-        "imageLayout": null,
+        "columns": null,
         "images": [],
         "createdAt": "2026-01-01T10:00:00.000Z",
         "updatedAt": "2026-01-02T10:00:00.000Z"
@@ -647,6 +653,14 @@ Authorization: Bearer <access_token>
 ```json
 {
     "message": "One or more section IDs do not belong to this news"
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
 }
 ```
 
