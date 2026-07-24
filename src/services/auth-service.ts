@@ -4,7 +4,7 @@ import type { Admin } from "../generated/prisma/client.js";
 import { toCurrentUserResponse, type CurrentUserResponse, type LoginRequest, type LoginResponse, type UpdateCurrentRequest } from "../models/auth-model.js";
 import { AuthValidation } from "../validations/auth-validation.js";
 import { Validation } from "../validations/validation.js";
-import bcrypt, { compare } from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export class AuthService {

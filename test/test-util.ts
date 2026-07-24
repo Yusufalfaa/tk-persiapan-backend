@@ -3,6 +3,7 @@ import supertest from "supertest";
 import { web } from "../src/application/web.js";
 import { prismaClient } from "../src/application/database.js";
 import type { Admin, SchoolProfile, Mission } from "../src/generated/prisma/client.js";
+import { NewsService } from "../src/services/news-service.js";
 
 export class AuthTest {
     
@@ -207,45 +208,161 @@ export class NewsTest {
                     id: 1,
                     title: "Lomba TK 2026",
                     slug: "lomba-tk-2026",
-                    content: "Deskripsi lomba TK tahun 2026.",
-                    imagePath: "https://your-storage.com/news/lomba-tk-2026.jpg",
                     isPublished: true,
                 },
                 {
                     id: 2,
                     title: "Penerimaan Peserta Didik Baru",
                     slug: "ppdb-2026",
-                    content: "Pendaftaran peserta didik baru telah dibuka.",
-                    imagePath: "https://your-storage.com/news/ppdb-2026.jpg",
                     isPublished: true,
                 },
                 {
                     id: 3,
                     title: "Kegiatan Outing Class",
                     slug: "outing-class-2026",
-                    content: "Outing class ke kebun binatang.",
-                    imagePath: "https://your-storage.com/news/outing-class.jpg",
                     isPublished: false,
                 },
             ],
         });
     }
 
-
-    static async getAll() {
-        const News = await prismaClient.news.findMany({
-            where: {
+    static async createWithSections() {
+        const news = await prismaClient.news.create({
+            data: {
+                title: "Lomba TK 2026",
+                slug: "lomba-tk-2026",
                 isPublished: true,
+                sections: {
+                    create: [
+                        {
+                            type: "TEXT",
+                            order: 0,
+                            text: "Deskripsi kegiatan lomba TK tahun ini.",
+                        },
+                        {
+                            type: "IMAGE",
+                            order: 1,
+                            columns: 2,
+                            images: {
+                                create: [
+                                    { imagePath: "https://your-storage.com/news/photo1.jpg", order: 0 },
+                                    { imagePath: "https://your-storage.com/news/photo2.jpg", order: 1 },
+                                ],
+                            },
+                        },
+                        {
+                            type: "YOUTUBE",
+                            order: 2,
+                            youtubeUrl: "https://www.youtube.com/watch?v=xxxxxxx",
+                        },
+                    ],
+                },
             },
-            orderBy: {
-                createdAt: "desc",
-            }
         });
 
-        if(!News) {
-            throw new Error("News Not Found")
+        await NewsService.syncNewsSummary(news.id);
+
+        return prismaClient.news.findUniqueOrThrow({
+            where: { id: news.id },
+            include: {
+                sections: {
+                    orderBy: { order: "asc" },
+                    include: { images: { orderBy: { order: "asc" } } },
+                },
+            },
+        });
+    }
+
+    static async createSecondNews() {
+        const news = await prismaClient.news.create({
+            data: {
+                title: "Kegiatan Outing Class TK 2026",
+                slug: "kegiatan-outing-class-tk-2026",
+                isPublished: true,
+                sections: {
+                    create: [
+                        {
+                            type: "TEXT",
+                            order: 0,
+                            text: "Kegiatan outing class merupakan kegiatan belajar di luar kelas untuk mengenalkan siswa terhadap lingkungan sekitar.",
+                        },
+                        {
+                            type: "IMAGE",
+                            order: 1,
+                            columns: 3,
+                            images: {
+                                create: [
+                                    {
+                                        imagePath: "https://your-storage.com/news/outing1.jpg",
+                                        order: 0,
+                                    },
+                                    {
+                                        imagePath: "https://your-storage.com/news/outing2.jpg",
+                                        order: 1,
+                                    },
+                                    {
+                                        imagePath: "https://your-storage.com/news/outing3.jpg",
+                                        order: 2,
+                                    },
+                                ],
+                            },
+                        },
+                        {
+                            type: "TEXT",
+                            order: 2,
+                            text: "Siswa mengikuti berbagai aktivitas edukatif yang menyenangkan bersama guru pendamping.",
+                        },
+                    ],
+                },
+            },
+        });
+
+        await NewsService.syncNewsSummary(news.id);
+
+        return prismaClient.news.findUniqueOrThrow({
+            where: {
+                id: news.id,
+            },
+            include: {
+                sections: {
+                    orderBy: {
+                        order: "asc",
+                    },
+                    include: {
+                        images: {
+                            orderBy: {
+                                order: "asc",
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    static async getAll() {
+        const news = await prismaClient.news.findMany({
+            where: { isPublished: true },
+            orderBy: { createdAt: "desc" },
+        });
+
+        if (news.length === 0) {
+            throw new Error("News not found");
         }
 
-        return News
+        return news;
     }
+
+    static async getBySlug(slug: string) {
+        const news = await prismaClient.news.findUnique({
+            where: { slug },
+        });
+
+        if (!news) {
+            throw new Error("News not found");
+        }
+
+        return news;
+    }
+
 }
