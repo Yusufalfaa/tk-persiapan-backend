@@ -50,7 +50,7 @@ export class NewsController {
     }
 
     
-    static async getAdminDetail(req: Request, res: Response, next: NextFunction) {
+    static async getAdminDetail(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const slug = req.params.slug;
 
@@ -68,7 +68,7 @@ export class NewsController {
         }
     }
 
-    static async createNews(req: Request, res: Response, next: NextFunction) {
+    static async createNews(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const response = await NewsService.createNews(req.body);
 
@@ -80,7 +80,7 @@ export class NewsController {
         }
     }
 
-    static async updateNews(req: Request, res: Response, next: NextFunction) {
+    static async updateNews(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const response = await NewsService.updateNews(req.body, Number(req.params.id));
 

@@ -110,7 +110,6 @@ describe('GET /api/admin/news/:slug', () => {
             .get("/api/admin/news/lomba-tk-2026")
             .set("Authorization", `Bearer ${accessToken}`)
 
-        console.log(response.body)
         expect(response.status).toBe(200)
         expect(response.body.data.title).toBe("Lomba TK 2026");
     }) 
@@ -159,7 +158,6 @@ describe('POST /api/admin/news', () => {
                 isPublished: false,
             })
 
-        console.log(response.body)
         expect(response.status).toBe(201)
         expect(response.body.data.title).toBe("Pendaftaran Siswa Baru");
     })
@@ -175,7 +173,6 @@ describe('POST /api/admin/news', () => {
                 isPublished: false,
             })
 
-        console.log(response.body)
         expect(response.status).toBe(400)
         expect(response.body.message).toBe("Validation error");
     })
@@ -191,7 +188,6 @@ describe('POST /api/admin/news', () => {
                 isPublished: false,
             })
 
-        console.log(response.body)
         expect(response.status).toBe(401)
         expect(response.body.message).toBe("Unauthorized");
     })
@@ -220,7 +216,6 @@ describe('PATCH /api/admin/news', () => {
                 isPublished: true,
             })
 
-        console.log(response.body)
         expect(response.status).toBe(200)
         expect(response.body.data.title).toBe("Pendaftaran Siswa Baru");
     })
@@ -236,7 +231,6 @@ describe('PATCH /api/admin/news', () => {
                 isPublished: false,
             })
 
-        console.log(response.body)
         expect(response.status).toBe(400)
         expect(response.body.message).toBe("Validation error");
     })
@@ -252,7 +246,6 @@ describe('PATCH /api/admin/news', () => {
                 isPublished: false,
             })
 
-        console.log(response.body)
         expect(response.status).toBe(401)
         expect(response.body.message).toBe("Unauthorized");
     })

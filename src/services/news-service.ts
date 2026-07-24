@@ -255,6 +255,4 @@ export class NewsService {
 
         return toNewsDetailResponse(response);
     }
-
-
 }

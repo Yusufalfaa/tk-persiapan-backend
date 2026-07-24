@@ -28,7 +28,7 @@ apiRouter.delete("/api/admin/teachers/:id", TeacherController.delete)
 apiRouter.get("/api/admin/news", NewsController.getAdminList);
 apiRouter.get("/api/admin/news/:slug", NewsController.getAdminDetail);
 apiRouter.post("/api/admin/news", NewsController.createNews);
-apiRouter.post("/api/admin/news/:id", NewsController.updateNews);
+apiRouter.patch("/api/admin/news/:id", NewsController.updateNews);
 
 
 // Admins
