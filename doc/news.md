@@ -6,7 +6,7 @@
 
 ## List Published News
 
-> Endpoint publik, hanya menampilkan news yang sudah dipublish.
+> Endpoint publik, hanya menampilkan news yang sudah dipublish. Response tidak menyertakan `sections`, hanya metadata dasar untuk daftar/preview.
 
 **Endpoint**
 
@@ -30,7 +30,6 @@ GET /api/news
             "id": 1,
             "title": "Lomba TK 2026",
             "slug": "lomba-tk-2026",
-            "imagePath": "https://your-storage.com/news/photo.jpg",
             "isPublished": true,
             "createdAt": "2026-01-01T10:00:00.000Z",
             "updatedAt": "2026-01-01T10:00:00.000Z"
@@ -49,12 +48,12 @@ GET /api/news
 
 ## Get Published News Detail
 
-> Endpoint publik, hanya dapat mengakses news yang sudah dipublish.
+> Endpoint publik, hanya dapat mengakses news yang sudah dipublish. Response menyertakan seluruh `sections`, sudah terurut berdasarkan `order`.
 
 **Endpoint**
 
 ```
-GET /api/news/:id
+GET /api/news/:slug
 ```
 
 ## Response Body (200 OK)
@@ -65,9 +64,47 @@ GET /api/news/:id
         "id": 1,
         "title": "Lomba TK 2026",
         "slug": "lomba-tk-2026",
-        "content": "Deskripsi kegiatan...",
-        "imagePath": "https://your-storage.com/news/photo.jpg",
         "isPublished": true,
+        "sections": [
+            {
+                "id": 1,
+                "type": "TEXT",
+                "order": 0,
+                "text": "Deskripsi kegiatan lomba TK tahun ini...",
+                "youtubeUrl": null,
+                "imageLayout": null,
+                "images": []
+            },
+            {
+                "id": 2,
+                "type": "IMAGE",
+                "order": 1,
+                "text": null,
+                "youtubeUrl": null,
+                "imageLayout": "GRID",
+                "images": [
+                    {
+                        "id": 1,
+                        "imagePath": "https://your-storage.com/news/photo1.jpg",
+                        "order": 0
+                    },
+                    {
+                        "id": 2,
+                        "imagePath": "https://your-storage.com/news/photo2.jpg",
+                        "order": 1
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "type": "YOUTUBE",
+                "order": 2,
+                "text": null,
+                "youtubeUrl": "https://www.youtube.com/watch?v=xxxxxxx",
+                "imageLayout": null,
+                "images": []
+            }
+        ],
         "createdAt": "2026-01-01T10:00:00.000Z",
         "updatedAt": "2026-01-01T10:00:00.000Z"
     }
@@ -98,7 +135,7 @@ Authorization: Bearer <access_token>
 
 ## Admin List News
 
-> Menampilkan seluruh news termasuk draft.
+> Menampilkan seluruh news termasuk draft. Response tidak menyertakan `sections`.
 
 **Endpoint**
 
@@ -122,7 +159,6 @@ GET /api/admin/news
             "id": 1,
             "title": "Lomba TK 2026",
             "slug": "lomba-tk-2026",
-            "imagePath": "https://your-storage.com/news/photo.jpg",
             "isPublished": true,
             "createdAt": "2026-01-01T10:00:00.000Z",
             "updatedAt": "2026-01-01T10:00:00.000Z"
@@ -131,7 +167,6 @@ GET /api/admin/news
             "id": 2,
             "title": "Draft Berita",
             "slug": "draft-berita",
-            "imagePath": null,
             "isPublished": false,
             "createdAt": "2026-01-02T10:00:00.000Z",
             "updatedAt": "2026-01-02T10:00:00.000Z"
@@ -158,7 +193,7 @@ GET /api/admin/news
 
 ## Admin Get News Detail
 
-> Menampilkan detail news termasuk draft.
+> Menampilkan detail news termasuk draft, beserta seluruh `sections`.
 
 **Endpoint**
 
@@ -174,9 +209,18 @@ GET /api/admin/news/:id
         "id": 2,
         "title": "Draft Berita",
         "slug": "draft-berita",
-        "content": "Isi berita draft",
-        "imagePath": null,
         "isPublished": false,
+        "sections": [
+            {
+                "id": 4,
+                "type": "TEXT",
+                "order": 0,
+                "text": "Isi berita draft",
+                "youtubeUrl": null,
+                "imageLayout": null,
+                "images": []
+            }
+        ],
         "createdAt": "2026-01-02T10:00:00.000Z",
         "updatedAt": "2026-01-02T10:00:00.000Z"
     }
@@ -203,7 +247,7 @@ GET /api/admin/news/:id
 
 ## Create News
 
-> Memerlukan autentikasi admin.
+> Membuat berita baru (tanpa section). Section ditambahkan lewat endpoint terpisah setelah berita dibuat.
 
 **Endpoint**
 
@@ -215,7 +259,6 @@ POST /api/admin/news
 
 ```
 Authorization: Bearer <access_token>
-Content-Type: multipart/form-data
 ```
 
 ## Request Body
@@ -223,8 +266,6 @@ Content-Type: multipart/form-data
 ```json
 {
     "title": "Lomba TK 2026",
-    "content": "Deskripsi kegiatan...",
-    "image": "(file, max 2MB)",
     "isPublished": true
 }
 ```
@@ -237,9 +278,8 @@ Content-Type: multipart/form-data
         "id": 1,
         "title": "Lomba TK 2026",
         "slug": "lomba-tk-2026",
-        "content": "Deskripsi kegiatan...",
-        "imagePath": "https://your-storage.com/news/photo.jpg",
         "isPublished": true,
+        "sections": [],
         "createdAt": "2026-01-01T10:00:00.000Z",
         "updatedAt": "2026-01-01T10:00:00.000Z"
     }
@@ -250,7 +290,10 @@ Content-Type: multipart/form-data
 
 ```json
 {
-    "message": "Image must be less than 2 MB"
+    "message": "Validation error",
+    "errors": {
+        "title": "Judul wajib diisi"
+    }
 }
 ```
 
@@ -266,7 +309,7 @@ Content-Type: multipart/form-data
 
 ## Update News
 
-> Memerlukan autentikasi admin. Semua field bersifat opsional.
+> Mengubah `title`/`isPublished` berita. Tidak memengaruhi `sections`. Semua field bersifat opsional.
 
 **Endpoint**
 
@@ -278,7 +321,6 @@ PUT /api/admin/news/:id
 
 ```
 Authorization: Bearer <access_token>
-Content-Type: multipart/form-data
 ```
 
 ## Request Body
@@ -286,8 +328,6 @@ Content-Type: multipart/form-data
 ```json
 {
     "title": "Updated title",
-    "content": "Updated content",
-    "image": "(file, max 2MB)",
     "isPublished": false
 }
 ```
@@ -300,8 +340,6 @@ Content-Type: multipart/form-data
         "id": 1,
         "title": "Updated title",
         "slug": "updated-title",
-        "content": "Updated content",
-        "imagePath": "https://your-storage.com/news/new-photo.jpg",
         "isPublished": false,
         "createdAt": "2026-01-01T10:00:00.000Z",
         "updatedAt": "2026-01-02T12:00:00.000Z"
@@ -329,7 +367,7 @@ Content-Type: multipart/form-data
 
 ## Delete News
 
-> Memerlukan autentikasi admin.
+> Menghapus berita beserta seluruh `sections` dan `images` di dalamnya (cascade).
 
 **Endpoint**
 
@@ -348,6 +386,267 @@ Authorization: Bearer <access_token>
 ```json
 {
     "message": "News deleted successfully"
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "News not found"
+}
+```
+
+---
+
+# Admin News Section API
+
+> Seluruh endpoint berikut membutuhkan autentikasi admin.
+
+---
+
+## Create Section
+
+> Menambahkan section baru ke sebuah berita. Field yang wajib diisi tergantung `type`:
+>
+> - `TEXT` → wajib isi `text`
+> - `YOUTUBE` → wajib isi `youtubeUrl`
+> - `IMAGE` → wajib isi `imageLayout` dan minimal 1 file di `images`
+
+**Endpoint**
+
+```
+POST /api/admin/news/:newsId/sections
+```
+
+## Headers
+
+```
+Authorization: Bearer <access_token>
+Content-Type: multipart/form-data
+```
+
+## Request Body
+
+```json
+{
+    "type": "IMAGE",
+    "order": 1,
+    "imageLayout": "GRID",
+    "images": "(file[], max 2MB per file)"
+}
+```
+
+## Response Body (201 Created)
+
+```json
+{
+    "data": {
+        "id": 2,
+        "type": "IMAGE",
+        "order": 1,
+        "text": null,
+        "youtubeUrl": null,
+        "imageLayout": "GRID",
+        "images": [
+            {
+                "id": 1,
+                "imagePath": "https://your-storage.com/news/photo1.jpg",
+                "order": 0
+            },
+            {
+                "id": 2,
+                "imagePath": "https://your-storage.com/news/photo2.jpg",
+                "order": 1
+            }
+        ],
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "updatedAt": "2026-01-01T10:00:00.000Z"
+    }
+}
+```
+
+## Response Body (400 Bad Request)
+
+```json
+{
+    "message": "Validation error",
+    "errors": {
+        "imageLayout": "imageLayout wajib diisi untuk section bertipe IMAGE"
+    }
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "News not found"
+}
+```
+
+---
+
+## Update Section
+
+> Mengubah isi section (misal ganti teks, ganti link YouTube, atau ganti layout gambar). Semua field bersifat opsional.
+
+**Endpoint**
+
+```
+PUT /api/admin/news/sections/:sectionId
+```
+
+## Headers
+
+```
+Authorization: Bearer <access_token>
+Content-Type: multipart/form-data
+```
+
+## Request Body
+
+```json
+{
+    "text": "Teks yang sudah diperbarui"
+}
+```
+
+## Response Body (200 OK)
+
+```json
+{
+    "data": {
+        "id": 1,
+        "type": "TEXT",
+        "order": 0,
+        "text": "Teks yang sudah diperbarui",
+        "youtubeUrl": null,
+        "imageLayout": null,
+        "images": [],
+        "createdAt": "2026-01-01T10:00:00.000Z",
+        "updatedAt": "2026-01-02T10:00:00.000Z"
+    }
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "Section not found"
+}
+```
+
+---
+
+## Delete Section
+
+> Menghapus 1 section beserta seluruh `images` di dalamnya (cascade).
+
+**Endpoint**
+
+```
+DELETE /api/admin/news/sections/:sectionId
+```
+
+## Headers
+
+```
+Authorization: Bearer <access_token>
+```
+
+## Response Body (200 OK)
+
+```json
+{
+    "message": "Section deleted successfully"
+}
+```
+
+## Response Body (401 Unauthorized)
+
+```json
+{
+    "message": "Unauthorized"
+}
+```
+
+## Response Body (404 Not Found)
+
+```json
+{
+    "message": "Section not found"
+}
+```
+
+---
+
+## Reorder Sections
+
+> Mengubah urutan seluruh section dalam satu berita sekaligus, misal setelah admin drag-and-drop di frontend.
+
+**Endpoint**
+
+```
+PATCH /api/admin/news/:newsId/sections/reorder
+```
+
+## Headers
+
+```
+Authorization: Bearer <access_token>
+```
+
+## Request Body
+
+```json
+{
+    "sections": [
+        { "id": 3, "order": 0 },
+        { "id": 1, "order": 1 },
+        { "id": 2, "order": 2 }
+    ]
+}
+```
+
+## Response Body (200 OK)
+
+```json
+{
+    "message": "Sections reordered successfully"
+}
+```
+
+## Response Body (400 Bad Request)
+
+```json
+{
+    "message": "One or more section IDs do not belong to this news"
 }
 ```
 

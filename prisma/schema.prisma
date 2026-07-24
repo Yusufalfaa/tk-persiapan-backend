@@ -12,10 +12,26 @@ datasource db {
   provider = "mysql"
 }
 
+// Enums
+
 enum AdminRole {
   ADMIN
   SUPER_ADMIN
 }
+
+enum NewsSectionType {
+  TEXT
+  IMAGE
+  YOUTUBE
+}
+
+enum NewsImageLayout {
+  SINGLE
+  GRID
+  CAROUSEL
+}
+
+// ADMIN
 
 model Admin {
   id Int @id @default(autoincrement())
@@ -31,20 +47,7 @@ model Admin {
   @@map("admins")
 }
 
-model GalleryPhoto {
-  id Int @id @default(autoincrement())
-
-  imagePath String @db.VarChar(500)
-  caption   String @db.VarChar(255)
-
-  order Int @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([order])
-  @@map("gallery_photos")
-}
+// NEWS
 
 model News {
   id Int @id @default(autoincrement())
@@ -52,17 +55,62 @@ model News {
   title String @db.VarChar(255)
   slug  String @unique @db.VarChar(255)
 
-  content String @db.Text
-
-  imagePath String @db.VarChar(500)
-
   isPublished Boolean @default(true)
+
+  sections NewsSection[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([createdAt])
   @@map("news")
+}
+
+model NewsSection {
+  id Int @id @default(autoincrement())
+
+  // TEXT / IMAGE / YOUTUBE
+  type  NewsSectionType
+  order Int             @default(0)
+
+  // digunakan jika type TEXT
+  text String? @db.Text
+
+  // digunakan jika type YOUTUBE
+  youtubeUrl String? @db.VarChar(500)
+
+  // digunakan jika type IMAGE
+  imageLayout NewsImageLayout?
+
+  newsId Int
+  news   News @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  images NewsSectionImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([newsId])
+  @@index([order])
+  @@map("news_sections")
+}
+
+model NewsSectionImage {
+  id Int @id @default(autoincrement())
+
+  imagePath String @db.VarChar(500)
+
+  // urutan gambar dalam section
+  order Int @default(0)
+
+  sectionId Int
+  section   NewsSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([sectionId])
+  @@index([order])
+  @@map("news_section_images")
 }
 
 model SchoolProfile {

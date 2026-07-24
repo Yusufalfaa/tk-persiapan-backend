@@ -5,7 +5,6 @@ import { SchoolController } from "../controllers/school-controller.js";
 import { TeacherController } from "../controllers/teacher-controller.js";
 import { requireRole } from "../middleware/role-middleware.js";
 import { AdminController } from "../controllers/admin-controller.js";
-import { NewsController } from "../controllers/news-controller.js";
 
 export const apiRouter = express.Router();
 apiRouter.use(authMiddleware);
@@ -31,5 +30,3 @@ apiRouter.patch("/api/admin/:id/reset-password", requireRole("SUPER_ADMIN"), Adm
 apiRouter.delete("/api/admin/:id", requireRole("SUPER_ADMIN"), AdminController.delete)
 
 // News
-apiRouter.get("/api/admin/news", NewsController.getAdminList)
-apiRouter.get("/api/admin/news/:id", NewsController.getAdmin)
