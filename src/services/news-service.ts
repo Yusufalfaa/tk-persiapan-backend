@@ -24,11 +24,7 @@ export class NewsService {
             }
         })
 
-        if(!thumbnail) {
-            throw new ResponseError(404, "Image not found")
-        }
-
-        return thumbnail.images[0]?.imagePath ?? null;
+        return thumbnail?.images[0]?.imagePath ?? null;
     }
 
     private static async generateExcerpt(newsId: number) {
@@ -69,6 +65,9 @@ export class NewsService {
         const skip = (page - 1) * size;
 
         const news = await prismaClient.news.findMany({
+            where: {
+                isPublished: true,
+            },
             orderBy: {
                 createdAt: "desc",
             },
@@ -90,6 +89,58 @@ export class NewsService {
     }
 
     static async getDetail(slug: string) : Promise<NewsDetailResponse> {
+        const news = await prismaClient.news.findFirst({
+            where: {
+                isPublished: true,
+                slug: slug,
+            }, include: {
+                sections: {
+                    orderBy: {
+                        order: "asc"
+                    },
+                    include: {
+                        images: {
+                            orderBy: {
+                                order: "asc"
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        if(!news){
+            throw new ResponseError(404, "News not found")
+        }
+
+        return toNewsDetailResponse(news);
+    }
+
+    static async getAdminList(page: number, size: number) : Promise<PageResponse<NewsListResponse>> {
+        const skip = (page - 1) * size;
+
+        const news = await prismaClient.news.findMany({
+            orderBy: {
+                createdAt: "desc",
+            },
+            skip,
+            take: size,
+        })
+
+        const total = await prismaClient.news.count();
+
+        return {
+            data: toNewsListResponse(news),
+            meta: {
+                page,
+                size,
+                total,
+                totalPages: Math.ceil(total / size),
+            }
+        }
+    }
+
+    static async getAdminDetail(slug: string) : Promise<NewsDetailResponse> {
         const news = await prismaClient.news.findFirst({
             where: {
                 slug: slug,

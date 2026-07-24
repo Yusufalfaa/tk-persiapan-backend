@@ -340,6 +340,42 @@ export class NewsTest {
         });
     }
 
+    static async createDraftNews() {
+        const news = await prismaClient.news.create({
+            data: {
+                title: "Kegiatan Outing Class",
+                slug: "outing-class-2026",
+                isPublished: false,
+                sections: {
+                    create: [
+                        {
+                            type: "TEXT",
+                            order: 0,
+                            text: "",
+                        },
+                        {
+                            type: "TEXT",
+                            order: 1,
+                            text: "Draft rencana outing class ke kebun binatang, masih dalam tahap persiapan.",
+                        },
+                    ],
+                },
+            },
+        });
+
+        await NewsService.syncNewsSummary(news.id);
+
+        return prismaClient.news.findUniqueOrThrow({
+            where: { id: news.id },
+            include: {
+                sections: {
+                    orderBy: { order: "asc" },
+                    include: { images: { orderBy: { order: "asc" } } },
+                },
+            },
+        });
+    }
+
     static async getAll() {
         const news = await prismaClient.news.findMany({
             where: { isPublished: true },
@@ -364,5 +400,4 @@ export class NewsTest {
 
         return news;
     }
-
 }

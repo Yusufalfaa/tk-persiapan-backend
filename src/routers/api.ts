@@ -6,6 +6,7 @@ import { TeacherController } from "../controllers/teacher-controller.js";
 import { requireRole } from "../middleware/role-middleware.js";
 import { AdminController } from "../controllers/admin-controller.js";
 import { uploadMiddleware } from "../middleware/upload-middleware.js";
+import { NewsController } from "../controllers/news-controller.js";
 
 export const apiRouter = express.Router();
 apiRouter.use(authMiddleware);
@@ -23,11 +24,13 @@ apiRouter.post("/api/admin/teachers", uploadMiddleware("teachers").single("photo
 apiRouter.put("/api/admin/teachers/:id", uploadMiddleware("teachers").single("photo"), TeacherController.update)
 apiRouter.delete("/api/admin/teachers/:id", TeacherController.delete)
 
+// News
+apiRouter.get("/api/admin/news", NewsController.getAdminList)
+apiRouter.get("/api/admin/news/:slug", NewsController.getAdminDetail)
+
 // Admins
 apiRouter.get("/api/admin", requireRole("SUPER_ADMIN"),AdminController.getList)
 apiRouter.get("/api/admin/:id", requireRole("SUPER_ADMIN"),AdminController.get)
 apiRouter.post("/api/admin", requireRole("SUPER_ADMIN"), AdminController.create)
 apiRouter.patch("/api/admin/:id/reset-password", requireRole("SUPER_ADMIN"), AdminController.resetPassword)
 apiRouter.delete("/api/admin/:id", requireRole("SUPER_ADMIN"), AdminController.delete)
-
-// News
