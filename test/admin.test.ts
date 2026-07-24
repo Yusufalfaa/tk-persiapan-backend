@@ -1,5 +1,6 @@
 import supertest from "supertest";
-import { AdminTest, AuthTest } from "./test-util.js";
+import { AuthTest } from "./utils/auth-test.js";
+import { AdminTest } from "./utils/admin-test.js";
 import { web } from "../src/application/web.js";
 import bcrypt from "bcrypt";
 

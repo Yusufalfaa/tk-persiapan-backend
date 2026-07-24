@@ -1,5 +1,6 @@
 import supertest from "supertest"
-import { AuthTest, NewsTest } from "./test-util.js"
+import { NewsTest } from "./utils/news-test.js"
+import { AuthTest } from "./utils/auth-test.js"
 import { web } from "../src/application/web.js"
 
 describe('GET /api/news', () => {
@@ -89,7 +90,7 @@ describe('GET /api/admin/news', () => {
 
 })
 
-describe('GET /api/admin/news/:slug', () => {
+describe('GET /api/admin/news/:id', () => {
 
     beforeEach(async () => {
         await AuthTest.create()
@@ -107,18 +108,18 @@ describe('GET /api/admin/news/:slug', () => {
         const accessToken = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admin/news/lomba-tk-2026")
+            .get("/api/admin/news/3")
             .set("Authorization", `Bearer ${accessToken}`)
 
         expect(response.status).toBe(200)
-        expect(response.body.data.title).toBe("Lomba TK 2026");
+        expect(response.body.data.title).toBe("Kegiatan Outing Class");
     }) 
 
     it('should reject get news detail due to not found', async () => {
         const accessToken = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admin/news/lomba-tk-2025")
+            .get("/api/admin/news/4")
             .set("Authorization", `Bearer ${accessToken}`)
 
         expect(response.status).toBe(404)
@@ -129,7 +130,7 @@ describe('GET /api/admin/news/:slug', () => {
         const accessToken = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .get("/api/admin/news/lomba-tk-2025")
+            .get("/api/admin/news/3")
             .set("Authorization", `Bearer ${accessToken}1234`)
 
         expect(response.status).toBe(401)
@@ -294,5 +295,83 @@ describe('DELETE /api/admin/news/:id', () => {
 
         expect(response.status).toBe(404)
         expect(response.body.message).toBe("News not found");
+    })
+})
+
+describe('POST /api/admin/news/:newsId/sections', () => {
+    beforeEach(async () => {
+        await AuthTest.create()
+        await NewsTest.createDraftNews()
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete()
+        await NewsTest.deleteAll()
+    })
+
+    it('should be able to create news section', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news/3/sections")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                type: "TEXT",
+                order: 0,
+                text: "Ini adalah section baru."
+            });
+
+        expect(response.status).toBe(201)
+        expect(response.body.data.order).toBe(0);
+        expect(response.body.data.text).toBe("Ini adalah section baru.");
+    })
+
+    it('should reject create news section due to validation error', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news/3/sections")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                type: "",
+                order: 0,
+                text: "Ini adalah section baru."
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBeDefined();
+    })
+
+    it('should reject create news section due to unauthorized', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news/3/sections")
+            .set("Authorization", `Bearer ${accessToken}1234`)
+            .send({
+                type: "TEXT",
+                order: 0,
+                text: "Ini adalah section baru."
+            });
+
+        expect(response.status).toBe(401)
+        expect(response.body.message).toBe("Unauthorized");
+    })
+
+    it('should be able to create news section', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news/3/sections")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                type: "TEXT",
+                order: 0,
+                text: "Ini adalah section baru."
+            });
+
+        expect(response.status).toBe(201)
+        expect(response.body.data.order).toBe(0);
+        expect(response.body.data.text).toBe("Ini adalah section baru.");
     })
 })

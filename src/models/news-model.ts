@@ -104,3 +104,11 @@ export type UpdateNewsRequest = {
     title?: string | undefined,
     isPublished?: boolean | undefined,
 }
+
+export type CreateSectionRequest = {
+    type: NewsSectionType,
+    order: number,
+    text?: string;
+    youtubeUrl?: string;
+    columns?: number;
+}

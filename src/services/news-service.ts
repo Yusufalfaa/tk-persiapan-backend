@@ -1,7 +1,7 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
 import type { News, NewsSection } from "../generated/prisma/client.js";
-import { toNewsDetailResponse, toNewsListResponse, type CreateNewsRequest, type NewsDetailResponse, type NewsListResponse, type UpdateNewsRequest } from "../models/news-model.js";
+import { toNewsDetailResponse, toNewsListResponse, toNewsSectionResponse, type CreateNewsRequest, type CreateSectionRequest, type NewsDetailResponse, type NewsListResponse, type NewsSectionResponse, type UpdateNewsRequest } from "../models/news-model.js";
 import type { PageResponse } from "../models/page-model.js";
 import { NewsValidation } from "../validations/news-validation.js";
 import { Validation } from "../validations/validation.js";
@@ -169,10 +169,10 @@ export class NewsService {
         }
     }
 
-    static async getAdminDetail(slug: string) : Promise<NewsDetailResponse> {
+    static async getAdminDetail(newsId: number) : Promise<NewsDetailResponse> {
         const news = await prismaClient.news.findFirst({
             where: {
-                slug: slug,
+                id: newsId,
             }, include: {
                 sections: {
                     orderBy: {
@@ -286,6 +286,78 @@ export class NewsService {
                 id: newsId,
             },
         });
+    }
+
+    // News Section
+
+    static async createSection(request: CreateSectionRequest, newsId: number, images?: Express.Multer.File[]) : Promise<NewsSectionResponse> {
+        const createRequest = Validation.validate(NewsValidation.CREATE_SECTION, request);
+        
+        await prismaClient.newsSection.updateMany({
+            where: {
+                newsId,
+                order: {
+                    gte: createRequest.order,
+                },
+            },
+            data: {
+                order: {
+                    increment: 1,
+                },
+            },
+        });
+
+        const section = await prismaClient.newsSection.create({
+            data: {
+                newsId,
+                type: createRequest.type,
+                order: createRequest.order,
+
+                ...(createRequest.type === "TEXT" && {
+                    text: createRequest.text
+                }),
+
+                ...(createRequest.type === "YOUTUBE" && {
+                    youtubeUrl: createRequest.youtubeUrl
+                }),
+
+                ...(createRequest.type === "IMAGE" && {
+                    columns: createRequest.columns
+                }),
+            }
+        });
+
+        if(createRequest.type === "IMAGE" && images){
+
+            await prismaClient.newsSectionImage.createMany({
+                data: images.map((file,index)=>({
+                    sectionId: section.id,
+                    imagePath: StorageService.getPublicPath(
+                        "news",
+                        file.filename
+                    ),
+                    order:index
+                }))
+            });
+        }
+
+        await this.syncNewsSummary(newsId);
+
+        const result = await prismaClient.newsSection.findUniqueOrThrow({
+            where:{
+                id: section.id
+            },
+            include:{
+                images:{
+                    orderBy:{
+                        order:"asc"
+                    }
+                }
+            }
+        });
+
+
+        return toNewsSectionResponse(result);
     }
 
 }

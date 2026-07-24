@@ -1,5 +1,6 @@
 import supertest from "supertest";
-import { AuthTest, TeacherTest } from "./test-util.js"
+import { TeacherTest } from "./utils/teacher-test.js"
+import { AuthTest } from "./utils/auth-test.js";
 import { web } from "../src/application/web.js";
 
 describe('GET /api/teachers', () => {

@@ -1,5 +1,5 @@
 import { z, ZodType } from "zod";
-import type { CreateNewsRequest, UpdateNewsRequest } from "../models/news-model.js";
+import type { CreateNewsRequest, CreateSectionRequest, UpdateNewsRequest } from "../models/news-model.js";
 
 export class NewsValidation {
 
@@ -13,5 +13,25 @@ export class NewsValidation {
         isPublished: z.boolean().optional(),
     })
 
+    static readonly CREATE_SECTION: ZodType<CreateSectionRequest> =
+        z.discriminatedUnion("type", [
+            z.object({
+                type: z.literal("TEXT"),
+                order: z.number().min(0),
+                text: z.string().min(1),
+            }),
+
+            z.object({
+                type: z.literal("IMAGE"),
+                order: z.number().min(0),
+                columns: z.number().min(1).max(4),
+            }),
+
+            z.object({
+                type: z.literal("YOUTUBE"),
+                order: z.number().min(0),
+                youtubeUrl: z.string(),
+            }),
+        ]);
 
 }

@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import { web } from "../src/application/web.js"
 import { logger } from "../src/application/logging.js";
-import { AuthTest } from "./test-util.js";
+import { AuthTest } from "./utils/auth-test.js";
 import bcrypt from "bcrypt";
 describe('POST /api/auth/login', () => {
     

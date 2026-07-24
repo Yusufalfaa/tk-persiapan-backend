@@ -26,11 +26,13 @@ apiRouter.delete("/api/admin/teachers/:id", TeacherController.delete)
 
 // News
 apiRouter.get("/api/admin/news", NewsController.getAdminList);
-apiRouter.get("/api/admin/news/:slug", NewsController.getAdminDetail);
+apiRouter.get("/api/admin/news/:id", NewsController.getAdminDetail);
 apiRouter.post("/api/admin/news", NewsController.createNews);
 apiRouter.patch("/api/admin/news/:id", NewsController.updateNews);
 apiRouter.delete("/api/admin/news/:id", NewsController.deleteNews);
 
+// News Section
+apiRouter.post("/api/admin/news/:newsId/sections", NewsController.createSection);
 
 // Admins
 apiRouter.get("/api/admin", requireRole("SUPER_ADMIN"),AdminController.getList);

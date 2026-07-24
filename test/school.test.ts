@@ -1,5 +1,6 @@
 import supertest from "supertest";
-import { AuthTest, SchoolTest } from "./test-util.js"
+import { SchoolTest } from "./utils/school-test.js"
+import { AuthTest } from "./utils/auth-test.js";
 import { web } from "../src/application/web.js";
 import { logger } from "../src/application/logging.js";
 import { toSchoolProfileUpdateRequest } from "../src/models/school-model.js";
