@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 
-type UploadFolder = "news" | "teacher" | "school";
+type UploadFolder = "news" | "teachers";
 
 const ALLOWED_MIME_TYPES = [
     "image/jpeg",

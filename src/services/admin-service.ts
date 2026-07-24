@@ -5,7 +5,7 @@ import { toAdminListResponse, toAdminResponse, type AdminListResponse, type Admi
 import { AdminValidation } from "../validations/admin-validation.js";
 import { Validation } from "../validations/validation.js";
 import bcrypt from "bcrypt";
-import type { PageResponse } from "./page-model.js";
+import type { PageResponse } from "../models/page-model.js";
 
 export class AdminService {
 

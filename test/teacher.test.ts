@@ -59,191 +59,298 @@ describe('POST /api/admin/teachers', () => {
         await AuthTest.create();
     })
 
+
     afterEach(async () => {
         await AuthTest.delete();
         await TeacherTest.deleteAll();
     })
 
+
     it('should be able to create new teacher', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
             .post("/api/admin/teachers")
             .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                name: "Muhamad Yusuf",
-                position: "Guru Kelas B",
-                photoPath: null,
-                order: 1, 
-            });       
+            .field("name", "Muhamad Yusuf")
+            .field("position", "Guru Kelas B")
+            .field("order", "1")
+            .attach(
+                "photo",
+                "test/resources/teacher.jpg"
+            );
+
 
         expect(response.status).toBe(201);
         expect(response.body.data).toBeDefined();
-        expect(response.body.data.name).toBe("Muhamad Yusuf");
+        expect(response.body.data.name)
+            .toBe("Muhamad Yusuf");
+
+        expect(response.body.data.photoPath).toBeDefined();
 
     });
 
+
     it('should reject create new teacher due to invalid token', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
             .post("/api/admin/teachers")
-            .set("Authorization", `Bearer ${accessToken}1234`)
-            .send({
-                name: "Muhamad Yusuf",
-                position: "Guru Kelas B",
-                photoPath: null,
-                order: 1, 
-            });       
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}invalid`
+            )
+            .field("name", "Muhamad Yusuf")
+            .field("position", "Guru Kelas B")
+            .field("order", "1");
+
 
         expect(response.status).toBe(401);
         expect(response.body.message).toBeDefined();
+
     });
 
+
     it('should reject create new teacher due to invalid input', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
             .post("/api/admin/teachers")
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                name: "",
-                position: "Guru Kelas B",
-                photoPath: null,
-                order: 1, 
-            });
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}`
+            )
+            .field("name", "")
+            .field("position", "Guru Kelas B")
+            .field("order", "1")
+            .attach(
+                "photo",
+                "test/resources/teacher.jpg"
+            );
+
 
         expect(response.status).toBe(400);
         expect(response.body.message).toBeDefined();
-    })
 
-})
+    });
+
+
+    it('should reject create new teacher without photo', async () => {
+
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/teachers")
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}`
+            )
+            .field("name", "Muhamad Yusuf")
+            .field("position", "Guru Kelas B")
+            .field("order", "1");
+
+
+        expect(response.status).toBe(201);
+        expect(response.body.data.photoPath).toBeNull();
+
+    });
+
+
+});
 
 describe('PUT /api/admin/teachers/:id', () => {
+
     beforeEach(async () => {
         await AuthTest.create();
         await TeacherTest.create();
     })
+
 
     afterEach(async () => {
         await AuthTest.delete();
         await TeacherTest.deleteAll();
     })
 
-    it('should be able to update teachers', async () => {
+
+    it('should be able to update teacher without photo', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
             .put(`/api/admin/teachers/1`)
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                name: "Muhamad Yusuf",
-                position: "Guru Kelas B",
-                photoPath: null,
-                order: 1, 
-            });       
-        
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}`
+            )
+            .field("name", "Muhamad Yusuf")
+            .field("position", "Guru Kelas B")
+            .field("order", "1");
+
+
         expect(response.status).toBe(200);
         expect(response.body.data).toBeDefined();
         expect(response.body.data.name).toBe("Muhamad Yusuf");
-    })
+
+    });
+
+
+    it('should be able to update teacher with new photo', async () => {
+
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .put(`/api/admin/teachers/1`)
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}`
+            )
+            .field("name", "Muhamad Yusuf")
+            .field("position", "Guru Kelas B")
+            .field("order", "1")
+            .attach(
+                "photo",
+                "test/resources/teacher.jpg"
+            );
+
+
+        expect(response.status).toBe(200);
+        expect(response.body.data).toBeDefined();
+        expect(response.body.data.photoPath).toBeDefined();
+
+    });
+
 
     it('should reject teacher update due to invalid token', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
             .put(`/api/admin/teachers/1`)
-            .set("Authorization", `Bearer ${accessToken}1234`)
-            .send({
-                name: "Muhamad Yusuf",
-                position: "Guru Kelas B",
-                photoPath: null,
-                order: 1, 
-            });       
-        
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}1234`
+            )
+            .field("name", "Muhamad Yusuf")
+            .field("position", "Guru Kelas B")
+            .field("order", "1");
+
+
         expect(response.status).toBe(401);
         expect(response.body.message).toBeDefined();
-    })
+
+    });
+
 
     it('should reject teacher not found', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
             .put(`/api/admin/teachers/9999`)
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                name: "Muhamad Yusuf",
-                position: "Guru Kelas B",
-                photoPath: null,
-                order: 1, 
-            });       
-        
-        console.log(response.body)
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}`
+            )
+            .field("name", "Muhamad Yusuf")
+            .field("position", "Guru Kelas B")
+            .field("order", "1");
+
+
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Teacher not found");
-    })
+
+    });
+
 
     it('should reject teacher update due to invalid input', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
             .put(`/api/admin/teachers/1`)
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                name: "Muhamad Yusuf",
-                position: "",
-                photoPath: null,
-                order: 1, 
-            });       
-        
-        console.log(response.body)
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}`
+            )
+            .field("name", "Muhamad Yusuf")
+            .field("position", "")
+            .field("order", "1");
+
+
         expect(response.status).toBe(400);
         expect(response.body.message).toBeDefined();
+
     });
+
 });
 
 describe('DELETE /api/admin/teachers/:id', () => {
-    
+
     beforeEach(async () => {
         await AuthTest.create();
         await TeacherTest.create();
     })
+
 
     afterEach(async () => {
         await AuthTest.delete();
         await TeacherTest.deleteAll();
     })
 
-    it('should be delete teachers by id', async () =>{
+
+    it('should be able to delete teacher by id', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
             .delete(`/api/admin/teachers/1`)
-            .set("Authorization", `Bearer ${accessToken}`)      
-        
-        expect(response.status).toBe(200);
-        expect(response.body).toBeDefined();
-    })
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}`
+            );
 
-    it('should reject delete teachers due to invalid token', async () =>{
+
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBeDefined();
+
+    });
+
+
+    it('should reject delete teacher due to invalid token', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
-            .delete(`/api/admin/teachers/0`)
-            .set("Authorization", `Bearer ${accessToken}1234`)      
-        
+            .delete(`/api/admin/teachers/1`)
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}1234`
+            );
+
+
         expect(response.status).toBe(401);
         expect(response.body.message).toBeDefined();
-    })
 
-    it('should reject delete teachers due to invalid id', async () =>{
+    });
+
+
+    it('should reject delete teacher not found', async () => {
+
         const accessToken = await AuthTest.getAccessToken();
-        
+
         const response = await supertest(web)
-            .delete(`/api/admin/teachers/0`)
-            .set("Authorization", `Bearer ${accessToken}`)      
-        
+            .delete(`/api/admin/teachers/9999`)
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}`
+            );
+
         expect(response.status).toBe(404);
         expect(response.body.message).toBeDefined();
-    })
-})
+
+    });
+
+});

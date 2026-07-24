@@ -23,8 +23,13 @@ export type TeacherResponse = {
 export type TeacherRequest = {
     name: string;
     position: string;
-    photoPath: string | null;
     order: number;
+};
+
+export type TeacherUpdateRequest = {
+    name?: string | undefined;
+    position?: string | undefined;
+    order?: number | undefined;
 };
 
 export function toTeacherListResponse(teachers: Teacher[]): TeacherListResponse[] {
