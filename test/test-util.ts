@@ -229,6 +229,7 @@ export class NewsTest {
     static async createWithSections() {
         const news = await prismaClient.news.create({
             data: {
+                id: 1,
                 title: "Lomba TK 2026",
                 slug: "lomba-tk-2026",
                 isPublished: true,
@@ -276,6 +277,7 @@ export class NewsTest {
     static async createSecondNews() {
         const news = await prismaClient.news.create({
             data: {
+                id: 2,
                 title: "Kegiatan Outing Class TK 2026",
                 slug: "kegiatan-outing-class-tk-2026",
                 isPublished: true,
@@ -343,6 +345,7 @@ export class NewsTest {
     static async createDraftNews() {
         const news = await prismaClient.news.create({
             data: {
+                id: 3,
                 title: "Kegiatan Outing Class",
                 slug: "outing-class-2026",
                 isPublished: false,

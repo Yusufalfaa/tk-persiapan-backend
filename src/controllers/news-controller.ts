@@ -68,4 +68,28 @@ export class NewsController {
         }
     }
 
+    static async createNews(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response = await NewsService.createNews(req.body);
+
+            res.status(201).json({
+                data: response,
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async updateNews(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response = await NewsService.updateNews(req.body, Number(req.params.id));
+
+            res.status(200).json({
+                data: response,
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
 }

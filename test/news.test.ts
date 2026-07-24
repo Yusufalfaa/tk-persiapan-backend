@@ -137,3 +137,124 @@ describe('GET /api/admin/news/:slug', () => {
         expect(response.body.message).toBe("Unauthorized");
     }) 
 })
+
+describe('POST /api/admin/news', () => {
+    beforeEach(async () => {
+        await AuthTest.create()
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete()
+        await NewsTest.deleteAll()
+    })
+    
+    it('should be create new news', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                title: "Pendaftaran Siswa Baru",
+                isPublished: false,
+            })
+
+        console.log(response.body)
+        expect(response.status).toBe(201)
+        expect(response.body.data.title).toBe("Pendaftaran Siswa Baru");
+    })
+
+    it('should reject bad request', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                title: "",
+                isPublished: false,
+            })
+
+        console.log(response.body)
+        expect(response.status).toBe(400)
+        expect(response.body.message).toBe("Validation error");
+    })
+
+    it('should be reject create due to unauthorized', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news")
+            .set("Authorization", `Bearer ${accessToken}1234`)
+            .send({
+                title: "Pendaftaran Siswa Baru",
+                isPublished: false,
+            })
+
+        console.log(response.body)
+        expect(response.status).toBe(401)
+        expect(response.body.message).toBe("Unauthorized");
+    })
+    
+})
+
+describe('PATCH /api/admin/news', () => {
+    beforeEach(async () => {
+        await AuthTest.create()
+        await NewsTest.createDraftNews()
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete()
+        await NewsTest.deleteAll()
+    })
+    
+    it('should be update news', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/3")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                title: "Pendaftaran Siswa Baru",
+                isPublished: true,
+            })
+
+        console.log(response.body)
+        expect(response.status).toBe(200)
+        expect(response.body.data.title).toBe("Pendaftaran Siswa Baru");
+    })
+
+    it('should reject update bad request', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/3")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                title: "",
+                isPublished: false,
+            })
+
+        console.log(response.body)
+        expect(response.status).toBe(400)
+        expect(response.body.message).toBe("Validation error");
+    })
+
+    it('should reject update due to unauthorized', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/3")
+            .set("Authorization", `Bearer ${accessToken}1234`)
+            .send({
+                title: "Pendaftaran Siswa Baru",
+                isPublished: false,
+            })
+
+        console.log(response.body)
+        expect(response.status).toBe(401)
+        expect(response.body.message).toBe("Unauthorized");
+    })
+    
+})

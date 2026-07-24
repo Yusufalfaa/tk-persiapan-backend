@@ -14,14 +14,14 @@
 GET /api/news
 ```
 
-## Query Parameters
+### Query Parameters
 
 | Parameter | Type   | Required | Default |
 | --------- | ------ | -------- | ------- |
 | page      | Number | No       | 1       |
 | size      | Number | No       | 10      |
 
-## Response Body (200 OK)
+### Response Body (200 OK)
 
 ```json
 {
@@ -58,7 +58,7 @@ GET /api/news
 GET /api/news/:slug
 ```
 
-## Response Body (200 OK)
+### Response Body (200 OK)
 
 ```json
 {
@@ -113,7 +113,7 @@ GET /api/news/:slug
 }
 ```
 
-## Response Body (404 Not Found)
+### Response Body (404 Not Found)
 
 ```json
 {
@@ -145,14 +145,14 @@ Authorization: Bearer <access_token>
 GET /api/admin/news
 ```
 
-## Query Parameters
+### Query Parameters
 
 | Parameter | Type   | Required | Default |
 | --------- | ------ | -------- | ------- |
 | page      | Number | No       | 1       |
 | size      | Number | No       | 10      |
 
-## Response Body (200 OK)
+### Response Body (200 OK)
 
 ```json
 {
@@ -187,7 +187,7 @@ GET /api/admin/news
 }
 ```
 
-## Response Body (401 Unauthorized)
+### Response Body (401 Unauthorized)
 
 ```json
 {
@@ -207,7 +207,7 @@ GET /api/admin/news
 GET /api/admin/news/:id
 ```
 
-## Response Body (200 OK)
+### Response Body (200 OK)
 
 ```json
 {
@@ -233,7 +233,7 @@ GET /api/admin/news/:id
 }
 ```
 
-## Response Body (401 Unauthorized)
+### Response Body (401 Unauthorized)
 
 ```json
 {
@@ -241,7 +241,7 @@ GET /api/admin/news/:id
 }
 ```
 
-## Response Body (404 Not Found)
+### Response Body (404 Not Found)
 
 ```json
 {
@@ -261,13 +261,13 @@ GET /api/admin/news/:id
 POST /api/admin/news
 ```
 
-## Headers
+### Headers
 
 ```
 Authorization: Bearer <access_token>
 ```
 
-## Request Body
+### Request Body
 
 ```json
 {
@@ -276,7 +276,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (201 Created)
+### Response Body (201 Created)
 
 ```json
 {
@@ -292,7 +292,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (400 Bad Request)
+### Response Body (400 Bad Request)
 
 ```json
 {
@@ -303,7 +303,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (401 Unauthorized)
+### Response Body (401 Unauthorized)
 
 ```json
 {
@@ -320,16 +320,16 @@ Authorization: Bearer <access_token>
 **Endpoint**
 
 ```
-PUT /api/admin/news/:id
+PATCH /api/admin/news/:id
 ```
 
-## Headers
+### Headers
 
 ```
 Authorization: Bearer <access_token>
 ```
 
-## Request Body
+### Request Body
 
 ```json
 {
@@ -338,7 +338,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (200 OK)
+### Response Body (200 OK)
 
 ```json
 {
@@ -353,7 +353,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (401 Unauthorized)
+### Response Body (401 Unauthorized)
 
 ```json
 {
@@ -361,7 +361,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (404 Not Found)
+### Response Body (404 Not Found)
 
 ```json
 {
@@ -381,13 +381,13 @@ Authorization: Bearer <access_token>
 DELETE /api/admin/news/:id
 ```
 
-## Headers
+### Headers
 
 ```
 Authorization: Bearer <access_token>
 ```
 
-## Response Body (200 OK)
+### Response Body (200 OK)
 
 ```json
 {
@@ -395,7 +395,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (401 Unauthorized)
+### Response Body (401 Unauthorized)
 
 ```json
 {
@@ -403,7 +403,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (404 Not Found)
+### Response Body (404 Not Found)
 
 ```json
 {
@@ -433,14 +433,14 @@ Authorization: Bearer <access_token>
 POST /api/admin/news/:newsId/sections
 ```
 
-## Headers
+### Headers
 
 ```
 Authorization: Bearer <access_token>
 Content-Type: multipart/form-data
 ```
 
-## Request Body
+### Request Body
 
 ```json
 {
@@ -451,7 +451,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-## Response Body (201 Created)
+### Response Body (201 Created)
 
 ```json
 {
@@ -480,7 +480,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-## Response Body (400 Bad Request)
+### Response Body (400 Bad Request)
 
 ```json
 {
@@ -491,7 +491,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-## Response Body (401 Unauthorized)
+### Response Body (401 Unauthorized)
 
 ```json
 {
@@ -499,7 +499,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-## Response Body (404 Not Found)
+### Response Body (404 Not Found)
 
 ```json
 {
@@ -516,17 +516,17 @@ Content-Type: multipart/form-data
 **Endpoint**
 
 ```
-PUT /api/admin/news/sections/:sectionId
+PATCH /api/admin/news/sections/:sectionId
 ```
 
-## Headers
+### Headers
 
 ```
 Authorization: Bearer <access_token>
 Content-Type: multipart/form-data
 ```
 
-## Request Body
+### Request Body
 
 ```json
 {
@@ -534,7 +534,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-## Response Body (200 OK)
+### Response Body (200 OK)
 
 ```json
 {
@@ -552,7 +552,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-## Response Body (401 Unauthorized)
+### Response Body (401 Unauthorized)
 
 ```json
 {
@@ -560,7 +560,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-## Response Body (404 Not Found)
+### Response Body (404 Not Found)
 
 ```json
 {
@@ -580,13 +580,13 @@ Content-Type: multipart/form-data
 DELETE /api/admin/news/sections/:sectionId
 ```
 
-## Headers
+### Headers
 
 ```
 Authorization: Bearer <access_token>
 ```
 
-## Response Body (200 OK)
+### Response Body (200 OK)
 
 ```json
 {
@@ -594,7 +594,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (401 Unauthorized)
+### Response Body (401 Unauthorized)
 
 ```json
 {
@@ -602,7 +602,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (404 Not Found)
+### Response Body (404 Not Found)
 
 ```json
 {
@@ -622,13 +622,13 @@ Authorization: Bearer <access_token>
 PATCH /api/admin/news/:newsId/sections/reorder
 ```
 
-## Headers
+### Headers
 
 ```
 Authorization: Bearer <access_token>
 ```
 
-## Request Body
+### Request Body
 
 ```json
 {
@@ -640,7 +640,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (200 OK)
+### Response Body (200 OK)
 
 ```json
 {
@@ -648,7 +648,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (400 Bad Request)
+### Response Body (400 Bad Request)
 
 ```json
 {
@@ -656,7 +656,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (401 Unauthorized)
+### Response Body (401 Unauthorized)
 
 ```json
 {
@@ -664,15 +664,7 @@ Authorization: Bearer <access_token>
 }
 ```
 
-## Response Body (401 Unauthorized)
-
-```json
-{
-    "message": "Unauthorized"
-}
-```
-
-## Response Body (404 Not Found)
+### Response Body (404 Not Found)
 
 ```json
 {

@@ -94,3 +94,13 @@ export function toNewsSectionImageResponse(
         order: image.order,
     };
 }
+
+export type CreateNewsRequest = {
+    title: string,
+    isPublished: boolean,
+}
+
+export type UpdateNewsRequest = {
+    title?: string | undefined,
+    isPublished?: boolean | undefined,
+}
