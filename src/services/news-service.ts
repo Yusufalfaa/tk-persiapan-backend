@@ -1,7 +1,7 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
 import type { News, NewsSection } from "../generated/prisma/client.js";
-import { toNewsListResponse, type NewsListResponse } from "../models/news-model.js";
+import { toNewsDetailResponse, toNewsListResponse, type NewsDetailResponse, type NewsListResponse } from "../models/news-model.js";
 import type { PageResponse } from "../models/page-model.js";
 
 
@@ -87,6 +87,33 @@ export class NewsService {
                 totalPages: Math.ceil(total / size),
             }
         }
+    }
+
+    static async getDetail(slug: string) : Promise<NewsDetailResponse> {
+        const news = await prismaClient.news.findFirst({
+            where: {
+                slug: slug,
+            }, include: {
+                sections: {
+                    orderBy: {
+                        order: "asc"
+                    },
+                    include: {
+                        images: {
+                            orderBy: {
+                                order: "asc"
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        if(!news){
+            throw new ResponseError(404, "News not found")
+        }
+
+        return toNewsDetailResponse(news);
     }
 
 }

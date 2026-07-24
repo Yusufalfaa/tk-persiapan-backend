@@ -18,3 +18,4 @@ publicRouter.get("/api/teachers/:id", TeacherController.get)
 
 // News
 publicRouter.get("/api/news", NewsController.getList)
+publicRouter.get("/api/news/:slug", NewsController.getDetail)
