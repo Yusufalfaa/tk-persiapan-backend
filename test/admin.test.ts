@@ -109,7 +109,7 @@ describe('GET /api/admin/:id', () => {
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.status).toBe(404);
-        expect(response.body.errors).toBe("Admin not found");
+        expect(response.body.message).toBe("Admin not found");
     });
 
     it('should not return password hash', async () => {
@@ -163,7 +163,7 @@ describe('POST /api/admin', () => {
             })
 
         expect(response.status).toBe(400);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     })
 
     it('should reject due to invalid token', async () => {
@@ -179,7 +179,7 @@ describe('POST /api/admin', () => {
             })
         
         expect(response.status).toBe(401);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     })
 
     it('should reject due to forbidden role', async () => {
@@ -195,7 +195,7 @@ describe('POST /api/admin', () => {
             })
         
         expect(response.status).toBe(403);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     })
 
     it('should reject due to conflict inputs', async () => {
@@ -211,7 +211,7 @@ describe('POST /api/admin', () => {
             })
         
         expect(response.status).toBe(409);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     })
 
 })
@@ -257,7 +257,7 @@ describe('PATCH /api/admin/:id/reset-password', async () => {
                 })
 
             expect(response.status).toBe(400);
-            expect(response.body.errors).toBeDefined();
+            expect(response.body.message).toBeDefined();
     });
 
     it('should reject due to invalid token', async () => {
@@ -271,7 +271,7 @@ describe('PATCH /api/admin/:id/reset-password', async () => {
                 })
 
             expect(response.status).toBe(401);
-            expect(response.body.errors).toBeDefined();
+            expect(response.body.message).toBeDefined();
     });
 
     it('should reject due to forbidden role', async () => {
@@ -285,7 +285,7 @@ describe('PATCH /api/admin/:id/reset-password', async () => {
                 })
 
             expect(response.status).toBe(403);
-            expect(response.body.errors).toBeDefined();
+            expect(response.body.message).toBeDefined();
     });
 
     it('should reject due to admin not found', async () => {
@@ -301,7 +301,7 @@ describe('PATCH /api/admin/:id/reset-password', async () => {
             console.log(response.body)
 
             expect(response.status).toBe(404);
-            expect(response.body.errors).toBeDefined();
+            expect(response.body.message).toBeDefined();
     });
 
 })

@@ -47,7 +47,7 @@ describe('GET /api/teachers/:id', () => {
             .get("/api/teachers/3")
 
         expect(response.status).toBe(404);
-        expect(response.body.errors).toBe("Teacher not found");
+        expect(response.body.message).toBe("Teacher not found");
 
     });
 
@@ -97,7 +97,7 @@ describe('POST /api/admin/teachers', () => {
             });       
 
         expect(response.status).toBe(401);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     });
 
     it('should reject create new teacher due to invalid input', async () => {
@@ -114,7 +114,7 @@ describe('POST /api/admin/teachers', () => {
             });
 
         expect(response.status).toBe(400);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     })
 
 })
@@ -162,7 +162,7 @@ describe('PUT /api/admin/teachers/:id', () => {
             });       
         
         expect(response.status).toBe(401);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     })
 
     it('should reject teacher not found', async () => {
@@ -180,7 +180,7 @@ describe('PUT /api/admin/teachers/:id', () => {
         
         console.log(response.body)
         expect(response.status).toBe(404);
-        expect(response.body.errors).toBe("Teacher not found");
+        expect(response.body.message).toBe("Teacher not found");
     })
 
     it('should reject teacher update due to invalid input', async () => {
@@ -198,7 +198,7 @@ describe('PUT /api/admin/teachers/:id', () => {
         
         console.log(response.body)
         expect(response.status).toBe(400);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     });
 });
 
@@ -233,7 +233,7 @@ describe('DELETE /api/admin/teachers/:id', () => {
             .set("Authorization", `Bearer ${accessToken}1234`)      
         
         expect(response.status).toBe(401);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     })
 
     it('should reject delete teachers due to invalid id', async () =>{
@@ -244,6 +244,6 @@ describe('DELETE /api/admin/teachers/:id', () => {
             .set("Authorization", `Bearer ${accessToken}`)      
         
         expect(response.status).toBe(404);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     })
 })

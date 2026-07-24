@@ -14,14 +14,14 @@ export const authMiddleware = async (
 
         if (!authorization) {
             res.status(401).json({
-                errors: "Unauthorized",
+                message: "Unauthorized",
             });
             return;
         }
 
         if (!authorization.startsWith("Bearer ")) {
             res.status(401).json({
-                errors: "Unauthorized",
+                message: "Unauthorized",
             });
             return;
         }
@@ -44,7 +44,7 @@ export const authMiddleware = async (
 
         if (!admin) {
             res.status(401).json({
-                errors: "Unauthorized",
+                message: "Unauthorized",
             });
             return;
         }
@@ -54,7 +54,7 @@ export const authMiddleware = async (
         next();
     } catch {
         res.status(401).json({
-            errors: "Unauthorized",
+            message: "Unauthorized",
         });
     }
 };

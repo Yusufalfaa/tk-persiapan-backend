@@ -72,7 +72,7 @@ describe('PUT /api/school', () => {
             .send(request);
 
         expect(response.status).toBe(400);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     });
 
     it('should reject update school if token is invalid', async () => {
@@ -91,6 +91,6 @@ describe('PUT /api/school', () => {
             .send(request);
 
         expect(response.status).toBe(401);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     });
 })

@@ -33,7 +33,7 @@ describe('POST /api/auth/login', () => {
         });
 
         expect(response.status).toBe(400);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
         
     });
 
@@ -70,7 +70,7 @@ describe('GET /api/auth/me', () => {
 
         logger.debug(response.body);
         expect(response.status).toBe(401);
-        expect(response.body.errors).toBeDefined()
+        expect(response.body.message).toBeDefined()
 
         console.log(response.body.data)
     })
@@ -101,7 +101,7 @@ describe('PUT /api/auth/me', () => {
 
         logger.debug(response.body);
         expect(response.status).toBe(400);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
 
     });
 
@@ -119,7 +119,7 @@ describe('PUT /api/auth/me', () => {
 
         logger.debug(response.body);
         expect(response.status).toBe(401);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
 
     });
 
@@ -190,6 +190,6 @@ describe('POST /api/auth/logout', () => {
         .set("Authorization", `Bearer ${accessToken} 1234`);
 
         expect(response.status).toBe(401);
-        expect(response.body.errors).toBeDefined();
+        expect(response.body.message).toBeDefined();
     })
 })
