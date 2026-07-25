@@ -32,6 +32,13 @@ export class StorageService {
         }
     };
 
+    static async deleteMany(filePaths: string[]): Promise<void> {
+        await Promise.all(
+            filePaths.map(filePath => this.delete(filePath))
+        );
+    }
+
+
     static getPublicPath(folder: string, filename: string): string {
         return `/uploads/${folder}/${filename}`;
     }

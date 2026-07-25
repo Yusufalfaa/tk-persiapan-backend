@@ -326,6 +326,76 @@ describe('POST /api/admin/news/:newsId/sections', () => {
         expect(response.body.data.text).toBe("Ini adalah section baru.");
     })
 
+    it('should be able to create news section with image', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news/3/sections")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .field("type", "IMAGE")
+            .field("order", 1)
+            .field("columns", 2)
+            .attach("images", "test/resources/news.webp");
+
+        expect(response.status).toBe(201);
+        expect(response.body.data.type).toBe("IMAGE");
+        expect(response.body.data.columns).toBe(2);
+        expect(response.body.data.images.length).toBe(1);
+        expect(response.body.data.images[0].imagePath).toBeDefined();
+    });
+
+    it('should reject file not type of file upload', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news/3/sections")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .field("type", "IMAGE")
+            .field("order", 1)
+            .field("columns", 2)
+            .attach("images", "test/resources/Tugas_Besar_Kecerdasan_Buatan_Lanjut.pdf");
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBeDefined();
+    });
+
+    it('should reject file limit exceeded (by column)', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news/3/sections")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .field("type", "IMAGE")
+            .field("order", 1)
+            .field("columns", 3)
+            .attach("images", "test/resources/news.webp")
+            .attach("images", "test/resources/news.webp")
+            .attach("images", "test/resources/news.webp")
+            .attach("images", "test/resources/news.webp")
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe("Maximum 3 images allowed for this layout");
+    });
+
+    it('should reject file limit exceeded (by multer/max column)', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/news/3/sections")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .field("type", "IMAGE")
+            .field("order", 1)
+            .field("columns", 4)
+            .attach("images", "test/resources/news.webp")
+            .attach("images", "test/resources/news.webp")
+            .attach("images", "test/resources/news.webp")
+            .attach("images", "test/resources/news.webp")
+            .attach("images", "test/resources/news.webp");
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe("Maximum 4 files allowed");
+    });
+
     it('should reject create news section due to validation error', async () => {
         const accessToken = await AuthTest.getAccessToken();
 
@@ -356,22 +426,5 @@ describe('POST /api/admin/news/:newsId/sections', () => {
 
         expect(response.status).toBe(401)
         expect(response.body.message).toBe("Unauthorized");
-    })
-
-    it('should be able to create news section', async () => {
-        const accessToken = await AuthTest.getAccessToken();
-
-        const response = await supertest(web)
-            .post("/api/admin/news/3/sections")
-            .set("Authorization", `Bearer ${accessToken}`)
-            .send({
-                type: "TEXT",
-                order: 0,
-                text: "Ini adalah section baru."
-            });
-
-        expect(response.status).toBe(201)
-        expect(response.body.data.order).toBe(0);
-        expect(response.body.data.text).toBe("Ini adalah section baru.");
     })
 })

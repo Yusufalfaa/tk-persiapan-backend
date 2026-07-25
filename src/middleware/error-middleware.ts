@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import multer from "multer";
 import { ResponseError } from "../errors/response-error.js";
 import { Prisma } from "../generated/prisma/client.js";
+import { InvalidFileTypeError } from "../errors/invalid-file-type-error.js";
 
 export const errorMiddleware = (error: Error, req: Request, res: Response, next: NextFunction) => {
 
@@ -29,13 +30,17 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, next:
         return;
     }
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+    if ( error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
         const target = error.meta?.target;
-        const field = Array.isArray(target) ? target[0] : "Field";
+
+        const field = Array.isArray(target)
+            ? target.join(", ")
+            : "Data";
 
         res.status(409).json({
             message: `${field} already exists`,
         });
+
         return;
     }
 
@@ -50,7 +55,7 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, next:
 
         if(error.code === "LIMIT_FILE_COUNT"){
             res.status(400).json({
-                message:"Maximum 10 files allowed"
+                message:"Maximum 4 files allowed"
             });
             return;
         }
@@ -61,11 +66,10 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, next:
 
         return;
     }
-
-
-    if(error.message?.includes("Only image files are allowed")){
+    
+    if (error instanceof InvalidFileTypeError) {
         res.status(400).json({
-            message:error.message
+            message: error.message,
         });
         return;
     }

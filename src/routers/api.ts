@@ -21,7 +21,7 @@ apiRouter.put("/api/admin/school", SchoolController.update);
 
 // Teacher API
 apiRouter.post("/api/admin/teachers", uploadMiddleware("teachers").single("photo"), TeacherController.create);
-apiRouter.put("/api/admin/teachers/:id", uploadMiddleware("teachers").single("photo"), TeacherController.update);
+apiRouter.patch("/api/admin/teachers/:id", uploadMiddleware("teachers").single("photo"), TeacherController.update);
 apiRouter.delete("/api/admin/teachers/:id", TeacherController.delete)
 
 // News
@@ -32,7 +32,7 @@ apiRouter.patch("/api/admin/news/:id", NewsController.updateNews);
 apiRouter.delete("/api/admin/news/:id", NewsController.deleteNews);
 
 // News Section
-apiRouter.post("/api/admin/news/:newsId/sections", NewsController.createSection);
+apiRouter.post("/api/admin/news/:newsId/sections", uploadMiddleware("news").array("images"),NewsController.createSection);
 
 // Admins
 apiRouter.get("/api/admin", requireRole("SUPER_ADMIN"),AdminController.getList);

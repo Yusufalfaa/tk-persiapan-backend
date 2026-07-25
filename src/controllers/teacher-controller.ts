@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { TeacherService } from "../services/teacher-service.js";
-import type { TeacherRequest, TeacherUpdateRequest } from "../models/teacher-model.js";
+import type { TeacherCreateRequest, TeacherUpdateRequest } from "../models/teacher-model.js";
 import type { AuthRequest } from "../type/auth-request.js";
 
 
@@ -31,7 +31,7 @@ export class TeacherController {
 
     static async create(req: AuthRequest, res: Response, next: NextFunction) {
         try {
-            const request : TeacherRequest = {
+            const request : TeacherCreateRequest = {
                 name: req.body.name,
                 position: req.body.position,
                 order: Number(req.body.order),

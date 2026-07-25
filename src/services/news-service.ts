@@ -290,20 +290,39 @@ export class NewsService {
 
     // News Section
 
-    static async createSection(request: CreateSectionRequest, newsId: number, images?: Express.Multer.File[]) : Promise<NewsSectionResponse> {
-        const createRequest = Validation.validate(NewsValidation.CREATE_SECTION, request);
-        
+    static async createSection(request: unknown, newsId: number, images?: Express.Multer.File[]): Promise<NewsSectionResponse> {
+        const createRequest = Validation.validate<CreateSectionRequest>(NewsValidation.CREATE_SECTION, request);
+
+        if (createRequest.type === "IMAGE") {
+            if (!images || images.length === 0) {
+                throw new ResponseError(400, "At least 1 image is required for IMAGE section");
+            }
+            if (images.length > createRequest.columns) {
+
+                await StorageService.deleteMany(
+                    images.map(file =>
+                        StorageService.getPublicPath(
+                            "news",
+                            file.filename
+                        )
+                    )
+                );
+
+                throw new ResponseError(400, `Maximum ${createRequest.columns} images allowed for this layout`);
+            }
+        }
+
+        const order = createRequest.order ?? (await prismaClient.newsSection.count({
+            where: { newsId },
+        }));
+
         await prismaClient.newsSection.updateMany({
             where: {
                 newsId,
-                order: {
-                    gte: createRequest.order,
-                },
+                order: { gte: order },
             },
             data: {
-                order: {
-                    increment: 1,
-                },
+                order: { increment: 1 },
             },
         });
 
@@ -311,7 +330,7 @@ export class NewsService {
             data: {
                 newsId,
                 type: createRequest.type,
-                order: createRequest.order,
+                order,
 
                 ...(createRequest.type === "TEXT" && {
                     text: createRequest.text
@@ -327,37 +346,25 @@ export class NewsService {
             }
         });
 
-        if(createRequest.type === "IMAGE" && images){
-
+        if (createRequest.type === "IMAGE" && images) {
             await prismaClient.newsSectionImage.createMany({
-                data: images.map((file,index)=>({
+                data: images.map((file, index) => ({
                     sectionId: section.id,
-                    imagePath: StorageService.getPublicPath(
-                        "news",
-                        file.filename
-                    ),
-                    order:index
-                }))
+                    imagePath: StorageService.getPublicPath("news", file.filename),
+                    order: index,
+                })),
             });
         }
 
         await this.syncNewsSummary(newsId);
 
         const result = await prismaClient.newsSection.findUniqueOrThrow({
-            where:{
-                id: section.id
+            where: { id: section.id },
+            include: {
+                images: { orderBy: { order: "asc" } },
             },
-            include:{
-                images:{
-                    orderBy:{
-                        order:"asc"
-                    }
-                }
-            }
         });
-
 
         return toNewsSectionResponse(result);
     }
-
 }

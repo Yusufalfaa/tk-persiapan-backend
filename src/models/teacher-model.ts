@@ -20,10 +20,10 @@ export type TeacherResponse = {
     updatedAt: Date;
 };
 
-export type TeacherRequest = {
+export type TeacherCreateRequest = {
     name: string;
     position: string;
-    order: number;
+    order?: number | undefined;
 };
 
 export type TeacherUpdateRequest = {
@@ -31,6 +31,7 @@ export type TeacherUpdateRequest = {
     position?: string | undefined;
     order?: number | undefined;
 };
+
 
 export function toTeacherListResponse(teachers: Teacher[]): TeacherListResponse[] {
     return teachers.map((teacher) => ({
@@ -44,7 +45,9 @@ export function toTeacherListResponse(teachers: Teacher[]): TeacherListResponse[
     }));
 }
 
+
 export function toTeacherResponse(teacher: Teacher): TeacherResponse {
+
     return {
         id: teacher.id,
         name: teacher.name,

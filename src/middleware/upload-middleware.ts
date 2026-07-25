@@ -2,6 +2,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
+import { InvalidFileTypeError } from "../errors/invalid-file-type-error.js";
 
 type UploadFolder = "news" | "teachers";
 
@@ -41,13 +42,13 @@ export function uploadMiddleware(folder: UploadFolder) {
             if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
                 cb(null, true);
             } else {
-                cb(new Error("Invalid file type. Only JPG, PNG, and WEBP are allowed"));
+                cb(new InvalidFileTypeError("Invalid file type. Only JPG, PNG, and WEBP are allowed"));
             }
         },
 
         limits: {
             fileSize: 2 * 1024 * 1024,
-            files: 5,
+            files: 4,
         }
 
     });

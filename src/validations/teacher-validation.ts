@@ -1,9 +1,9 @@
 import { z, ZodType } from "zod";
-import type { TeacherRequest, TeacherUpdateRequest } from "../models/teacher-model.js";
+import type { TeacherCreateRequest, TeacherUpdateRequest } from "../models/teacher-model.js";
 
 export class TeacherValidation {
 
-    static readonly CREATE: ZodType<TeacherRequest> = z.object({
+    static readonly CREATE: ZodType<TeacherCreateRequest> = z.object({
         name: z.string().trim().min(3).max(100),
         position: z.string().trim().min(3).max(100),
         order: z.number().int().min(0),

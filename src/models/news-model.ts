@@ -96,19 +96,43 @@ export function toNewsSectionImageResponse(
 }
 
 export type CreateNewsRequest = {
-    title: string,
-    isPublished: boolean,
+    title: string;
+    isPublished?: boolean;
 }
 
 export type UpdateNewsRequest = {
-    title?: string | undefined,
-    isPublished?: boolean | undefined,
+    title?: string | undefined;
+    isPublished?: boolean | undefined;
 }
 
-export type CreateSectionRequest = {
-    type: NewsSectionType,
-    order: number,
-    text?: string;
-    youtubeUrl?: string;
-    columns?: number;
-}
+export type CreateSectionRequest =
+    | {
+          type: "TEXT";
+          order?: number | undefined;
+          text: string;
+      }
+    | {
+          type: "IMAGE";
+          order?: number | undefined;
+          columns: number;
+      }
+    | {
+          type: "YOUTUBE";
+          order?: number | undefined;
+          youtubeUrl: string;
+      };
+
+export type UpdateTextSectionRequest = {
+    order?: number | undefined;
+    text?: string | undefined;
+};
+
+export type UpdateImageSectionRequest = {
+    order?: number | undefined;
+    columns?: number | undefined;
+};
+
+export type UpdateYoutubeSectionRequest = {
+    order?: number | undefined;
+    youtubeUrl?: string | undefined;
+};

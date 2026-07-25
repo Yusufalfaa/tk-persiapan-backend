@@ -1,6 +1,6 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
-import { toTeacherListResponse, toTeacherResponse, type TeacherListResponse, type TeacherRequest, type TeacherResponse, type TeacherUpdateRequest } from "../models/teacher-model.js";
+import { toTeacherListResponse, toTeacherResponse, type TeacherListResponse, type TeacherCreateRequest, type TeacherResponse, type TeacherUpdateRequest } from "../models/teacher-model.js";
 import { TeacherValidation } from "../validations/teacher-validation.js";
 import { Validation } from "../validations/validation.js";
 import type { PageResponse } from "../models/page-model.js";
@@ -47,29 +47,60 @@ export class TeacherService {
         }
     }
 
-    static async create(request: TeacherRequest, file?: Express.Multer.File): Promise<TeacherResponse> {
+    static async create(request: TeacherCreateRequest, file?: Express.Multer.File): Promise<TeacherResponse> {
         const createRequest = Validation.validate(TeacherValidation.CREATE, request);
-
+    
+        const order = createRequest.order ?? await prismaClient.teacher.count();
         let photoPath: string | null = null;
 
         if(file){
             photoPath = StorageService.getPublicPath(
-                "teacher",
+                "teachers",
                 file.filename
             );
         }
 
-        const teacher = await prismaClient.teacher.create({
-            data: {
-                ...createRequest,
-                photoPath
-            }
-        });
+        const teacher = await prismaClient.$transaction(async (tx) => {
+            const order = createRequest.order ?? await tx.teacher.count();
 
+            await tx.teacher.updateMany({
+                where:{
+                    order:{
+                        gte: order
+                    }
+                },
+                data:{
+                    order:{
+                        increment:1
+                    }
+                }
+            });
+
+            let photoPath: string | null = null;
+
+            if(file){
+                photoPath = StorageService.getPublicPath(
+                    "teachers",
+                    file.filename
+                );
+            }
+
+            return tx.teacher.create({
+                data:{
+                    name:createRequest.name,
+                    position:createRequest.position,
+                    order,
+                    photoPath
+                }
+            });
+
+        });
         return toTeacherResponse(teacher)
     }
 
     static async update(request: TeacherUpdateRequest, teacherId: number, file?: Express.Multer.File): Promise<TeacherResponse> {
+        const updateRequest = Validation.validate(TeacherValidation.UPDATE, request);
+
         const teacher = await prismaClient.teacher.findUnique({
             where: {
                 id: teacherId
@@ -80,41 +111,95 @@ export class TeacherService {
             throw new ResponseError(404, "Teacher not found");
         }
 
-        const updateRequest = Validation.validate(TeacherValidation.UPDATE, request);
-
         let photoPath = teacher.photoPath;
 
         if (file) {
-
-            if (teacher.photoPath) {
-                await StorageService.delete(teacher.photoPath);
-            }
-
-            photoPath = StorageService.getPublicPath("teacher",file.filename);
+            photoPath = StorageService.getPublicPath(
+                "teachers",
+                file.filename
+            );
         }
 
-        const updatedTeacher = await prismaClient.teacher.update({
-            where: {
-                id: teacherId
-            },
-            data: {
-                ...(updateRequest.name !== undefined && {
-                    name: updateRequest.name
-                }),
+        const updatedTeacher = await prismaClient.$transaction(async (tx) => {
 
-                ...(updateRequest.position !== undefined && {
-                    position: updateRequest.position
-                }),
+            if (
+                updateRequest.order !== undefined &&
+                updateRequest.order !== teacher.order
+            ) {
 
-                ...(updateRequest.order !== undefined && {
-                    order: updateRequest.order
-                }),
+                await tx.teacher.update({
+                    where:{
+                        id: teacherId
+                    },
+                    data:{
+                        order:-1
+                    }
+                });
 
-                photoPath
+                if(updateRequest.order < teacher.order){
+
+                    await tx.teacher.updateMany({
+                        where:{
+                            order:{
+                                gte:updateRequest.order,
+                                lt:teacher.order
+                            }
+                        },
+                        data:{
+                            order:{
+                                increment:1
+                            }
+                        }
+                    });
+
+                } else {
+
+                    await tx.teacher.updateMany({
+                        where:{
+                            order:{
+                                gt:teacher.order,
+                                lte:updateRequest.order
+                            }
+                        },
+                        data:{
+                            order:{
+                                decrement:1
+                            }
+                        }
+                    });
+
+                }
             }
+
+
+            return tx.teacher.update({
+                where:{
+                    id:teacherId
+                },
+                data:{
+                    ...(updateRequest.name !== undefined && {
+                        name:updateRequest.name
+                    }),
+
+                    ...(updateRequest.position !== undefined && {
+                        position:updateRequest.position
+                    }),
+
+                    ...(updateRequest.order !== undefined && {
+                        order:updateRequest.order
+                    }),
+
+                    photoPath
+                }
+            });
+
         });
+        if (file && teacher.photoPath) {
+            await StorageService.delete(teacher.photoPath)
+            };
 
         return toTeacherResponse(updatedTeacher)
+        
     }
 
     static async delete(teacherId: number) {

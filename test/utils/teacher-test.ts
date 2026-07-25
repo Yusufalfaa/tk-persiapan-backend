@@ -13,14 +13,14 @@ export class TeacherTest {
                     name: "Ibu Sri Wahyuni",
                     position: "Kepala Sekolah",
                     photoPath: "/uploads/teachers/dewi-lestari.jpg",
-                    order: 1
+                    order: 0
                 },
                 {
                     id: 2,
                     name: "Ibu Dewi Lestari",
                     position: "Guru Kelas A",
                     photoPath: null,
-                    order: 2
+                    order: 1
                 },
             ]
         })

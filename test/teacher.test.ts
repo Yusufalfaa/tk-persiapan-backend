@@ -17,6 +17,7 @@ describe('GET /api/teachers', () => {
         const response = await supertest(web)
             .get("/api/teachers?page=1&size=10")
 
+        console.log(response.body)
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body.data)).toBe(true);
 
@@ -58,6 +59,7 @@ describe('POST /api/admin/teachers', () => {
 
     beforeEach(async () => {
         await AuthTest.create();
+        await TeacherTest.create();
     })
 
 
@@ -77,19 +79,29 @@ describe('POST /api/admin/teachers', () => {
             .field("name", "Muhamad Yusuf")
             .field("position", "Guru Kelas B")
             .field("order", "1")
-            .attach(
-                "photo",
-                "test/resources/teacher.jpg"
-            );
-
+            .attach("photo", "test/resources/teacher.jpg")
 
         expect(response.status).toBe(201);
         expect(response.body.data).toBeDefined();
-        expect(response.body.data.name)
-            .toBe("Muhamad Yusuf");
-
+        expect(response.body.data.name).toBe("Muhamad Yusuf");
         expect(response.body.data.photoPath).toBeDefined();
+    });
 
+    it('should reject due to limit file exceeded', async () => {
+
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/teachers")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .field("name", "Muhamad Yusuf")
+            .field("position", "Guru Kelas B")
+            .field("order", "1")
+            .attach("photo", "test/resources/teacher.jpg")
+            .attach("photo", "test/resources/teacher.jpg");
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBeDefined();
     });
 
 
@@ -162,7 +174,7 @@ describe('POST /api/admin/teachers', () => {
 
 });
 
-describe('PUT /api/admin/teachers/:id', () => {
+describe('PATCH /api/admin/teachers/:id', () => {
 
     beforeEach(async () => {
         await AuthTest.create();
@@ -181,7 +193,7 @@ describe('PUT /api/admin/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .put(`/api/admin/teachers/1`)
+            .patch(`/api/admin/teachers/1`)
             .set(
                 "Authorization",
                 `Bearer ${accessToken}`
@@ -189,7 +201,6 @@ describe('PUT /api/admin/teachers/:id', () => {
             .field("name", "Muhamad Yusuf")
             .field("position", "Guru Kelas B")
             .field("order", "1");
-
 
         expect(response.status).toBe(200);
         expect(response.body.data).toBeDefined();
@@ -203,20 +214,17 @@ describe('PUT /api/admin/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .put(`/api/admin/teachers/1`)
+            .patch(`/api/admin/teachers/2`)
             .set(
                 "Authorization",
                 `Bearer ${accessToken}`
             )
             .field("name", "Muhamad Yusuf")
             .field("position", "Guru Kelas B")
-            .field("order", "1")
-            .attach(
-                "photo",
-                "test/resources/teacher.jpg"
-            );
+            .field("order", "0")
+            .attach("photo", "test/resources/teacher.jpg");
 
-
+        console.log(response.body)
         expect(response.status).toBe(200);
         expect(response.body.data).toBeDefined();
         expect(response.body.data.photoPath).toBeDefined();
@@ -229,7 +237,7 @@ describe('PUT /api/admin/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .put(`/api/admin/teachers/1`)
+            .patch(`/api/admin/teachers/1`)
             .set(
                 "Authorization",
                 `Bearer ${accessToken}1234`
@@ -250,7 +258,7 @@ describe('PUT /api/admin/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .put(`/api/admin/teachers/9999`)
+            .patch(`/api/admin/teachers/9999`)
             .set(
                 "Authorization",
                 `Bearer ${accessToken}`
@@ -271,7 +279,7 @@ describe('PUT /api/admin/teachers/:id', () => {
         const accessToken = await AuthTest.getAccessToken();
 
         const response = await supertest(web)
-            .put(`/api/admin/teachers/1`)
+            .patch(`/api/admin/teachers/1`)
             .set(
                 "Authorization",
                 `Bearer ${accessToken}`
