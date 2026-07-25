@@ -34,27 +34,14 @@ CREATE TABLE `news_sections` (
     `type` ENUM('TEXT', 'IMAGE', 'YOUTUBE') NOT NULL,
     `order` INTEGER NOT NULL DEFAULT 0,
     `text` TEXT NULL,
+    `imageUrl` VARCHAR(500) NULL,
     `youtubeUrl` VARCHAR(500) NULL,
-    `columns` TINYINT NULL,
     `newsId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    INDEX `news_sections_newsId_idx`(`newsId`),
     INDEX `news_sections_order_idx`(`order`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `news_section_images` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `imagePath` VARCHAR(500) NOT NULL,
-    `order` INTEGER NOT NULL DEFAULT 0,
-    `sectionId` INTEGER NOT NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-
-    INDEX `news_section_images_sectionId_idx`(`sectionId`),
-    INDEX `news_section_images_order_idx`(`order`),
+    UNIQUE INDEX `news_sections_newsId_order_key`(`newsId`, `order`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -104,9 +91,6 @@ CREATE TABLE `teachers` (
 
 -- AddForeignKey
 ALTER TABLE `news_sections` ADD CONSTRAINT `news_sections_newsId_fkey` FOREIGN KEY (`newsId`) REFERENCES `news`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `news_section_images` ADD CONSTRAINT `news_section_images_sectionId_fkey` FOREIGN KEY (`sectionId`) REFERENCES `news_sections`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `school_missions` ADD CONSTRAINT `school_missions_schoolId_fkey` FOREIGN KEY (`schoolId`) REFERENCES `school_profile`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

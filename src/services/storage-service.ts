@@ -1,6 +1,10 @@
 import fs from "fs/promises";
 import path from "path";
 
+type StorageFolder =
+    | "news"
+    | "teachers";
+
 export class StorageService {
 
     static async exists(filePath: string): Promise<boolean> {
@@ -16,7 +20,11 @@ export class StorageService {
         }
     };
 
-    static async delete(filePath: string): Promise<void> {
+    static async delete(filePath?: string | null): Promise<void> {
+        if(!filePath){
+            return;
+        }
+
         const absolutePath = path.join(
             process.cwd(),
             filePath
@@ -24,10 +32,14 @@ export class StorageService {
 
         try {
             await fs.unlink(absolutePath);
-        } catch (error) {
-            if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+        } catch(error){
+
+            if(
+                (error as NodeJS.ErrnoException).code === "ENOENT"
+            ){
                 return;
             }
+
             throw error;
         }
     };
@@ -39,7 +51,7 @@ export class StorageService {
     }
 
 
-    static getPublicPath(folder: string, filename: string): string {
+    static getPublicPath(folder: StorageFolder, filename: string): string {
         return `/uploads/${folder}/${filename}`;
     }
 

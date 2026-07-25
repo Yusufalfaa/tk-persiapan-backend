@@ -67,46 +67,28 @@ model NewsSection {
   id Int @id @default(autoincrement())
 
   type  NewsSectionType
-  order Int             @default(0)
+  order Int @default(0)
 
   // TEXT
   text String? @db.Text
+  
+  // IMAGE
+  imageUrl String? @db.VarChar(500)
 
   // YOUTUBE
   youtubeUrl String? @db.VarChar(500)
 
-  // IMAGE only (1-4)
-  columns Int? @db.TinyInt
-
   newsId Int
   news   News @relation(fields: [newsId], references: [id], onDelete: Cascade)
-
-  images NewsSectionImage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([newsId])
+  @@unique([newsId, order])
   @@index([order])
   @@map("news_sections")
 }
 
-model NewsSectionImage {
-  id Int @id @default(autoincrement())
-
-  imagePath String @db.VarChar(500)
-
-  order Int @default(0)
-
-  sectionId Int
-  section   NewsSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@index([sectionId])
-  @@index([order])
-  @@map("news_section_images")
-}
 
 // SCHOOL PROFILE
 

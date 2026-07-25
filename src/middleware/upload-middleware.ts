@@ -15,41 +15,42 @@ const ALLOWED_MIME_TYPES = [
 export function uploadMiddleware(folder: UploadFolder) {
 
     const storage = multer.diskStorage({
-
         destination: (req, file, cb) => {
-            const uploadPath = path.join(process.cwd(), "uploads", folder);
-
+            const uploadPath = path.join(
+                process.cwd(),
+                "uploads",
+                folder
+            );
             if (!fs.existsSync(uploadPath)) {
                 fs.mkdirSync(uploadPath, { recursive: true });
             }
-
             cb(null, uploadPath);
         },
 
         filename: (req, file, cb) => {
             const ext = path.extname(file.originalname);
-            const uniqueName = `${Date.now()}-${crypto.randomUUID()}${ext}`;
+
+            const uniqueName =
+                `${Date.now()}-${crypto.randomUUID()}${ext}`;
+
             cb(null, uniqueName);
         }
-
     });
 
     return multer({
         storage,
-
         fileFilter: (req, file, cb) => {
 
             if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
                 cb(null, true);
-            } else {
-                cb(new InvalidFileTypeError("Invalid file type. Only JPG, PNG, and WEBP are allowed"));
+                return;
             }
+            cb(new InvalidFileTypeError("Invalid file type. Only JPG, PNG, and WEBP are allowed"));
         },
-
         limits: {
             fileSize: 2 * 1024 * 1024,
-            files: 4,
+            files: 1
         }
-
     });
+
 }

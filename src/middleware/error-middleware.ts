@@ -5,12 +5,16 @@ import { ResponseError } from "../errors/response-error.js";
 import { Prisma } from "../generated/prisma/client.js";
 import { InvalidFileTypeError } from "../errors/invalid-file-type-error.js";
 
+
 export const errorMiddleware = (error: Error, req: Request, res: Response, next: NextFunction) => {
 
     if (error instanceof ZodError) {
         const fieldErrors: Record<string, string> = {};
+
         for (const issue of error.issues) {
+
             const field = issue.path.join(".") || "unknown";
+
             if (!fieldErrors[field]) {
                 fieldErrors[field] = issue.message;
             }
@@ -20,6 +24,7 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, next:
             message: "Validation error",
             errors: fieldErrors,
         });
+
         return;
     }
 
@@ -30,7 +35,11 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, next:
         return;
     }
 
-    if ( error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+    if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+    ) {
+
         const target = error.meta?.target;
 
         const field = Array.isArray(target)
@@ -40,42 +49,37 @@ export const errorMiddleware = (error: Error, req: Request, res: Response, next:
         res.status(409).json({
             message: `${field} already exists`,
         });
-
         return;
     }
 
     if (error instanceof multer.MulterError) {
+        switch(error.code) {
+            case "LIMIT_FILE_SIZE":
 
-        if(error.code === "LIMIT_FILE_SIZE"){
-            res.status(400).json({
-                message:"File size exceeds 2MB"
-            });
-            return;
+                res.status(400).json({
+                    message:"File size exceeds 2MB"
+                });
+                return;
+            case "LIMIT_UNEXPECTED_FILE":
+
+                res.status(400).json({
+                    message:"Only 1 file allowed"
+                });
+                return;
+            default:
+                res.status(400).json({
+                    message:error.message
+                });
+                return;
         }
-
-        if(error.code === "LIMIT_FILE_COUNT"){
-            res.status(400).json({
-                message:"Maximum 4 files allowed"
-            });
-            return;
-        }
-
-        res.status(400).json({
-            message:error.message
-        });
-
-        return;
     }
-    
+
     if (error instanceof InvalidFileTypeError) {
         res.status(400).json({
-            message: error.message,
+            message:error.message,
         });
         return;
     }
-
-
-    console.error(error);
 
     res.status(500).json({
         message:"Internal server error"
