@@ -6,6 +6,7 @@ import { TeacherController } from "../controllers/teacher-controller.js";
 import { requireRole } from "../middleware/role-middleware.js";
 import { AdminController } from "../controllers/admin-controller.js";
 import { uploadMiddleware } from "../middleware/upload-middleware.js";
+import { NewsController } from "../controllers/news-controller.js";
 
 export const apiRouter = express.Router();
 apiRouter.use(authMiddleware);
@@ -24,6 +25,9 @@ apiRouter.patch("/api/admin/teachers/:id", uploadMiddleware("teachers").single("
 apiRouter.delete("/api/admin/teachers/:id", TeacherController.delete)
 
 // News
+apiRouter.get("/api/admin/news", NewsController.getAdminList)
+apiRouter.get("/api/admin/news/:id", NewsController.getAdminDetail)
+
 
 // News Section
 

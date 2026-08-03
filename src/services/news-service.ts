@@ -131,4 +131,46 @@ export class NewsService {
         return toNewsDetailResponse(news)
     }
 
+    static async getAdminList(page: number, size: number) : Promise<PageResponse<NewsListResponse>> {
+        const skip = (page - 1) * size;
+
+        const news = await prismaClient.news.findMany({
+            skip,
+            take: size,
+        });
+
+        const total = await prismaClient.news.count();
+
+        return {
+            data: toNewsListResponse(news),
+            meta: {
+                page,
+                size,
+                total,
+                totalPages: Math.ceil(total / size),
+            }
+        }
+    }
+
+    static async getAdminDetail(newsId: number) : Promise<NewsDetailResponse> {
+        const news = await prismaClient.news.findFirst({
+            where: {
+                id: newsId
+            },
+            include: {
+                sections: {
+                    orderBy: {
+                        order: "asc"
+                    }
+                }
+            }
+        });
+
+        if(!news) {
+            throw new ResponseError(404, "News not found");
+        }
+
+        return toNewsDetailResponse(news)
+    }
+
 }
