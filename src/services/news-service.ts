@@ -1,7 +1,10 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
-import { toNewsDetailResponse, toNewsListResponse, type NewsDetailResponse, type NewsListResponse } from "../models/news-model.js";
+import { toNewsDetailResponse, toNewsListResponse, type CreateNewsRequest, type NewsDetailResponse, type NewsListResponse, type UpdateNewsRequest } from "../models/news-model.js";
 import type { PageResponse } from "../models/page-model.js";
+import { NewsValidation } from "../validations/news-validation.js";
+import { Validation } from "../validations/validation.js";
+import { StorageService } from "./storage-service.js";
 
 
 export class NewsService {
@@ -171,6 +174,95 @@ export class NewsService {
         }
 
         return toNewsDetailResponse(news)
+    }
+
+    static async createNews(request: CreateNewsRequest): Promise<NewsDetailResponse> {
+        const createRequest = Validation.validate(NewsValidation.CREATE, request);
+        
+        let generatedSlug = await this.generateUniqueSlug(createRequest.title);
+
+        const news = await prismaClient.news.create({
+            data: {
+                title: createRequest.title,
+                slug: generatedSlug,
+                isPublished: false,
+            },
+            include: {
+                sections: true
+            }
+        })
+
+        return toNewsDetailResponse(news);
+        
+    }
+
+    static async updateNews(request: UpdateNewsRequest, newsId: number): Promise<NewsDetailResponse> {
+        const updateRequest = Validation.validate(NewsValidation.UPDATE, request);
+        
+        const existingNews = await prismaClient.news.findUnique({
+            where: {
+                id: newsId
+            }
+        });
+
+        if (!existingNews) {
+            throw new ResponseError(404, "News not found");
+        }
+
+        let slug = existingNews.slug;
+
+        if(updateRequest.title) {
+            slug = await this.generateUniqueSlug(updateRequest.title);
+        }
+
+
+        const news = await prismaClient.news.update({
+            where: {
+                id: newsId
+            },
+            data: {
+                ...(updateRequest.title && {
+                    title: updateRequest.title,
+                    slug
+                }),
+
+                ...(updateRequest.isPublished !== undefined && {
+                    isPublished: updateRequest.isPublished
+                })
+            },
+            include: {
+                sections: true
+            }
+        });
+
+        return toNewsDetailResponse(news);
+    }
+    
+    static async deleteNews(newsId: number) {
+        const news = await prismaClient.news.findUnique({
+            where: {
+                id: newsId
+            },
+            include: {
+                sections:true
+            }
+        });
+
+        if (!news) {
+            throw new ResponseError(404, "News not found");
+        }
+
+        for (const section of news.sections) {
+            if (section.imagePath) {
+                await StorageService.delete(section.imagePath);
+            }
+        }
+
+        await prismaClient.news.delete({
+            where: {
+                id: newsId,
+            }
+        })
     }
 
 }

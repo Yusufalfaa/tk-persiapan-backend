@@ -256,8 +256,7 @@ Authorization: Bearer <access_token>
 
 ```json
 {
-    "title": "Lomba TK 2026",
-    "isPublished": true
+    "title": "Lomba TK 2026"
 }
 ```
 
@@ -269,7 +268,7 @@ Authorization: Bearer <access_token>
         "id": 1,
         "title": "Lomba TK 2026",
         "slug": "lomba-tk-2026",
-        "isPublished": true,
+        "isPublished": false,
         "sections": [],
         "createdAt": "2026-01-01T10:00:00.000Z",
         "updatedAt": "2026-01-01T10:00:00.000Z"
@@ -319,7 +318,7 @@ Authorization: Bearer <access_token>
 ```json
 {
     "title": "Updated title",
-    "isPublished": false
+    "isPublished": true
 }
 ```
 

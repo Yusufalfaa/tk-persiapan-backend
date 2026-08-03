@@ -49,16 +49,6 @@ export class TeacherService {
 
     static async create(request: TeacherCreateRequest, file?: Express.Multer.File): Promise<TeacherResponse> {
         const createRequest = Validation.validate(TeacherValidation.CREATE, request);
-    
-        const order = createRequest.order ?? await prismaClient.teacher.count();
-        let photoPath: string | null = null;
-
-        if(file){
-            photoPath = StorageService.getPublicPath(
-                "teachers",
-                file.filename
-            );
-        }
 
         const teacher = await prismaClient.$transaction(async (tx) => {
             const order = createRequest.order ?? await tx.teacher.count();

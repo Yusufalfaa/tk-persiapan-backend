@@ -22,7 +22,6 @@ describe('GET /api/admin', () => {
             .get("/api/admin?page=1&size=10")
             .set("Authorization", `Bearer ${token}`);
 
-        console.log(response.body);
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body.data)).toBe(true);
     });
@@ -77,7 +76,6 @@ describe('GET /api/admin/:id', () => {
             .get("/api/admin/2")
             .set("Authorization", `Bearer ${token}`);
 
-        console.log(response.body);
         expect(response.status).toBe(200);
         expect(response.body.data.role).toBe("ADMIN");
     });

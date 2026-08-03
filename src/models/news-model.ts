@@ -61,3 +61,12 @@ export function toNewsDetailResponse(news: News & { sections: NewsSection[] }): 
         updatedAt: news.updatedAt,
     };
 }
+
+export type CreateNewsRequest = {
+    title: string,
+}
+
+export type UpdateNewsRequest = {
+    title?: string | undefined,
+    isPublished?: boolean | undefined,
+}

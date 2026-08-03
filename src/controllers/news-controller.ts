@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { NewsService } from "../services/news-service.js";
 import { ResponseError } from "../errors/response-error.js";
+import type { CreateNewsRequest, UpdateNewsRequest } from "../models/news-model.js";
 
 
 export class NewsController {
@@ -61,6 +62,56 @@ export class NewsController {
             res.status(200).json({
                 data: response
             });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async createNews(req: Request, res: Response, next: NextFunction) {
+        try {
+            const request : CreateNewsRequest = {
+                title: req.body.title
+            };
+
+            const response = await NewsService.createNews(request);
+
+            res.status(201).json({
+                data: response,
+            })
+
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async updateNews(req: Request, res: Response, next: NextFunction) {
+        try {
+            const newsId = Number(req.params.id)
+            const request : UpdateNewsRequest = {
+                title: req.body.title,
+                isPublished: req.body.isPublished
+            }
+
+            const response = await NewsService.updateNews(request, newsId)
+
+            res.status(200).json({
+                data: response,
+            })
+
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async deleteNews(req: Request, res: Response, next: NextFunction) {
+        try {
+            const newsId = Number(req.params.id)
+            
+            await NewsService.deleteNews(newsId)
+
+            res.status(200).json({
+                message: "News deleted successfully"
+            })
         } catch (e) {
             next(e);
         }
