@@ -8,6 +8,7 @@ import { NewsValidation } from "../validations/news-validation.js";
 import { Validation } from "../validations/validation.js";
 import { StorageService } from "./storage-service.js";
 
+import sanitizeHtml from "sanitize-html";
 
 export class NewsService {
 
@@ -66,11 +67,16 @@ export class NewsService {
             return null;
         }
 
+        const plainText = sanitizeHtml(section.text, {
+            allowedTags: [],
+            allowedAttributes: {},
+        });
+
         const maxLength = 150;
 
-        return section.text.length > maxLength
-        ? section.text.slice(0, maxLength) + "..."
-        : section.text;
+        return plainText.length > maxLength
+        ? plainText.slice(0, maxLength) + "..."
+        : plainText;
     }
 
 
@@ -306,7 +312,19 @@ export class NewsService {
             case NewsSectionType.TEXT:
                 data = {
                     type: NewsSectionType.TEXT,
-                    text: createRequest.text!,
+                    text: sanitizeHtml(createRequest.text!, {
+                        allowedTags: ["b", "strong", "i", "em", "u", "ul", "ol", "li", "a"],
+                        allowedAttributes: {
+                            a: ["href", "target", "rel"],
+                        },
+                        allowedSchemes: ["http", "https"],
+                        transformTags: {
+                            a: sanitizeHtml.simpleTransform("a", {
+                                target: "_blank",
+                                rel: "noopener noreferrer",
+                            }),
+                        },
+                    }),
                     order,
                     newsId,
                 };
@@ -371,7 +389,19 @@ export class NewsService {
                 }
 
                 data = {
-                    text: updateRequest.text,
+                    text: sanitizeHtml(updateRequest.text, {
+                        allowedTags: ["b", "strong", "i", "em", "u", "ul", "ol", "li", "a"],
+                        allowedAttributes: {
+                            a: ["href", "target", "rel"],
+                        },
+                        allowedSchemes: ["http", "https"],
+                        transformTags: {
+                            a: sanitizeHtml.simpleTransform("a", {
+                                target: "_blank",
+                                rel: "noopener noreferrer",
+                            }),
+                        },
+                    }),
                     youtubeUrl: null,
                     imagePath: null,
                 };

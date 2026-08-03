@@ -403,6 +403,25 @@ describe('POST /api/admin/news/:newsId/sections', async () => {
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("News not found");
     })
+
+    it('should sanitize malicious script tag from text section', async () => {
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post(`/api/admin/news/1/sections`)
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send({
+                type: "TEXT",
+                text: "Halo semua <script>alert('hacked')</script> selamat datang"
+            });
+
+        console.log(response.body.data.sections)
+        expect(response.status).toBe(201);
+        
+        const newSection = response.body.data.sections.at(-1);
+        expect(newSection.text).not.toContain("<script>");
+        expect(newSection.text).toContain("Halo semua");
+    });
 })
 
 describe('PATCH /api/admin/news/sections/:sectionId', async () => {
