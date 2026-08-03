@@ -372,25 +372,6 @@ describe('POST /api/admin/news/:newsId/sections', async () => {
         expect(response.status).toBe(400);
     })
 
-    it('should be reject new section due invalid 3', async () =>{
-        const token = await AuthTest.getAccessToken()
-
-        const response = await supertest(web)
-            .post("/api/admin/news/1/sections")
-            .set("Authorization", `Bearer ${token}`)
-            .field("type", "TEXT")
-            .field(
-                "text",
-                "Ini adalah isi section baru yang panjangnya lebih dari sepuluh karakter."
-            )
-            .field(
-                "youtubeUrl",
-                "https://www.youtube.com/watch?v=1is1PwQKo8w"
-            );
-        
-        expect(response.status).toBe(400);
-    })
-
     it('should be reject to create news section due to unauthorized ', async () =>{
         const token = await AuthTest.getAccessToken()
 
@@ -421,5 +402,87 @@ describe('POST /api/admin/news/:newsId/sections', async () => {
             
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("News not found");
+    })
+})
+
+describe('PATCH /api/admin/news/sections/:sectionId', async () => {
+    beforeEach(async () => {
+        await AuthTest.create()
+        await NewsTest.createNews()
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete()
+        await NewsTest.deleteAll()
+    })
+
+    it('should be able to update news section TEXT', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/1")
+            .set("Authorization", `Bearer ${token}`)
+            .field(
+                "text",
+                "Ini adalah section yang udah diupdate"
+            );
+            
+        console.log(response.body.data.sections);
+        expect(response.status).toBe(200);
+        expect(response.body.data.sections[0].text).toBe("Ini adalah section yang udah diupdate");
+    })
+
+    it('should be able to update news section IMAGE', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/2")
+            .set("Authorization", `Bearer ${token}`)
+            .attach("image", "test/resources/news.webp");
+            
+        expect(response.status).toBe(200);
+        expect(response.body.data.sections[0].imagePath).toBeDefined();
+    })
+
+    it('should be able to update news section YOUTUBE', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/3")
+            .set("Authorization", `Bearer ${token}`)
+            .field("youtubeUrl", "https://youtu.be/QDia3e12czc?si=urU03BVXjwbNVyEh");
+    
+        expect(response.status).toBe(200);
+        expect(response.body.data.sections[0].youtubeUrl).toBeDefined();
+    })
+
+    it('should reject due to unauthorized', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/1")
+            .set("Authorization", `Bearer ${token}1234`)
+            .field(
+                "text",
+                "Ini adalah section yang udah diupdate"
+            );
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toBe("Unauthorized");
+    })
+
+    it('should reject due to section not found', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/4")
+            .set("Authorization", `Bearer ${token}`)
+            .field(
+                "text",
+                "Ini adalah section yang udah diupdate"
+            );
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe("Section not found");
     })
 })

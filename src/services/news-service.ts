@@ -2,7 +2,7 @@ import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
 import type { Prisma } from "../generated/prisma/client.js";
 import { NewsSectionType } from "../generated/prisma/enums.js";
-import { toNewsDetailResponse, toNewsListResponse, type AdminNewsDetailResponse, type CreateNewsRequest, type CreateSectionRequest, type NewsDetailResponse, type NewsListResponse, type UpdateNewsRequest } from "../models/news-model.js";
+import { toNewsDetailResponse, toNewsListResponse, type AdminNewsDetailResponse, type CreateNewsRequest, type CreateSectionRequest, type NewsDetailResponse, type NewsListResponse, type UpdateNewsRequest, type UpdateSectionRequest } from "../models/news-model.js";
 import type { PageResponse } from "../models/page-model.js";
 import { NewsValidation } from "../validations/news-validation.js";
 import { Validation } from "../validations/validation.js";
@@ -341,6 +341,91 @@ export class NewsService {
         await this.syncNewsSummary(newsId);
 
         return await this.getAdminDetail(newsId);
+    }
+
+    static async updateSection(request: UpdateSectionRequest, sectionId: number, file?: Express.Multer.File): Promise<AdminNewsDetailResponse> {
+        const updateRequest : UpdateSectionRequest = Validation.validate(NewsValidation.UPDATE_SECTION, request);
+
+        let section = await prismaClient.newsSection.findUnique({
+            where: {
+                id: sectionId
+            },
+        })
+
+        if (!section) {
+            throw new ResponseError(404, "Section not found");
+        }
+
+        if (section.type === NewsSectionType.IMAGE && !file) {
+            throw new ResponseError(400, "Image is required");
+        }
+
+        let data: Prisma.NewsSectionUpdateInput = {};
+
+        const oldImagePath = section.imagePath;
+
+        switch (section.type) {
+            case NewsSectionType.TEXT:
+                if (!updateRequest.text) {
+                    throw new ResponseError(400, "Text is required for TEXT section");
+                }
+
+                data = {
+                    text: updateRequest.text,
+                    youtubeUrl: null,
+                    imagePath: null,
+                };
+
+                break;
+
+
+            case NewsSectionType.YOUTUBE:
+
+                if (!updateRequest.youtubeUrl) {
+                    throw new ResponseError(400, "Youtube URL is required for YOUTUBE section");
+                }
+
+                data = {
+                    youtubeUrl: updateRequest.youtubeUrl,
+                    text: null,
+                    imagePath: null,
+                };
+
+                break;
+
+
+            case NewsSectionType.IMAGE:
+
+                if(!file) {
+                    throw new ResponseError(400, "Image file is required for IMAGE section");
+                }
+
+                data = {
+                    youtubeUrl: null,
+                    text: null,
+                    imagePath: StorageService.getPublicPath(
+                        "news",
+                        file.filename
+                    ),
+                };
+
+                break;
+        }
+
+        await prismaClient.newsSection.update({
+            where: {
+                id: sectionId
+            },
+            data,
+        });
+
+        if (section.type === NewsSectionType.IMAGE && oldImagePath) {
+            await StorageService.delete(oldImagePath);
+        }
+
+        await this.syncNewsSummary(section.newsId);
+
+        return await this.getAdminDetail(section.newsId);
     }
 
 }

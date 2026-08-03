@@ -33,6 +33,7 @@ apiRouter.delete("/api/admin/news/:id", NewsController.deleteNews);
 
 // News Section
 apiRouter.post("/api/admin/news/:newsId/sections", uploadMiddleware("news").single("image"), NewsController.createSection);
+apiRouter.patch("/api/admin/news/sections/:sectionId", uploadMiddleware("news").single("image"), NewsController.updateSection);
 
 // Admins
 apiRouter.get("/api/admin", requireRole("SUPER_ADMIN"),AdminController.getList);

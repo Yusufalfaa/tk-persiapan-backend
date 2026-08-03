@@ -20,7 +20,8 @@ export class NewsTest {
                 isPublished: true,
                 sections: {
                     create: [
-                        {
+                        {   
+                            id: 1,
                             order: 0,
                             type: NewsSectionType.TEXT,
                             text: "Ini adalah ringkasan berita pertama."
@@ -41,6 +42,7 @@ export class NewsTest {
                 sections: {
                     create: [
                         {
+                            id: 2,
                             order: 1,
                             type: NewsSectionType.IMAGE,
                             imagePath: "/uploads/news/content-2.jpg"
@@ -61,6 +63,7 @@ export class NewsTest {
                 sections: {
                     create: [
                         {
+                            id: 3,
                             order: 2,
                             type: NewsSectionType.YOUTUBE,
                             youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"

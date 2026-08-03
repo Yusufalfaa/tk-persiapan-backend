@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { NewsService } from "../services/news-service.js";
 import { ResponseError } from "../errors/response-error.js";
-import type { CreateNewsRequest, CreateSectionRequest, UpdateNewsRequest } from "../models/news-model.js";
+import type { CreateNewsRequest, CreateSectionRequest, UpdateNewsRequest, UpdateSectionRequest } from "../models/news-model.js";
 import type { AuthRequest } from "../type/auth-request.js";
 import { StorageService } from "../services/storage-service.js";
 
@@ -147,5 +147,30 @@ export class NewsController {
         }
     }
 
+    static async updateSection(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const newsId = Number(req.params.sectionId);
+            const request : UpdateSectionRequest = {
+                text: req.body.text,
+                youtubeUrl: req.body.youtubeUrl,
+            }
 
+            const response = await NewsService.updateSection(request, newsId, req.file)
+
+            res.status(200).json({
+                data: response,
+            });
+        } catch (e) {
+            if (req.file) {
+                await StorageService.delete(
+                    StorageService.getPublicPath(
+                        "news",
+                        req.file.filename
+                    )
+                );
+            }
+
+            next(e);
+        }
+    }
 }
