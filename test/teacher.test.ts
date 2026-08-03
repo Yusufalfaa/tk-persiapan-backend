@@ -87,6 +87,27 @@ describe('POST /api/admin/teachers', () => {
         expect(response.body.data.photoPath).toBeDefined();
     });
 
+    it('should create new teacher without photo', async () => {
+
+        const accessToken = await AuthTest.getAccessToken();
+
+        const response = await supertest(web)
+            .post("/api/admin/teachers")
+            .set(
+                "Authorization",
+                `Bearer ${accessToken}`
+            )
+            .field("name", "Muhamad Yusuf")
+            .field("position", "Guru Kelas B")
+            .field("order", "1");
+
+
+        expect(response.status).toBe(201);
+        expect(response.body.data.photoPath).toBeNull();
+
+    });
+
+
     it('should reject due to limit file exceeded', async () => {
 
         const accessToken = await AuthTest.getAccessToken();
@@ -125,7 +146,6 @@ describe('POST /api/admin/teachers', () => {
 
     });
 
-
     it('should reject create new teacher due to invalid input', async () => {
 
         const accessToken = await AuthTest.getAccessToken();
@@ -144,34 +164,9 @@ describe('POST /api/admin/teachers', () => {
                 "test/resources/teacher.jpg"
             );
 
-
         expect(response.status).toBe(400);
         expect(response.body.message).toBeDefined();
-
     });
-
-
-    it('should reject create new teacher without photo', async () => {
-
-        const accessToken = await AuthTest.getAccessToken();
-
-        const response = await supertest(web)
-            .post("/api/admin/teachers")
-            .set(
-                "Authorization",
-                `Bearer ${accessToken}`
-            )
-            .field("name", "Muhamad Yusuf")
-            .field("position", "Guru Kelas B")
-            .field("order", "1");
-
-
-        expect(response.status).toBe(201);
-        expect(response.body.data.photoPath).toBeNull();
-
-    });
-
-
 });
 
 describe('PATCH /api/admin/teachers/:id', () => {

@@ -238,7 +238,7 @@ export class NewsService {
         return toNewsDetailResponse(news);
     }
     
-    static async deleteNews(newsId: number) {
+    static async deleteNews(newsId: number): Promise<void> {
         const news = await prismaClient.news.findUnique({
             where: {
                 id: newsId

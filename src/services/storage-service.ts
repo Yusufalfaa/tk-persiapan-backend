@@ -7,42 +7,48 @@ type StorageFolder =
 
 export class StorageService {
 
-    static async exists(filePath: string): Promise<boolean> {
-        const absolutePath = path.join(
+    private static getAbsolutePath(filePath: string): string {
+        return path.join(
             process.cwd(),
-            filePath
+            filePath.replace(/^\/+/, "")
         );
+    }
+
+
+    static async exists(filePath: string): Promise<boolean> {
         try {
-            await fs.access(absolutePath);
+            await fs.access(
+                this.getAbsolutePath(filePath)
+            );
+
             return true;
         } catch {
             return false;
         }
-    };
+    }
+
 
     static async delete(filePath?: string | null): Promise<void> {
-        if(!filePath){
+        if (!filePath) {
             return;
         }
 
-        const absolutePath = path.join(
-            process.cwd(),
-            filePath
-        );
-
         try {
-            await fs.unlink(absolutePath);
-        } catch(error){
+            await fs.unlink(
+                this.getAbsolutePath(filePath)
+            );
+        } catch(error) {
 
-            if(
+            if (
                 (error as NodeJS.ErrnoException).code === "ENOENT"
-            ){
+            ) {
                 return;
             }
 
             throw error;
         }
-    };
+    }
+
 
     static async deleteMany(filePaths: string[]): Promise<void> {
         await Promise.all(
@@ -51,8 +57,10 @@ export class StorageService {
     }
 
 
-    static getPublicPath(folder: StorageFolder, filename: string): string {
-        return `/uploads/${folder}/${filename}`;
+    static getPublicPath(
+        folder: StorageFolder,
+        filename: string
+    ): string {
+        return `uploads/${folder}/${filename}`;
     }
-
 }

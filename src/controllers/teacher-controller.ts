@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { TeacherService } from "../services/teacher-service.js";
 import type { TeacherCreateRequest, TeacherUpdateRequest } from "../models/teacher-model.js";
 import type { AuthRequest } from "../type/auth-request.js";
+import { StorageService } from "../services/storage-service.js";
 
 
 export class TeacherController {
@@ -43,6 +44,15 @@ export class TeacherController {
                 data: response,
             });
         } catch (e) {
+            if (req.file) {
+                await StorageService.delete(
+                    StorageService.getPublicPath(
+                        "teachers",
+                        req.file.filename
+                    )
+                );
+            }
+
             next(e);
         }
     }
