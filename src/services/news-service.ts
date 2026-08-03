@@ -8,6 +8,8 @@ export class NewsService {
 
     private static async generateUniqueSlug(title: string, excludeId?: number): Promise<string> {
         const baseSlug = title
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
             .toLowerCase()
             .trim()
             .replace(/[^a-z0-9\s-]/g, "")
@@ -90,7 +92,11 @@ export class NewsService {
             take: size,
         });
 
-        const total = await prismaClient.news.count();
+        const total = await prismaClient.news.count({
+            where: {
+                isPublished: true,
+            }
+        });
 
         return {
             data: toNewsListResponse(news),
@@ -103,7 +109,7 @@ export class NewsService {
         }
     }
 
-    static async get(slug: string) : Promise<NewsDetailResponse> {
+    static async getDetail(slug: string) : Promise<NewsDetailResponse> {
         const news = await prismaClient.news.findFirst({
             where: {
                 slug: slug,

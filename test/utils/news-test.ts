@@ -21,7 +21,7 @@ export class NewsTest {
                         {
                             order: 0,
                             type: NewsSectionType.TEXT,
-                            text: "Isi berita pertama."
+                            text: "Ini adalah ringkasan berita pertama."
                         }
                     ]
                 }
@@ -34,7 +34,7 @@ export class NewsTest {
                 title: "Berita 2",
                 slug: "berita-2",
                 thumbnail: "/uploads/news/news-2.jpg",
-                excerpt: "Ini adalah ringkasan berita kedua.",
+                excerpt: "",
                 isPublished: true,
                 sections: {
                     create: [
@@ -54,7 +54,7 @@ export class NewsTest {
                 title: "Berita 3",
                 slug: "berita-3",
                 thumbnail: "/uploads/news/news-3.jpg",
-                excerpt: "Ini adalah ringkasan berita ketiga.",
+                excerpt: "",
                 isPublished: false,
                 sections: {
                     create: [
