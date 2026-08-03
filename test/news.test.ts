@@ -125,7 +125,7 @@ describe('GET /api/admin/news/:id', async () => {
         const token = await AuthTest.getAccessToken()
         
         const response = await supertest(web)
-            .get("/api/admin/news/4")
+            .get("/api/admin/news/999")
             .set("Authorization", `Bearer ${token}`);
 
         expect(response.status).toBe(404);
@@ -280,7 +280,7 @@ describe('DELETE /api/admin/news/:id', async () => {
         const token = await AuthTest.getAccessToken()
 
         const response = await supertest(web)
-            .delete("/api/admin/news/4")
+            .delete("/api/admin/news/999")
             .set("Authorization", `Bearer ${token}`)
 
         expect(response.status).toBe(404);
@@ -327,12 +327,12 @@ describe('POST /api/admin/news/:newsId/sections', async () => {
                 "youtubeUrl",
                 "https://www.youtube.com/watch?v=1is1PwQKo8w"
             );
-            
+        
         expect(response.status).toBe(201);
-        expect(response.body.data.sections[1].type).toBe("YOUTUBE");
+        expect(response.body.data.sections[2].type).toBe("YOUTUBE");
     })
 
-    it('should be able to create news section YOUTUBE ', async () =>{
+    it('should be able to create news section IMAGE ', async () =>{
         const token = await AuthTest.getAccessToken()
 
         const response = await supertest(web)
@@ -342,7 +342,7 @@ describe('POST /api/admin/news/:newsId/sections', async () => {
             .attach("image", "test/resources/news.webp");
             
         expect(response.status).toBe(201);
-        expect(response.body.data.sections[1].type).toBe("IMAGE");
+        expect(response.body.data.sections[2].type).toBe("IMAGE");
     })
     it('should be reject new section due invalid 1', async () =>{
         const token = await AuthTest.getAccessToken()
@@ -392,7 +392,7 @@ describe('POST /api/admin/news/:newsId/sections', async () => {
         const token = await AuthTest.getAccessToken()
 
         const response = await supertest(web)
-            .post("/api/admin/news/4/sections")
+            .post("/api/admin/news/999/sections")
             .set("Authorization", `Bearer ${token}`)
             .field("type", "TEXT")
             .field(
@@ -475,7 +475,7 @@ describe('PATCH /api/admin/news/sections/:sectionId', async () => {
         const token = await AuthTest.getAccessToken()
 
         const response = await supertest(web)
-            .patch("/api/admin/news/sections/4")
+            .patch("/api/admin/news/sections/999")
             .set("Authorization", `Bearer ${token}`)
             .field(
                 "text",
@@ -525,9 +525,93 @@ describe('DELETE /api/admin/news/sections/:sectionId', async () => {
         const token = await AuthTest.getAccessToken()
 
         const response = await supertest(web)
-            .delete("/api/admin/news/sections/4")
+            .delete("/api/admin/news/sections/999")
             .set("Authorization", `Bearer ${token}`)
 
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe("Section not found");
+    })
+
+})
+
+describe('PATCH /api/admin/news/sections/:sectionId/move', async () => {
+    beforeEach(async () => {
+        await AuthTest.create()
+        await NewsTest.createNews()
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete()
+        await NewsTest.deleteAll()
+    })
+
+    it('should be able to move news section UP', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/4/move")
+            .set("Authorization", `Bearer ${token}`)
+            .send({direction: "UP"})
+
+        expect(response.status).toBe(200);
+    })
+
+    it('should be able to move news section DOWN', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/1/move")
+            .set("Authorization", `Bearer ${token}`)
+            .send({direction: "DOWN"})
+
+        expect(response.status).toBe(200);
+    })
+
+    it('should not move section DOWN if already last', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/4/move")
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                direction: "DOWN"
+            });
+
+        expect(response.status).toBe(200);
+
+        expect(response.body.data.sections).toEqual([
+            expect.objectContaining({
+                id: 1,
+                order: 0
+            }),
+            expect.objectContaining({
+                id: 4,
+                order: 1
+            })
+        ]);
+    });
+
+    
+    it('should reject move section due to unauthorized', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/4/move")
+            .set("Authorization", `Bearer ${token}1234`)
+            .send({direction: "UP"})
+            
+        expect(response.status).toBe(401);
+        expect(response.body.message).toBe("Unauthorized");
+    })
+
+    it('should reject move section due to not found', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .patch("/api/admin/news/sections/999/move")
+            .set("Authorization", `Bearer ${token}`)
+            .send({direction: "UP"})
+            
         expect(response.status).toBe(404);
         expect(response.body.message).toBe("Section not found");
     })

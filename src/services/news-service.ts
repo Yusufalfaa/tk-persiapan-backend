@@ -2,7 +2,7 @@ import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
 import type { Prisma } from "../generated/prisma/client.js";
 import { NewsSectionType } from "../generated/prisma/enums.js";
-import { toNewsDetailResponse, toNewsListResponse, type AdminNewsDetailResponse, type CreateNewsRequest, type CreateSectionRequest, type NewsDetailResponse, type NewsListResponse, type UpdateNewsRequest, type UpdateSectionRequest } from "../models/news-model.js";
+import { SectionMoveDirection, toNewsDetailResponse, toNewsListResponse, type AdminNewsDetailResponse, type CreateNewsRequest, type CreateSectionRequest, type NewsDetailResponse, type NewsListResponse, type ReorderSectionRequest, type UpdateNewsRequest, type UpdateSectionRequest } from "../models/news-model.js";
 import type { PageResponse } from "../models/page-model.js";
 import { NewsValidation } from "../validations/news-validation.js";
 import { Validation } from "../validations/validation.js";
@@ -448,6 +448,74 @@ export class NewsService {
         if(section.type === NewsSectionType.IMAGE && section.imagePath) {
             await StorageService.delete(section.imagePath)
         }
+    }
+
+    static async moveSection(request: ReorderSectionRequest, sectionId: number) {
+        const moveRequest = Validation.validate(NewsValidation.MOVE_SECTION, request);
+
+        const section = await prismaClient.newsSection.findUnique({
+            where: {
+                id: sectionId
+            }
+        });
+
+        if (!section) {
+            throw new ResponseError(404, "Section not found");
+        }
+
+        let targetSection;
+        if (moveRequest.direction === SectionMoveDirection.UP) {
+            targetSection = await prismaClient.newsSection.findFirst({
+                where: {
+                    newsId: section.newsId,
+                    order: section.order - 1
+                }
+            });
+        } else {
+            targetSection = await prismaClient.newsSection.findFirst({
+                where: {
+                    newsId: section.newsId,
+                    order: section.order + 1
+                }
+            });
+        }
+
+        if (!targetSection) {
+            return await this.getAdminDetail(section.newsId);
+        }
+
+        await prismaClient.$transaction([
+
+            prismaClient.newsSection.update({
+                where: {
+                    id: section.id
+                },
+                data: {
+                    order: -1
+                }
+            }),
+
+            prismaClient.newsSection.update({
+                where: {
+                    id: targetSection.id
+                },
+                data: {
+                    order: section.order
+                }
+            }),
+
+            prismaClient.newsSection.update({
+                where: {
+                    id: section.id
+                },
+                data: {
+                    order: targetSection.order
+                }
+            }),
+
+        ]);
+
+        return await this.getAdminDetail(section.newsId);
     }
 
 }

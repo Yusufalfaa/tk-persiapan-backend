@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { NewsService } from "../services/news-service.js";
 import { ResponseError } from "../errors/response-error.js";
-import type { CreateNewsRequest, CreateSectionRequest, UpdateNewsRequest, UpdateSectionRequest } from "../models/news-model.js";
+import type { CreateNewsRequest, CreateSectionRequest, ReorderSectionRequest, UpdateNewsRequest, UpdateSectionRequest } from "../models/news-model.js";
 import type { AuthRequest } from "../type/auth-request.js";
 import { StorageService } from "../services/storage-service.js";
 
@@ -185,6 +185,23 @@ export class NewsController {
             })
 
         } catch (e) {
+            next(e);
+        }
+    }
+
+    static async moveSection(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const sectionId = Number(req.params.sectionId)
+            const request : ReorderSectionRequest = {
+                direction: req.body.direction
+            }
+            const response = await NewsService.moveSection(request, sectionId)
+
+            res.status(200).json({
+                data: response,
+            })
+
+        } catch(e) {
             next(e);
         }
     }

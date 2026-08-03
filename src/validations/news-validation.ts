@@ -1,5 +1,5 @@
 import { z, ZodType } from "zod";
-import type { CreateNewsRequest, CreateSectionRequest, UpdateNewsRequest, UpdateSectionRequest } from "../models/news-model.js";
+import { SectionMoveDirection, type CreateNewsRequest, type CreateSectionRequest, type ReorderSectionRequest, type UpdateNewsRequest, type UpdateSectionRequest } from "../models/news-model.js";
 import { NewsSectionType } from "../generated/prisma/enums.js";
 
 const youtubeUrlSchema = z
@@ -54,4 +54,9 @@ export class NewsValidation {
         text: z.string().min(10).optional(),
         youtubeUrl: youtubeUrlSchema.optional(),
     });
+
+    static readonly MOVE_SECTION: ZodType<ReorderSectionRequest> = z.object({
+        direction: z.enum(SectionMoveDirection)
+    })
+
 }

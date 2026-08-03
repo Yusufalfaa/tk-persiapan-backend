@@ -86,3 +86,12 @@ export type UpdateSectionRequest = {
     text?: string | undefined;
     youtubeUrl?: string | undefined;
 }
+
+export enum SectionMoveDirection {
+    UP = "UP",
+    DOWN = "DOWN",
+}
+
+export type ReorderSectionRequest = {
+    direction: SectionMoveDirection;
+}

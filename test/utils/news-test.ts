@@ -25,6 +25,12 @@ export class NewsTest {
                             order: 0,
                             type: NewsSectionType.TEXT,
                             text: "Ini adalah ringkasan berita pertama."
+                        },
+                        {   
+                            id: 4,
+                            order: 1,
+                            type: NewsSectionType.TEXT,
+                            text: "Ini adalah ringkasan berita kedua."
                         }
                     ]
                 }

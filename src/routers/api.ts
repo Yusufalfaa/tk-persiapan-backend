@@ -35,7 +35,7 @@ apiRouter.delete("/api/admin/news/:id", NewsController.deleteNews);
 apiRouter.post("/api/admin/news/:newsId/sections", uploadMiddleware("news").single("image"), NewsController.createSection);
 apiRouter.patch("/api/admin/news/sections/:sectionId", uploadMiddleware("news").single("image"), NewsController.updateSection);
 apiRouter.delete("/api/admin/news/sections/:sectionId", NewsController.deleteSection)
-
+apiRouter.patch("/api/admin/news/sections/:sectionId/move", NewsController.moveSection)
 
 // Admins
 apiRouter.get("/api/admin", requireRole("SUPER_ADMIN"),AdminController.getList);

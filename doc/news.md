@@ -582,14 +582,14 @@ Authorization: Bearer <access_token>
 
 ---
 
-## Reorder Sections
+## Move Section
 
-> Mengubah urutan seluruh section dalam satu berita sekaligus, misal setelah admin drag-and-drop di frontend.
+> Menukar urutan section dengan section tetangganya (atas/bawah).
 
 **Endpoint**
 
 ```
-PATCH /api/admin/news/:newsId/sections/reorder
+PATCH /api/admin/news/sections/:sectionId/move
 ```
 
 ### Headers
@@ -602,19 +602,17 @@ Authorization: Bearer <access_token>
 
 ```json
 {
-    "sections": [
-        { "id": 3, "order": 0 },
-        { "id": 1, "order": 1 },
-        { "id": 2, "order": 2 }
-    ]
+    "direction": "UP"
 }
 ```
+
+`direction` menerima `"UP"` atau `"DOWN"`.
 
 ### Response Body (200 OK)
 
 ```json
 {
-    "message": "Sections reordered successfully"
+    "message": "Section moved successfully"
 }
 ```
 
@@ -622,7 +620,7 @@ Authorization: Bearer <access_token>
 
 ```json
 {
-    "message": "One or more section IDs do not belong to this news"
+    "message": "Section is already at the top"
 }
 ```
 
@@ -638,6 +636,6 @@ Authorization: Bearer <access_token>
 
 ```json
 {
-    "message": "News not found"
+    "message": "Section not found"
 }
 ```
