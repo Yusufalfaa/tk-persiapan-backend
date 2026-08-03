@@ -429,8 +429,8 @@ Content-Type: multipart/form-data
 ```json
 {
     "type": "IMAGE",
-    "order": 1,
-    "image": "(file, max 2MB)"
+    "text": "Ini section",
+    "youtubeUrl": "youtube.com/"
 }
 ```
 

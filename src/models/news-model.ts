@@ -62,6 +62,11 @@ export function toNewsDetailResponse(news: News & { sections: NewsSection[] }): 
     };
 }
 
+export type AdminNewsDetailResponse = NewsDetailResponse & {
+    sectionCount: number;
+    canAddSection: boolean;
+}
+
 export type CreateNewsRequest = {
     title: string,
 }
@@ -69,4 +74,15 @@ export type CreateNewsRequest = {
 export type UpdateNewsRequest = {
     title?: string | undefined,
     isPublished?: boolean | undefined,
+}
+
+export type CreateSectionRequest = {
+    type: NewsSectionType;
+    text?: string | undefined;
+    youtubeUrl?: string | undefined;
+}
+
+export type UpdateSectionRequest = {
+    text?: string | undefined;
+    youtubeUrl?: string | undefined;
 }

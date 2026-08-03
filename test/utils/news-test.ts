@@ -1,10 +1,12 @@
 import { NewsSectionType } from "../../src/generated/prisma/client.js";
 import { prismaClient } from "../../src/application/database.js";
+import { StorageService } from "../../src/services/storage-service.js";
 
 export class NewsTest {
 
     static async deleteAll() {
         await prismaClient.news.deleteMany();
+        await StorageService.deleteAllInFolder("news");
     }
 
     static async createNews() {

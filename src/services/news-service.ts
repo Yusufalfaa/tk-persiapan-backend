@@ -1,6 +1,8 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../errors/response-error.js";
-import { toNewsDetailResponse, toNewsListResponse, type CreateNewsRequest, type NewsDetailResponse, type NewsListResponse, type UpdateNewsRequest } from "../models/news-model.js";
+import type { Prisma } from "../generated/prisma/client.js";
+import { NewsSectionType } from "../generated/prisma/enums.js";
+import { toNewsDetailResponse, toNewsListResponse, type AdminNewsDetailResponse, type CreateNewsRequest, type CreateSectionRequest, type NewsDetailResponse, type NewsListResponse, type UpdateNewsRequest } from "../models/news-model.js";
 import type { PageResponse } from "../models/page-model.js";
 import { NewsValidation } from "../validations/news-validation.js";
 import { Validation } from "../validations/validation.js";
@@ -155,7 +157,7 @@ export class NewsService {
         }
     }
 
-    static async getAdminDetail(newsId: number) : Promise<NewsDetailResponse> {
+    static async getAdminDetail(newsId: number) : Promise<AdminNewsDetailResponse> {
         const news = await prismaClient.news.findFirst({
             where: {
                 id: newsId
@@ -173,7 +175,13 @@ export class NewsService {
             throw new ResponseError(404, "News not found");
         }
 
-        return toNewsDetailResponse(news)
+        const response = toNewsDetailResponse(news);
+
+        return {
+            ...response,
+            sectionCount: news.sections.length,
+            canAddSection: news.sections.length < 10,
+        };
     }
 
     static async createNews(request: CreateNewsRequest): Promise<NewsDetailResponse> {
@@ -252,17 +260,87 @@ export class NewsService {
             throw new ResponseError(404, "News not found");
         }
 
-        for (const section of news.sections) {
-            if (section.imagePath) {
-                await StorageService.delete(section.imagePath);
-            }
-        }
+        const imagePaths = news.sections
+            .filter(section => section.type === NewsSectionType.IMAGE)
+            .map(section => section.imagePath)
+            .filter((path): path is string => path !== null);
+
+        await StorageService.deleteMany(imagePaths);
 
         await prismaClient.news.delete({
             where: {
                 id: newsId,
             }
         })
+    }
+
+    static async createSection(request: CreateSectionRequest, newsId: number, file?: Express.Multer.File): Promise<AdminNewsDetailResponse> {
+        const createRequest : CreateSectionRequest = Validation.validate(NewsValidation.CREATE_SECTION, request);
+
+        let news = await prismaClient.news.findUnique({
+            where: {
+                id: newsId
+            },
+            include: {
+                sections: true,
+            }
+        })
+
+        if (!news) {
+            throw new ResponseError(404, "News not found");
+        }
+
+        if (news.sections.length >= 10) {
+            throw new ResponseError(400, "Maximum 10 sections");
+        }
+
+        if (createRequest.type === NewsSectionType.IMAGE && !file) {
+            throw new ResponseError(400, "Image is required");
+        }
+
+        const order = news.sections.length;
+
+        let data: Prisma.NewsSectionUncheckedCreateInput;
+
+        switch (createRequest.type) {
+            case NewsSectionType.TEXT:
+                data = {
+                    type: NewsSectionType.TEXT,
+                    text: createRequest.text!,
+                    order,
+                    newsId,
+                };
+                break;
+
+            case NewsSectionType.YOUTUBE:
+                data = {
+                    type: NewsSectionType.YOUTUBE,
+                    youtubeUrl: createRequest.youtubeUrl!,
+                    order,
+                    newsId,
+                };
+                break;
+
+            case NewsSectionType.IMAGE:
+                data = {
+                    type: NewsSectionType.IMAGE,
+                    imagePath: StorageService.getPublicPath(
+                        "news",
+                        file!.filename
+                    ),
+                    order,
+                    newsId,
+                };
+                break;
+        }
+
+        await prismaClient.newsSection.create({
+            data,
+        });
+
+        await this.syncNewsSummary(newsId);
+
+        return await this.getAdminDetail(newsId);
     }
 
 }

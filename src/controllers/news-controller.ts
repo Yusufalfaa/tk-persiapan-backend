@@ -1,7 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import { NewsService } from "../services/news-service.js";
 import { ResponseError } from "../errors/response-error.js";
-import type { CreateNewsRequest, UpdateNewsRequest } from "../models/news-model.js";
+import type { CreateNewsRequest, CreateSectionRequest, UpdateNewsRequest } from "../models/news-model.js";
+import type { AuthRequest } from "../type/auth-request.js";
+import { StorageService } from "../services/storage-service.js";
 
 
 export class NewsController {
@@ -39,7 +41,7 @@ export class NewsController {
         }
     }
 
-    static async getAdminList(req: Request, res: Response, next: NextFunction) {
+    static async getAdminList(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const page = Number(req.query.page) | 1;
             const size = Number(req.query.size) | 10;
@@ -51,7 +53,7 @@ export class NewsController {
         }
     }
 
-    static async getAdminDetail(req: Request, res: Response, next: NextFunction) {
+    static async getAdminDetail(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const id = Number(req.params.id);
             if(!id) {
@@ -67,7 +69,7 @@ export class NewsController {
         }
     }
 
-    static async createNews(req: Request, res: Response, next: NextFunction) {
+    static async createNews(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const request : CreateNewsRequest = {
                 title: req.body.title
@@ -84,7 +86,7 @@ export class NewsController {
         }
     }
 
-    static async updateNews(req: Request, res: Response, next: NextFunction) {
+    static async updateNews(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const newsId = Number(req.params.id)
             const request : UpdateNewsRequest = {
@@ -103,7 +105,7 @@ export class NewsController {
         }
     }
 
-    static async deleteNews(req: Request, res: Response, next: NextFunction) {
+    static async deleteNews(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const newsId = Number(req.params.id)
             
@@ -116,5 +118,34 @@ export class NewsController {
             next(e);
         }
     }
+
+    static async createSection(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const newsId = Number(req.params.newsId);
+            const request : CreateSectionRequest = {
+                type: req.body.type,
+                text: req.body.text,
+                youtubeUrl: req.body.youtubeUrl,
+            }
+
+            const response = await NewsService.createSection(request, newsId, req.file)
+
+            res.status(201).json({
+                data: response,
+            });
+        } catch (e) {
+            if (req.file) {
+                await StorageService.delete(
+                    StorageService.getPublicPath(
+                        "news",
+                        req.file.filename
+                    )
+                );
+            }
+
+            next(e);
+        }
+    }
+
 
 }

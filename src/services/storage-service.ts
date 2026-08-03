@@ -63,4 +63,28 @@ export class StorageService {
     ): string {
         return `uploads/${folder}/${filename}`;
     }
+
+    static async deleteAllInFolder(folder: StorageFolder): Promise<void> {
+    const folderPath = path.join(
+        process.cwd(),
+        "uploads",
+        folder
+    );
+
+    try {
+        const files = await fs.readdir(folderPath);
+
+        await Promise.all(
+            files.map(file =>
+                fs.unlink(path.join(folderPath, file))
+            )
+        );
+    } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+            return;
+        }
+
+        throw error;
+    }
+}
 }

@@ -288,3 +288,138 @@ describe('DELETE /api/admin/news/:id', async () => {
     })
 
 })
+
+describe('POST /api/admin/news/:newsId/sections', async () => {
+    beforeEach(async () => {
+        await AuthTest.create()
+        await NewsTest.createNews()
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete()
+        await NewsTest.deleteAll()
+    })
+
+    it('should be able to create news section TEXT ', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .post("/api/admin/news/1/sections")
+            .set("Authorization", `Bearer ${token}`)
+            .field("type", "TEXT")
+            .field(
+                "text",
+                "Ini adalah isi section baru yang panjangnya lebih dari sepuluh karakter."
+            );
+            
+        expect(response.status).toBe(201);
+        expect(response.body.data.sections[1].type).toBe("TEXT");
+    })
+
+    it('should be able to create news section YOUTUBE ', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .post("/api/admin/news/1/sections")
+            .set("Authorization", `Bearer ${token}`)
+            .field("type", "YOUTUBE")
+            .field(
+                "youtubeUrl",
+                "https://www.youtube.com/watch?v=1is1PwQKo8w"
+            );
+            
+        expect(response.status).toBe(201);
+        expect(response.body.data.sections[1].type).toBe("YOUTUBE");
+    })
+
+    it('should be able to create news section YOUTUBE ', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .post("/api/admin/news/1/sections")
+            .set("Authorization", `Bearer ${token}`)
+            .field("type", "IMAGE")
+            .attach("image", "test/resources/news.webp");
+            
+        expect(response.status).toBe(201);
+        expect(response.body.data.sections[1].type).toBe("IMAGE");
+    })
+    it('should be reject new section due invalid 1', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .post("/api/admin/news/1/sections")
+            .set("Authorization", `Bearer ${token}`)
+            .field("type", "IMAGE")
+            .attach("image", "test/resources/news.webp")
+            .attach("image", "test/resources/news.webp")
+
+        expect(response.status).toBe(400);
+    })
+
+    it('should be reject new section due invalid 2', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .post("/api/admin/news/1/sections")
+            .set("Authorization", `Bearer ${token}`)
+            .field("type", "TEXT")
+            .field(
+                "youtubeUrl",
+                "https://www.youtube.com/watch?v=1is1PwQKo8w"
+            );
+            
+        expect(response.status).toBe(400);
+    })
+
+    it('should be reject new section due invalid 3', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .post("/api/admin/news/1/sections")
+            .set("Authorization", `Bearer ${token}`)
+            .field("type", "TEXT")
+            .field(
+                "text",
+                "Ini adalah isi section baru yang panjangnya lebih dari sepuluh karakter."
+            )
+            .field(
+                "youtubeUrl",
+                "https://www.youtube.com/watch?v=1is1PwQKo8w"
+            );
+        
+        expect(response.status).toBe(400);
+    })
+
+    it('should be reject to create news section due to unauthorized ', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .post("/api/admin/news/1/sections")
+            .set("Authorization", `Bearer ${token}1234`)
+            .field("type", "TEXT")
+            .field(
+                "text",
+                "Ini adalah isi section baru yang panjangnya lebih dari sepuluh karakter."
+            );
+            
+        expect(response.status).toBe(401);
+        expect(response.body.message).toBe("Unauthorized");
+    })
+
+    it('should be reject to create news section due to news not found ', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .post("/api/admin/news/4/sections")
+            .set("Authorization", `Bearer ${token}`)
+            .field("type", "TEXT")
+            .field(
+                "text",
+                "Ini adalah isi section baru yang panjangnya lebih dari sepuluh karakter."
+            );
+            
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe("News not found");
+    })
+})
