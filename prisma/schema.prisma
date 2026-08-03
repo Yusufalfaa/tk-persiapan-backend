@@ -73,7 +73,7 @@ model NewsSection {
   text String? @db.Text
   
   // IMAGE
-  imageUrl String? @db.VarChar(500)
+  imagePath String? @db.VarChar(500)
 
   // YOUTUBE
   youtubeUrl String? @db.VarChar(500)

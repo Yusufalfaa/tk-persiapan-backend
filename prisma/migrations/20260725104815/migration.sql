@@ -34,7 +34,7 @@ CREATE TABLE `news_sections` (
     `type` ENUM('TEXT', 'IMAGE', 'YOUTUBE') NOT NULL,
     `order` INTEGER NOT NULL DEFAULT 0,
     `text` TEXT NULL,
-    `imageUrl` VARCHAR(500) NULL,
+    `imagePath` VARCHAR(500) NULL,
     `youtubeUrl` VARCHAR(500) NULL,
     `newsId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

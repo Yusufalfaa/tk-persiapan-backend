@@ -73,38 +73,24 @@ GET /api/news/:slug
                 "type": "TEXT",
                 "order": 0,
                 "text": "Deskripsi kegiatan lomba TK tahun ini...",
-                "youtubeUrl": null,
-                "columns": null,
-                "images": []
+                "imageUrl": null,
+                "youtubeUrl": null
             },
             {
                 "id": 2,
                 "type": "IMAGE",
                 "order": 1,
                 "text": null,
-                "youtubeUrl": null,
-                "columns": 2,
-                "images": [
-                    {
-                        "id": 1,
-                        "imagePath": "https://your-storage.com/news/photo1.jpg",
-                        "order": 0
-                    },
-                    {
-                        "id": 2,
-                        "imagePath": "https://your-storage.com/news/photo2.jpg",
-                        "order": 1
-                    }
-                ]
+                "imageUrl": "https://your-storage.com/news/photo1.jpg",
+                "youtubeUrl": null
             },
             {
                 "id": 3,
                 "type": "YOUTUBE",
                 "order": 2,
                 "text": null,
-                "youtubeUrl": "https://www.youtube.com/watch?v=xxxxxxx",
-                "columns": null,
-                "images": []
+                "imageUrl": null,
+                "youtubeUrl": "https://www.youtube.com/watch?v=xxxxxxx"
             }
         ],
         "createdAt": "2026-01-01T10:00:00.000Z",
@@ -222,9 +208,8 @@ GET /api/admin/news/:id
                 "type": "TEXT",
                 "order": 0,
                 "text": "Isi berita draft",
-                "youtubeUrl": null,
-                "columns": null,
-                "images": []
+                "imageUrl": null,
+                "youtubeUrl": null
             }
         ],
         "createdAt": "2026-01-02T10:00:00.000Z",
@@ -373,7 +358,7 @@ Authorization: Bearer <access_token>
 
 ## Delete News
 
-> Menghapus berita beserta seluruh `sections` dan `images` di dalamnya (cascade).
+> Menghapus berita beserta seluruh `sections` di dalamnya (cascade).
 
 **Endpoint**
 
@@ -425,7 +410,7 @@ Authorization: Bearer <access_token>
 >
 > - `TEXT` → wajib isi `text`
 > - `YOUTUBE` → wajib isi `youtubeUrl`
-> - `IMAGE` → wajib isi `columns` (angka 1–4) dan minimal 1 file di `images`
+> - `IMAGE` → wajib isi 1 file di `image`
 
 **Endpoint**
 
@@ -446,8 +431,7 @@ Content-Type: multipart/form-data
 {
     "type": "IMAGE",
     "order": 1,
-    "columns": 2,
-    "images": "(file[], max 2MB per file)"
+    "image": "(file, max 2MB)"
 }
 ```
 
@@ -460,20 +444,8 @@ Content-Type: multipart/form-data
         "type": "IMAGE",
         "order": 1,
         "text": null,
+        "imageUrl": "https://your-storage.com/news/photo1.jpg",
         "youtubeUrl": null,
-        "columns": 2,
-        "images": [
-            {
-                "id": 1,
-                "imagePath": "https://your-storage.com/news/photo1.jpg",
-                "order": 0
-            },
-            {
-                "id": 2,
-                "imagePath": "https://your-storage.com/news/photo2.jpg",
-                "order": 1
-            }
-        ],
         "createdAt": "2026-01-01T10:00:00.000Z",
         "updatedAt": "2026-01-01T10:00:00.000Z"
     }
@@ -486,7 +458,7 @@ Content-Type: multipart/form-data
 {
     "message": "Validation error",
     "errors": {
-        "columns": "columns wajib diisi (1-4) untuk section bertipe IMAGE"
+        "image": "1 gambar wajib diisi untuk section bertipe IMAGE"
     }
 }
 ```
@@ -511,7 +483,7 @@ Content-Type: multipart/form-data
 
 ## Update Section
 
-> Mengubah isi section (misal ganti teks, ganti link YouTube, atau ganti jumlah kolom gambar). Semua field bersifat opsional.
+> Mengubah isi section (misal ganti teks, ganti link YouTube, atau ganti gambar). Semua field bersifat opsional.
 
 **Endpoint**
 
@@ -543,9 +515,8 @@ Content-Type: multipart/form-data
         "type": "TEXT",
         "order": 0,
         "text": "Teks yang sudah diperbarui",
+        "imageUrl": null,
         "youtubeUrl": null,
-        "columns": null,
-        "images": [],
         "createdAt": "2026-01-01T10:00:00.000Z",
         "updatedAt": "2026-01-02T10:00:00.000Z"
     }
@@ -572,7 +543,7 @@ Content-Type: multipart/form-data
 
 ## Delete Section
 
-> Menghapus 1 section beserta seluruh `images` di dalamnya (cascade).
+> Menghapus 1 section.
 
 **Endpoint**
 
