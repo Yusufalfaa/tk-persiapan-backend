@@ -173,4 +173,19 @@ export class NewsController {
             next(e);
         }
     }
+
+    static async deleteSection(req: AuthRequest, res: Response, next: NextFunction) {
+        try {
+            const sectionId = Number(req.params.sectionId)
+
+            await NewsService.deleteSection(sectionId)
+
+            res.status(200).json({
+                message: "Section deleted successfully"
+            })
+
+        } catch (e) {
+            next(e);
+        }
+    }
 }

@@ -486,3 +486,50 @@ describe('PATCH /api/admin/news/sections/:sectionId', async () => {
         expect(response.body.message).toBe("Section not found");
     })
 })
+
+describe('DELETE /api/admin/news/sections/:sectionId', async () => {
+    beforeEach(async () => {
+        await AuthTest.create()
+        await NewsTest.createNews()
+    })
+
+    afterEach(async () => {
+        await AuthTest.delete()
+        await NewsTest.deleteAll()
+    })
+
+    it('should be able to delete news section', async () => {
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .delete("/api/admin/news/sections/1")
+            .set("Authorization", `Bearer ${token}`)
+
+        console.log(response.body)
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe("Section deleted successfully");
+    })
+
+    it('should not be able to delete news section unauthorized', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .delete("/api/admin/news/sections/1")
+            .set("Authorization", `Bearer ${token}1234`)
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toBe("Unauthorized");
+    })
+
+    it('should not be able to delete news section not found', async () =>{
+        const token = await AuthTest.getAccessToken()
+
+        const response = await supertest(web)
+            .delete("/api/admin/news/sections/4")
+            .set("Authorization", `Bearer ${token}`)
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe("Section not found");
+    })
+
+})

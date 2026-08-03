@@ -428,4 +428,26 @@ export class NewsService {
         return await this.getAdminDetail(section.newsId);
     }
 
+    static async deleteSection(sectiondId: number) {
+        const section = await prismaClient.newsSection.findUnique({
+            where: {
+                id: sectiondId,
+            }
+        })
+
+        if(!section) {
+            throw new ResponseError(404, "Section not found")
+        }
+
+        await prismaClient.newsSection.delete({
+            where: {
+                id: sectiondId,
+            }
+        })
+
+        if(section.type === NewsSectionType.IMAGE && section.imagePath) {
+            await StorageService.delete(section.imagePath)
+        }
+    }
+
 }
