@@ -80,6 +80,8 @@ Authorization: Bearer <access_token>
 
 # Update Current User
 
+> `username` tidak dapat diubah lewat endpoint ini. Untuk mengganti `name` saja, cukup kirim `name`. Untuk mengganti password, wajib kirim `oldPassword` dan `newPassword` sekaligus — `oldPassword` digunakan untuk verifikasi sebelum password baru disimpan.
+
 **Endpoint**
 
 ```
@@ -94,12 +96,13 @@ Authorization: Bearer <access_token>
 
 ## Request Body
 
-Semua field bersifat **opsional**.
+Semua field bersifat **opsional**, tapi `oldPassword` dan `newPassword` harus dikirim bersamaan.
 
 ```json
 {
     "name": "admin satu",
-    "password": "newpassword"
+    "oldPassword": "123456",
+    "newPassword": "newpassword"
 }
 ```
 
@@ -109,11 +112,11 @@ Semua field bersifat **opsional**.
 {
     "data": {
         "id": 1,
-        "username": "admin_updated",
-        "name": "Admin Satu",
+        "username": "admin",
+        "name": "admin satu",
         "role": "ADMIN",
         "createdAt": "2026-01-01T10:00:00.000Z",
-        "updatedAt": "2026-01-01T10:00:00.000Z"
+        "updatedAt": "2026-01-02T12:00:00.000Z"
     }
 }
 ```
@@ -126,6 +129,14 @@ Semua field bersifat **opsional**.
 }
 ```
 
+Kemungkinan pesan lain untuk `400`:
+
+```json
+{
+    "message": "newPassword requires oldPassword"
+}
+```
+
 ## Response Body (401 Unauthorized)
 
 ```json
@@ -134,11 +145,11 @@ Semua field bersifat **opsional**.
 }
 ```
 
-## Response Body (409 Conflict)
+Kemungkinan pesan lain untuk `401` (khusus saat ganti password):
 
 ```json
 {
-    "message": "Username already exists"
+    "message": "Old password is incorrect"
 }
 ```
 

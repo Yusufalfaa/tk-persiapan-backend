@@ -36,7 +36,7 @@ export class AuthController {
                 data: response
             })
         } catch (e) {
-            next(e);
+            next(e);    
         }
     }
 
@@ -45,7 +45,7 @@ export class AuthController {
             await AuthService.logout(req.admin!);
 
             res.status(200).json({
-                data: "Logout successful"
+                message: "Logout successful"
             });
         } catch (e) {
             next(e);

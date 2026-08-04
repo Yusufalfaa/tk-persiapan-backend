@@ -26,21 +26,20 @@ export type SchoolProfileResponse = {
 
 export type MissionRequest = {
     content: string;
-    order: number;
 };
 
 
 export type SchoolProfileUpdateRequest = {
-    name: string;
-    vision: string;
-    address: string;
-    latitude: number;
-    longitude: number;
-    googleMapsUrl: string;
-    phone: string;
-    email: string;
-    videoUrl: string | null;
-    missions: MissionRequest[];
+    name?: string | undefined;
+    vision?: string | undefined;
+    address?: string | undefined;
+    latitude?: number | undefined;
+    longitude?: number | undefined;
+    googleMapsUrl?: string | undefined;
+    phone?: string | undefined;
+    email?: string | undefined;
+    videoUrl?: string | null | undefined;
+    missions?: MissionRequest[] | undefined;
 };
 
 export function toSchoolProfileResponse(school: SchoolProfile & {missions: Mission[];}): SchoolProfileResponse {

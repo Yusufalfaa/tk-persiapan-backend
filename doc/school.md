@@ -4,6 +4,8 @@
 
 # Get School Profile
 
+> Endpoint publik, tidak memerlukan autentikasi.
+
 **Endpoint**
 
 ```
@@ -29,12 +31,12 @@ GET /api/school
             {
                 "id": 1,
                 "content": "Mendidik anak dengan baik",
-                "order": 1
+                "order": 0
             },
             {
                 "id": 2,
                 "content": "Mengembangkan kreativitas anak",
-                "order": 2
+                "order": 1
             }
         ],
         "createdAt": "2026-01-01T10:00:00.000Z",
@@ -46,6 +48,10 @@ GET /api/school
 ---
 
 # Update School Profile
+
+> Memerlukan autentikasi admin. Semua field bersifat opsional — hanya field yang dikirim yang akan diperbarui.
+>
+> Khusus `missions`: jika dikirim, seluruh data misi lama akan digantikan total oleh array yang dikirim (bukan digabung/di-merge). Urutan misi ditentukan dari **posisi di dalam array**, bukan dari field `order` — cukup kirim `content` untuk setiap misi, sesuai urutan tampil yang diinginkan.
 
 **Endpoint**
 
@@ -73,19 +79,11 @@ Authorization: Bearer <access_token>
     "email": "updated@email.com",
     "videoUrl": "https://youtube.com/new",
     "missions": [
-        {
-            "content": "Updated misi 1",
-            "order": 1
-        },
-        {
-            "content": "Updated misi 2",
-            "order": 2
-        }
+        { "content": "Updated misi 1" },
+        { "content": "Updated misi 2" }
     ]
 }
 ```
-
-> Saat update, daftar `missions` akan menggantikan seluruh data misi yang lama.
 
 ## Response Body (200 OK)
 
@@ -104,14 +102,14 @@ Authorization: Bearer <access_token>
         "videoUrl": "https://youtube.com/new",
         "missions": [
             {
-                "id": 1,
+                "id": 5,
                 "content": "Updated misi 1",
-                "order": 1
+                "order": 0
             },
             {
-                "id": 2,
+                "id": 6,
                 "content": "Updated misi 2",
-                "order": 2
+                "order": 1
             }
         ],
         "createdAt": "2026-01-01T10:00:00.000Z",
@@ -124,7 +122,10 @@ Authorization: Bearer <access_token>
 
 ```json
 {
-    "message": "Invalid request"
+    "message": "Validation error",
+    "errors": {
+        "email": "Format email tidak valid"
+    }
 }
 ```
 

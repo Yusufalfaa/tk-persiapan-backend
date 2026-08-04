@@ -29,7 +29,7 @@ export class SchoolService {
 
     static async update(request: SchoolProfileUpdateRequest): Promise<SchoolProfileResponse> {
 
-        const updateRequest = Validation.validate(SchoolValidation.UPDATE,request);
+        const updateRequest = Validation.validate<SchoolProfileUpdateRequest>(SchoolValidation.UPDATE,request);
 
         await prismaClient.$transaction(async (tx) => {
 
@@ -38,31 +38,31 @@ export class SchoolService {
                     id: 1,
                 },
                 data: {
-                    name: updateRequest.name,
-                    vision: updateRequest.vision,
-                    address: updateRequest.address,
-                    latitude: updateRequest.latitude,
-                    longitude: updateRequest.longitude,
-                    googleMapsUrl: updateRequest.googleMapsUrl,
-                    phone: updateRequest.phone,
-                    email: updateRequest.email,
-                    videoUrl: updateRequest.videoUrl,
+                    ...(updateRequest.name !== undefined && { name: updateRequest.name }),
+                    ...(updateRequest.vision !== undefined && { vision: updateRequest.vision }),
+                    ...(updateRequest.address !== undefined && { address: updateRequest.address }),
+                    ...(updateRequest.latitude !== undefined && { latitude: updateRequest.latitude }),
+                    ...(updateRequest.longitude !== undefined && { longitude: updateRequest.longitude }),
+                    ...(updateRequest.googleMapsUrl !== undefined && { googleMapsUrl: updateRequest.googleMapsUrl }),
+                    ...(updateRequest.phone !== undefined && { phone: updateRequest.phone }),
+                    ...(updateRequest.email !== undefined && { email: updateRequest.email }),
+                    ...(updateRequest.videoUrl !== undefined && { videoUrl: updateRequest.videoUrl }),
                 }
             });
 
-            await tx.mission.deleteMany({
-                where: {
-                    schoolId: 1,
-                }
-            });
+            if (updateRequest.missions !== undefined) {
+                await tx.mission.deleteMany({
+                    where: { schoolId: 1 },
+                });
 
-            await tx.mission.createMany({
-                data: updateRequest.missions.map((mission) => ({
-                    content: mission.content,
-                    order: mission.order,
-                    schoolId: 1,
-                }))
-            });
+                await tx.mission.createMany({
+                    data: updateRequest.missions.map((mission, index) => ({
+                        content: mission.content,
+                        order: index,
+                        schoolId: 1,
+                    }))
+                });
+            }
 
         });
 

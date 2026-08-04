@@ -37,7 +37,7 @@ export class AuthService {
             role: admin.role,
             },
             process.env.JWT_SECRET as string,
-            { expiresIn: "30m"}
+            { expiresIn: "4h"}
         );
 
         return {
