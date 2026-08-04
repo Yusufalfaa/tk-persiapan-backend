@@ -61,10 +61,10 @@ export class AdminController {
     static async delete(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const adminId = Number(req.params.id);
-            const response = await AdminService.delete(adminId);
+            await AdminService.delete(adminId);
 
             res.status(200).json({
-                data: response,
+                message: "Admin deleted successfully",
             });
         } catch (e) {
             next(e);

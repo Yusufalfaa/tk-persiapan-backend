@@ -4,12 +4,12 @@
 
 ---
 
-# List Admins
+# List Admin
 
 **Endpoint**
 
 ```
-GET /api/admins
+GET /api/admin
 ```
 
 ## Headers
@@ -79,7 +79,7 @@ Authorization: Bearer <access_token>
 **Endpoint**
 
 ```
-GET /api/admins/:id
+GET /api/admin/:id
 ```
 
 ## Headers
@@ -134,7 +134,7 @@ Authorization: Bearer <access_token>
 **Endpoint**
 
 ```
-POST /api/admins
+POST /api/admin
 ```
 
 > Role selalu dibuat sebagai `ADMIN`. Endpoint ini tidak menerima field `role` dari request — pembuatan akun `SUPER_ADMIN` hanya dilakukan lewat seed/database, agar tidak ada jalur untuk membuat super admin tambahan lewat API.
@@ -211,7 +211,7 @@ Authorization: Bearer <access_token>
 **Endpoint**
 
 ```
-PATCH /api/admins/:id/reset-password
+PATCH /api/admin/:id/reset-password
 ```
 
 ## Headers
@@ -277,7 +277,7 @@ Authorization: Bearer <access_token>
 **Endpoint**
 
 ```
-DELETE /api/admins/:id
+DELETE /api/admin/:id
 ```
 
 ## Headers

@@ -79,6 +79,29 @@ export class NewsService {
         : plainText;
     }
 
+    private static async reorderSections(newsId: number) {
+        const sections = await prismaClient.newsSection.findMany({
+            where: {
+                newsId
+            },
+            orderBy: {
+                order: "asc"
+            }
+        });
+
+        await prismaClient.$transaction(
+            sections.map((section, index) =>
+                prismaClient.newsSection.update({
+                    where: {
+                        id: section.id
+                    },
+                    data: {
+                        order: index
+                    }
+                })
+            )
+        );
+    }
 
     static async syncNewsSummary(newsId: number) {
         const [thumbnail, excerpt] = await Promise.all([
@@ -478,6 +501,9 @@ export class NewsService {
         if(section.type === NewsSectionType.IMAGE && section.imagePath) {
             await StorageService.delete(section.imagePath)
         }
+
+        await this.reorderSections(section.newsId);
+        await this.syncNewsSummary(section.newsId);
     }
 
     static async moveSection(request: ReorderSectionRequest, sectionId: number) {
@@ -544,6 +570,8 @@ export class NewsService {
             }),
 
         ]);
+
+        await this.syncNewsSummary(section.newsId);
 
         return await this.getAdminDetail(section.newsId);
     }
