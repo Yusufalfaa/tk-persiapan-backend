@@ -35,7 +35,7 @@ export class TeacherController {
             const request : TeacherCreateRequest = {
                 name: req.body.name,
                 position: req.body.position,
-                order: Number(req.body.order),
+                order: req.body.order !== undefined ? Number(req.body.order) : undefined,
             }
 
             const response = await TeacherService.create(request, req.file)

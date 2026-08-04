@@ -14,11 +14,12 @@ const ALLOWED_MIME_TYPES = [
 
 export function uploadMiddleware(folder: UploadFolder) {
 
+    
+
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
             const uploadPath = path.join(
-                process.cwd(),
-                "uploads",
+                path.resolve(process.env.STORAGE_PATH!),
                 folder
             );
             if (!fs.existsSync(uploadPath)) {

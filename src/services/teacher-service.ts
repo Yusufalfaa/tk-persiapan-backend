@@ -51,7 +51,7 @@ export class TeacherService {
         const createRequest = Validation.validate(TeacherValidation.CREATE, request);
 
         const teacher = await prismaClient.$transaction(async (tx) => {
-            const order = createRequest.order ?? await tx.teacher.count();
+            const order = createRequest.order ?? await tx.teacher.count()+1;
 
             await tx.teacher.updateMany({
                 where:{
@@ -110,6 +110,15 @@ export class TeacherService {
             );
         }
 
+        const totalTeacher = await prismaClient.teacher.count();
+
+        if (
+            updateRequest.order !== undefined &&
+            (updateRequest.order < 1 || updateRequest.order > totalTeacher)
+        ) {
+            throw new ResponseError(400, "Invalid order");
+        }
+
         const updatedTeacher = await prismaClient.$transaction(async (tx) => {
 
             if (
@@ -127,37 +136,51 @@ export class TeacherService {
                 });
 
                 if(updateRequest.order < teacher.order){
-
-                    await tx.teacher.updateMany({
-                        where:{
-                            order:{
-                                gte:updateRequest.order,
-                                lt:teacher.order
+                    const teachers = await tx.teacher.findMany({
+                        where: {
+                            order: {
+                                gte: updateRequest.order,
+                                lt: teacher.order
                             }
                         },
-                        data:{
-                            order:{
-                                increment:1
-                            }
+                        orderBy: {
+                            order: "desc"
                         }
                     });
 
+                    for (const t of teachers) {
+                        await tx.teacher.update({
+                            where: {
+                                id: t.id
+                            },
+                            data: {
+                                order: t.order + 1
+                            }
+                        });
+                    }
                 } else {
-
-                    await tx.teacher.updateMany({
-                        where:{
-                            order:{
-                                gt:teacher.order,
-                                lte:updateRequest.order
+                    const teachers = await tx.teacher.findMany({
+                        where: {
+                            order: {
+                                gt: teacher.order,
+                                lte: updateRequest.order
                             }
                         },
-                        data:{
-                            order:{
-                                decrement:1
-                            }
+                        orderBy: {
+                            order: "asc"
                         }
                     });
 
+                    for (const t of teachers) {
+                        await tx.teacher.update({
+                            where: {
+                                id: t.id
+                            },
+                            data: {
+                                order: t.order - 1
+                            }
+                        });
+                    }
                 }
             }
 
@@ -203,17 +226,42 @@ export class TeacherService {
             throw new ResponseError(404, "Teacher not found");
         }
 
+        await prismaClient.$transaction(async (tx) => {
+                await tx.teacher.delete({
+                    where: {
+                        id: teacherId
+                    }
+                });
+
+                const teachers = await tx.teacher.findMany({
+                    where: {
+                        order: {
+                            gt: teacher.order
+                        }
+                    },
+                    orderBy: {
+                        order: "asc"
+                    }
+                });
+
+                for (const t of teachers) {
+
+                    await tx.teacher.update({
+                        where: {
+                            id: t.id
+                        },
+                        data: {
+                            order: t.order - 1
+                        }
+                    });
+                }
+            });
+
         if(teacher.photoPath){
             await StorageService.delete(
                 teacher.photoPath
             );
         }
-
-        await prismaClient.teacher.delete({
-            where: {
-                id: teacherId
-            }
-        })
     }
 
 }

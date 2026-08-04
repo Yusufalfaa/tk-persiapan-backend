@@ -9,8 +9,10 @@ export class StorageService {
 
     private static getAbsolutePath(filePath: string): string {
         return path.join(
-            process.cwd(),
-            filePath.replace(/^\/+/, "")
+            path.resolve(process.env.STORAGE_PATH!),
+            filePath
+                .replace(/^\/storage\//, "")
+                .replace(/^\/+/, "")
         );
     }
 
@@ -57,34 +59,30 @@ export class StorageService {
     }
 
 
-    static getPublicPath(
-        folder: StorageFolder,
-        filename: string
-    ): string {
-        return `uploads/${folder}/${filename}`;
+    static getPublicPath(folder: StorageFolder, filename: string): string {
+        return `/storage/${folder}/${filename}`;
     }
 
     static async deleteAllInFolder(folder: StorageFolder): Promise<void> {
-    const folderPath = path.join(
-        process.cwd(),
-        "uploads",
-        folder
-    );
-
-    try {
-        const files = await fs.readdir(folderPath);
-
-        await Promise.all(
-            files.map(file =>
-                fs.unlink(path.join(folderPath, file))
-            )
+        const folderPath = path.join(
+            path.resolve(process.env.STORAGE_PATH!),
+            folder
         );
-    } catch (error) {
-        if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-            return;
-        }
 
-        throw error;
+        try {
+            const files = await fs.readdir(folderPath);
+
+            await Promise.all(
+                files.map(file =>
+                    fs.unlink(path.join(folderPath, file))
+                )
+            );
+        } catch (error) {
+            if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+                return;
+            }
+
+            throw error;
+        }
     }
-}
 }
