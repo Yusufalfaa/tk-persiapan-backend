@@ -8,7 +8,8 @@ import path from "path";
 export const web = express();
 
 web.use(cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:3001",
+    credentials: true,
 }));
 
 web.use(express.json());
