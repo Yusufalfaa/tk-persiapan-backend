@@ -10,8 +10,10 @@ export class NewsController {
 
     static async getList(req: Request, res: Response, next: NextFunction) {
         try {
-            const page = Number(req.query.page) | 1;
-            const size = Number(req.query.size) | 10;
+            console.log("QUERY:", req.query);
+
+            const page = Number(req.query.page) ?? 1;
+            const size = Number(req.query.size) ?? 10;
 
             const response = await NewsService.getList(page, size);
             res.status(200).json(response);
@@ -43,8 +45,8 @@ export class NewsController {
 
     static async getAdminList(req: AuthRequest, res: Response, next: NextFunction) {
         try {
-            const page = Number(req.query.page) | 1;
-            const size = Number(req.query.size) | 10;
+            const page = Number(req.query.page) ?? 1;
+            const size = Number(req.query.size) ?? 10;
 
             const response = await NewsService.getAdminList(page, size);
             res.status(200).json(response);
@@ -136,7 +138,7 @@ export class NewsController {
         } catch (e) {
             if (req.file) {
                 await StorageService.delete(
-                    StorageService.getPublicPath(
+                    StorageService.getStoragePath(
                         "news",
                         req.file.filename
                     )
@@ -163,7 +165,7 @@ export class NewsController {
         } catch (e) {
             if (req.file) {
                 await StorageService.delete(
-                    StorageService.getPublicPath(
+                    StorageService.getStoragePath(
                         "news",
                         req.file.filename
                     )

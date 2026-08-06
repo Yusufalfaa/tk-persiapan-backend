@@ -1,10 +1,11 @@
 import type { News, NewsSection, NewsSectionType } from "../generated/prisma/client.js";
+import { StorageService } from "../services/storage-service.js";
 
 export type NewsListResponse = {
     id: number;
     title: string;
     slug: string;
-    thumbnail?: string | null;
+    thumbnailUrl?: string | null;
     excerpt?: string| null;
     isPublished: boolean;
     createdAt: Date;
@@ -26,7 +27,7 @@ export type NewsSectionResponse = {
     type: NewsSectionType;
     order: number;
     text?: string | null;
-    imagePath?: string | null;
+    imageUrl?: string | null;
     youtubeUrl?: string | null;
 }
 
@@ -35,7 +36,9 @@ export function toNewsListResponse(newsList: News[]) : NewsListResponse[] {
         id: news.id,
         title: news.title,
         slug: news.slug,
-        thumbnail: news.thumbnail,
+        thumbnailUrl: news.thumbnail
+            ? StorageService.getPublicUrlFromPath(news.thumbnail)
+            : null,
         excerpt: news.excerpt,
         isPublished: news.isPublished,
         createdAt: news.createdAt,
@@ -54,7 +57,12 @@ export function toNewsDetailResponse(news: News & { sections: NewsSection[] }): 
             type: section.type,
             order: section.order,
             text: section.text,
-            imagePath: section.imagePath,
+            imageUrl: section.imagePath
+                ? StorageService.getPublicUrlFromPath(
+                    section.imagePath
+                )
+                : null,
+
             youtubeUrl: section.youtubeUrl,
         })),
         createdAt: news.createdAt,

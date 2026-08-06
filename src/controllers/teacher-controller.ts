@@ -46,7 +46,7 @@ export class TeacherController {
         } catch (e) {
             if (req.file) {
                 await StorageService.delete(
-                    StorageService.getPublicPath(
+                    StorageService.getStoragePath(
                         "teachers",
                         req.file.filename
                     )

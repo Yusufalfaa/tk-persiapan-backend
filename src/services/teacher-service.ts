@@ -69,7 +69,7 @@ export class TeacherService {
             let photoPath: string | null = null;
 
             if(file){
-                photoPath = StorageService.getPublicPath(
+                photoPath = StorageService.getStoragePath(
                     "teachers",
                     file.filename
                 );
@@ -104,7 +104,7 @@ export class TeacherService {
         let photoPath = teacher.photoPath;
 
         if (file) {
-            photoPath = StorageService.getPublicPath(
+            photoPath = StorageService.getStoragePath(
                 "teachers",
                 file.filename
             );
@@ -207,9 +207,14 @@ export class TeacherService {
             });
 
         });
+        
         if (file && teacher.photoPath) {
-            await StorageService.delete(teacher.photoPath)
-            };
+            try {
+                await StorageService.delete(teacher.photoPath);
+            } catch (error) {
+                console.error(error);
+            }
+        }
 
         return toTeacherResponse(updatedTeacher)
         

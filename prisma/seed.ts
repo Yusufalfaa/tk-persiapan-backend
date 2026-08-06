@@ -29,6 +29,7 @@ async function main() {
             googleMapsUrl: "https://maps.google.com/",
             phone: "08123456789",
             email: "info@tkpersiapan.sch.id",
+            instagramUrl: "https://www.instagram.com/tk_persiapan25/",
         },
     });
 

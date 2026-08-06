@@ -67,11 +67,11 @@ model NewsSection {
   id Int @id @default(autoincrement())
 
   type  NewsSectionType
-  order Int @default(0)
+  order Int             @default(0)
 
   // TEXT
   text String? @db.Text
-  
+
   // IMAGE
   imagePath String? @db.VarChar(500)
 
@@ -89,7 +89,6 @@ model NewsSection {
   @@map("news_sections")
 }
 
-
 // SCHOOL PROFILE
 
 model SchoolProfile {
@@ -104,8 +103,9 @@ model SchoolProfile {
 
   googleMapsUrl String @db.VarChar(500)
 
-  phone String @db.VarChar(20)
-  email String @db.VarChar(100)
+  phone        String  @db.VarChar(20)
+  email        String  @db.VarChar(100)
+  instagramUrl String? @db.VarChar(500)
 
   videoUrl String? @db.VarChar(500)
 

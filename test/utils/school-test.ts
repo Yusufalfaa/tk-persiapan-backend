@@ -23,6 +23,7 @@ export class SchoolTest {
                 googleMapsUrl: "https://maps.google.com",
                 phone: "08123456789",
                 email: "tk@persiapan.com",
+                instagramUrl: "https://www.instagram.com/tk_persiapan25/",
                 videoUrl: "https://youtube.com",
                 missions: {
                     create: [

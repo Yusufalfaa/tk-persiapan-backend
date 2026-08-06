@@ -460,7 +460,7 @@ describe('PATCH /api/admin/news/sections/:sectionId', async () => {
             .attach("image", "test/resources/news.webp");
             
         expect(response.status).toBe(200);
-        expect(response.body.data.sections[0].imagePath).toBeDefined();
+        expect(response.body.data.sections[0].imageUrl).toBeDefined();
     })
 
     it('should be able to update news section YOUTUBE', async () => {

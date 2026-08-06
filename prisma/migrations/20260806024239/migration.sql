@@ -56,6 +56,7 @@ CREATE TABLE `school_profile` (
     `googleMapsUrl` VARCHAR(500) NOT NULL,
     `phone` VARCHAR(20) NOT NULL,
     `email` VARCHAR(100) NOT NULL,
+    `instagramUrl` VARCHAR(500) NULL,
     `videoUrl` VARCHAR(500) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,

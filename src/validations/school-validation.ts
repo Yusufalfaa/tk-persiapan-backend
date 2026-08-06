@@ -12,6 +12,7 @@ export class SchoolValidation {
         googleMapsUrl: z.url().optional(),
         phone: z.string().min(10).max(20).optional(),
         email: z.email().optional(),
+        instagramUrl:z.url().nullable(),
         videoUrl: z.url().nullable().optional(),
         missions: z.array(z.object(
             {content: z.string().min(5).max(500)}

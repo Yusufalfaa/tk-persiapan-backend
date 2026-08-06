@@ -116,6 +116,11 @@ export class NewsService {
     }
 
     static async getList(page: number, size: number) : Promise<PageResponse<NewsListResponse>> {
+        console.log("SERVICE PARAM:", {
+            page,
+            size
+        });
+
         const skip = (page - 1) * size;
 
         const news = await prismaClient.news.findMany({
@@ -365,7 +370,7 @@ export class NewsService {
             case NewsSectionType.IMAGE:
                 data = {
                     type: NewsSectionType.IMAGE,
-                    imagePath: StorageService.getPublicPath(
+                    imagePath: StorageService.getStoragePath(
                         "news",
                         file!.filename
                     ),
@@ -456,7 +461,7 @@ export class NewsService {
                 data = {
                     youtubeUrl: null,
                     text: null,
-                    imagePath: StorageService.getPublicPath(
+                    imagePath: StorageService.getStoragePath(
                         "news",
                         file.filename
                     ),

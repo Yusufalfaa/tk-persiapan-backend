@@ -12,9 +12,14 @@ const ALLOWED_MIME_TYPES = [
     "image/webp"
 ];
 
-export function uploadMiddleware(folder: UploadFolder) {
+const ALLOWED_EXTENSIONS = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp"
+];
 
-    
+export function uploadMiddleware(folder: UploadFolder) {
 
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
@@ -42,10 +47,16 @@ export function uploadMiddleware(folder: UploadFolder) {
         storage,
         fileFilter: (req, file, cb) => {
 
-            if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+            const ext = path.extname(file.originalname).toLowerCase();
+
+            const isValidMime = ALLOWED_MIME_TYPES.includes(file.mimetype);
+            const isValidExtension = ALLOWED_EXTENSIONS.includes(ext);
+
+            if (isValidMime || isValidExtension) {
                 cb(null, true);
                 return;
             }
+            
             cb(new InvalidFileTypeError("Invalid file type. Only JPG, PNG, and WEBP are allowed"));
         },
         limits: {

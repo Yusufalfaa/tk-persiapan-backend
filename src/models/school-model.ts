@@ -17,6 +17,7 @@ export type SchoolProfileResponse = {
     googleMapsUrl: string;
     phone: string;
     email: string;
+    instagramUrl: string | null;
     videoUrl: string | null;
     missions: MissionResponse[];
     createdAt: Date;
@@ -38,6 +39,7 @@ export type SchoolProfileUpdateRequest = {
     googleMapsUrl?: string | undefined;
     phone?: string | undefined;
     email?: string | undefined;
+    instagramUrl?: string | null;
     videoUrl?: string | null | undefined;
     missions?: MissionRequest[] | undefined;
 };
@@ -54,8 +56,10 @@ export function toSchoolProfileResponse(school: SchoolProfile & {missions: Missi
 
         googleMapsUrl: school.googleMapsUrl,
 
+        
         phone: school.phone,
         email: school.email,
+        instagramUrl: school.instagramUrl,
 
         videoUrl: school.videoUrl,
 
@@ -83,6 +87,7 @@ export function toSchoolProfileUpdateRequest(school: SchoolProfile & {missions: 
 
         phone: school.phone,
         email: school.email,
+        instagramUrl: school.instagramUrl,
 
         videoUrl: school.videoUrl,
 
