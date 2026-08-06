@@ -22,14 +22,15 @@ async function main() {
         create: {
             id: 1,
             name: "TK Persiapan",
-            vision: "Menjadi sekolah terbaik",
-            address: "Jl. Contoh No. 1",
+            vision: "Mewujudkan generasi emas yang sehat, kreatif, mandiri, bernalar kritis, serta menjunjung tinggi nilai-nilai keimanan dan ketakwaan Kepada Tuhan Yang Maha Esa",
+            address: "Jl. Panca Warga Empat No.04 7, RT.7/RW.4, Cipinang Besar Sel., Kecamatan Jatinegara, Kota Jakarta Timur, Daerah Khusus Ibukota Jakarta 13410",
             latitude: -6.2,
             longitude: 106.8,
-            googleMapsUrl: "https://maps.google.com/",
+            googleMapsUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4698.223953328416!2d106.88146539212094!3d-6.235670336498814!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3914657d6f9%3A0xc4ad41aacc20abcd!2sTk%20Persiapan!5e1!3m2!1sen!2sid!4v1785991950173!5m2!1sen!2sid",
             phone: "08123456789",
             email: "info@tkpersiapan.sch.id",
             instagramUrl: "https://www.instagram.com/tk_persiapan25/",
+            videoUrl: "https://www.youtube.com/embed/NtlzaWr4gpU?si=kms8ou78mQALlp8n"
         },
     });
 
