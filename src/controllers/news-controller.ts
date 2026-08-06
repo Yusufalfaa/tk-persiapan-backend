@@ -10,8 +10,6 @@ export class NewsController {
 
     static async getList(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("QUERY:", req.query);
-
             const page = Number(req.query.page) ?? 1;
             const size = Number(req.query.size) ?? 10;
 

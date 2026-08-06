@@ -116,11 +116,6 @@ export class NewsService {
     }
 
     static async getList(page: number, size: number) : Promise<PageResponse<NewsListResponse>> {
-        console.log("SERVICE PARAM:", {
-            page,
-            size
-        });
-
         const skip = (page - 1) * size;
 
         const news = await prismaClient.news.findMany({
