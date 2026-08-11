@@ -171,6 +171,9 @@ export class NewsService {
         const news = await prismaClient.news.findMany({
             skip,
             take: size,
+            orderBy: {
+                createdAt: "desc",
+            }
         });
 
         const total = await prismaClient.news.count();

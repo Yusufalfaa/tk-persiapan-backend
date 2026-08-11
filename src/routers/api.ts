@@ -7,6 +7,7 @@ import { requireRole } from "../middleware/role-middleware.js";
 import { AdminController } from "../controllers/admin-controller.js";
 import { uploadMiddleware } from "../middleware/upload-middleware.js";
 import { NewsController } from "../controllers/news-controller.js";
+import { DashboardController } from "../controllers/dashboard-controller.js";
 
 export const apiRouter = express.Router();
 apiRouter.use(authMiddleware);
@@ -15,6 +16,8 @@ apiRouter.use(authMiddleware);
 apiRouter.get("/api/auth/me", AuthController.get);
 apiRouter.put("/api/auth/me", AuthController.update);
 apiRouter.post("/api/auth/logout", AuthController.logout);
+
+apiRouter.get("/api/admin/dashboard/stats", DashboardController.getStats)
 
 // School API
 apiRouter.put("/api/admin/school", SchoolController.update);
