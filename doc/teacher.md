@@ -45,44 +45,6 @@ GET /api/teachers
 }
 ```
 
----
-
-## Get Teacher Detail
-
-> Endpoint publik.
-
-**Endpoint**
-
-```
-GET /api/teachers/:id
-```
-
-## Response Body (200 OK)
-
-```json
-{
-    "data": {
-        "id": 1,
-        "name": "Ibu Sri Wahyuni",
-        "position": "Kepala Sekolah",
-        "photoPath": "/uploads/teachers/sri-wahyuni.jpg",
-        "order": 0,
-        "createdAt": "2026-01-01T10:00:00.000Z",
-        "updatedAt": "2026-01-01T10:00:00.000Z"
-    }
-}
-```
-
-## Response Body (404 Not Found)
-
-```json
-{
-    "message": "Teacher not found"
-}
-```
-
----
-
 # Admin Teacher API
 
 > Seluruh endpoint berikut membutuhkan autentikasi admin.
@@ -91,57 +53,6 @@ Headers:
 
 ```
 Authorization: Bearer <access_token>
-```
-
----
-
-## Admin List Teachers
-
-> Digunakan untuk dashboard admin.
-
-**Endpoint**
-
-```
-GET /api/admin/teachers
-```
-
-## Query Parameters
-
-| Parameter | Type   | Required | Default |
-| --------- | ------ | -------- | ------- |
-| page      | Number | No       | 1       |
-| size      | Number | No       | 10      |
-
-## Response Body (200 OK)
-
-```json
-{
-    "data": [
-        {
-            "id": 1,
-            "name": "Ibu Sri Wahyuni",
-            "position": "Kepala Sekolah",
-            "photoPath": "/uploads/teachers/sri-wahyuni.jpg",
-            "order": 0,
-            "createdAt": "2026-01-01T10:00:00.000Z",
-            "updatedAt": "2026-01-01T10:00:00.000Z"
-        }
-    ],
-    "meta": {
-        "page": 1,
-        "size": 10,
-        "total": 2,
-        "totalPages": 1
-    }
-}
-```
-
-## Response Body (401 Unauthorized)
-
-```json
-{
-    "message": "Unauthorized"
-}
 ```
 
 ---

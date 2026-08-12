@@ -23,6 +23,7 @@ apiRouter.get("/api/admin/dashboard/stats", DashboardController.getStats)
 apiRouter.put("/api/admin/school", SchoolController.update);
 
 // Teacher API
+apiRouter.get("/api/admin/teachers/:id", TeacherController.get)
 apiRouter.post("/api/admin/teachers", uploadMiddleware("teachers").single("photo"), TeacherController.create);
 apiRouter.patch("/api/admin/teachers/:id", uploadMiddleware("teachers").single("photo"), TeacherController.update);
 apiRouter.delete("/api/admin/teachers/:id", TeacherController.delete)

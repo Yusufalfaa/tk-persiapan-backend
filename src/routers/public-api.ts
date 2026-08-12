@@ -14,7 +14,6 @@ publicRouter.get("/api/school", SchoolController.get)
 
 // Teachers
 publicRouter.get("/api/teachers", TeacherController.getList)
-publicRouter.get("/api/teachers/:id", TeacherController.get)
 
 // News
 publicRouter.get("/api/news", NewsController.getList)
