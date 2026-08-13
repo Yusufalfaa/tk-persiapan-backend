@@ -20,6 +20,7 @@ CREATE TABLE `news` (
     `isPublished` BOOLEAN NOT NULL DEFAULT true,
     `thumbnail` VARCHAR(500) NULL,
     `excerpt` VARCHAR(500) NULL,
+    `authorId` INTEGER NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -51,8 +52,6 @@ CREATE TABLE `school_profile` (
     `name` VARCHAR(100) NOT NULL,
     `vision` TEXT NOT NULL,
     `address` VARCHAR(500) NOT NULL,
-    `latitude` DECIMAL(9, 6) NOT NULL,
-    `longitude` DECIMAL(9, 6) NOT NULL,
     `googleMapsUrl` VARCHAR(500) NOT NULL,
     `phone` VARCHAR(20) NOT NULL,
     `email` VARCHAR(100) NOT NULL,
@@ -89,6 +88,9 @@ CREATE TABLE `teachers` (
     INDEX `teachers_order_idx`(`order`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `news` ADD CONSTRAINT `news_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `admins`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `news_sections` ADD CONSTRAINT `news_sections_newsId_fkey` FOREIGN KEY (`newsId`) REFERENCES `news`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

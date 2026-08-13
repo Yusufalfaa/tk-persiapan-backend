@@ -75,7 +75,7 @@ export class NewsController {
                 title: req.body.title
             };
 
-            const response = await NewsService.createNews(request);
+            const response = await NewsService.createNews(request, req.admin!.id);
 
             res.status(201).json({
                 data: response,

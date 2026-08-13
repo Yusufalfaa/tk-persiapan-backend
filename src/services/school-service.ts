@@ -41,8 +41,6 @@ export class SchoolService {
                     ...(updateRequest.name !== undefined && { name: updateRequest.name }),
                     ...(updateRequest.vision !== undefined && { vision: updateRequest.vision }),
                     ...(updateRequest.address !== undefined && { address: updateRequest.address }),
-                    ...(updateRequest.latitude !== undefined && { latitude: updateRequest.latitude }),
-                    ...(updateRequest.longitude !== undefined && { longitude: updateRequest.longitude }),
                     ...(updateRequest.googleMapsUrl !== undefined && { googleMapsUrl: updateRequest.googleMapsUrl }),
                     ...(updateRequest.phone !== undefined && { phone: updateRequest.phone }),
                     ...(updateRequest.email !== undefined && { email: updateRequest.email }),

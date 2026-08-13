@@ -12,8 +12,6 @@ export type SchoolProfileResponse = {
     name: string;
     vision: string;
     address: string;
-    latitude: number;
-    longitude: number;
     googleMapsUrl: string;
     phone: string;
     email: string;
@@ -34,8 +32,6 @@ export type SchoolProfileUpdateRequest = {
     name?: string | undefined;
     vision?: string | undefined;
     address?: string | undefined;
-    latitude?: number | undefined;
-    longitude?: number | undefined;
     googleMapsUrl?: string | undefined;
     phone?: string | undefined;
     email?: string | undefined;
@@ -50,9 +46,6 @@ export function toSchoolProfileResponse(school: SchoolProfile & {missions: Missi
         name: school.name,
         vision: school.vision,
         address: school.address,
-
-        latitude: Number(school.latitude),
-        longitude: Number(school.longitude),
 
         googleMapsUrl: school.googleMapsUrl,
 
@@ -79,9 +72,6 @@ export function toSchoolProfileUpdateRequest(school: SchoolProfile & {missions: 
         name: school.name,
         vision: school.vision,
         address: school.address,
-
-        latitude: Number(school.latitude),
-        longitude: Number(school.longitude),
 
         googleMapsUrl: school.googleMapsUrl,
 

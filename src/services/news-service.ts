@@ -115,21 +115,22 @@ export class NewsService {
         });
     }
 
-    static async getList(page: number, size: number) : Promise<PageResponse<NewsListResponse>> {
+    static async getList(page: number, size: number): Promise<PageResponse<NewsListResponse>> {
         const skip = (page - 1) * size;
 
         const news = await prismaClient.news.findMany({
             where: {
                 isPublished: true,
             },
+            include: {
+                author: true,
+            },
             skip,
             take: size,
         });
 
         const total = await prismaClient.news.count({
-            where: {
-                isPublished: true,
-            }
+            where: { isPublished: true },
         });
 
         return {
@@ -139,11 +140,11 @@ export class NewsService {
                 size,
                 total,
                 totalPages: Math.ceil(total / size),
-            }
-        }
+            },
+        };
     }
 
-    static async getDetail(slug: string) : Promise<NewsDetailResponse> {
+    static async getDetail(slug: string): Promise<NewsDetailResponse> {
         const news = await prismaClient.news.findFirst({
             where: {
                 slug: slug,
@@ -151,29 +152,29 @@ export class NewsService {
             },
             include: {
                 sections: {
-                    orderBy: {
-                        order: "asc"
-                    }
-                }
-            }
+                    orderBy: { order: "asc" },
+                },
+                author: true,
+            },
         });
 
-        if(!news) {
+        if (!news) {
             throw new ResponseError(404, "News not found");
         }
 
-        return toNewsDetailResponse(news)
+        return toNewsDetailResponse(news);
     }
 
-    static async getAdminList(page: number, size: number) : Promise<PageResponse<NewsListResponse>> {
+    static async getAdminList(page: number, size: number): Promise<PageResponse<NewsListResponse>> {
         const skip = (page - 1) * size;
 
         const news = await prismaClient.news.findMany({
             skip,
             take: size,
-            orderBy: {
-                createdAt: "desc",
-            }
+            orderBy: { createdAt: "desc" },
+            include: {
+                author: true,
+            },
         });
 
         const total = await prismaClient.news.count();
@@ -185,25 +186,22 @@ export class NewsService {
                 size,
                 total,
                 totalPages: Math.ceil(total / size),
-            }
-        }
+            },
+        };
     }
 
-    static async getAdminDetail(newsId: number) : Promise<AdminNewsDetailResponse> {
+    static async getAdminDetail(newsId: number): Promise<AdminNewsDetailResponse> {
         const news = await prismaClient.news.findFirst({
-            where: {
-                id: newsId
-            },
+            where: { id: newsId },
             include: {
                 sections: {
-                    orderBy: {
-                        order: "asc"
-                    }
-                }
-            }
+                    orderBy: { order: "asc" },
+                },
+                author: true,
+            },
         });
 
-        if(!news) {
+        if (!news) {
             throw new ResponseError(404, "News not found");
         }
 
@@ -216,33 +214,32 @@ export class NewsService {
         };
     }
 
-    static async createNews(request: CreateNewsRequest): Promise<NewsDetailResponse> {
-        const createRequest = Validation.validate(NewsValidation.CREATE, request);
-        
-        let generatedSlug = await this.generateUniqueSlug(createRequest.title);
+    static async createNews(request: CreateNewsRequest, authorId: number): Promise<NewsDetailResponse> {
+        const createRequest = Validation.validate<CreateNewsRequest>(NewsValidation.CREATE, request);
+
+        const generatedSlug = await this.generateUniqueSlug(createRequest.title);
 
         const news = await prismaClient.news.create({
             data: {
                 title: createRequest.title,
                 slug: generatedSlug,
                 isPublished: false,
+                authorId,
             },
             include: {
-                sections: true
-            }
-        })
+                sections: true,
+                author: true,
+            },
+        });
 
         return toNewsDetailResponse(news);
-        
     }
 
     static async updateNews(request: UpdateNewsRequest, newsId: number): Promise<NewsDetailResponse> {
-        const updateRequest = Validation.validate(NewsValidation.UPDATE, request);
-        
+        const updateRequest = Validation.validate<UpdateNewsRequest>(NewsValidation.UPDATE, request);
+
         const existingNews = await prismaClient.news.findUnique({
-            where: {
-                id: newsId
-            }
+            where: { id: newsId },
         });
 
         if (!existingNews) {
@@ -251,28 +248,25 @@ export class NewsService {
 
         let slug = existingNews.slug;
 
-        if(updateRequest.title) {
-            slug = await this.generateUniqueSlug(updateRequest.title);
+        if (updateRequest.title) {
+            slug = await this.generateUniqueSlug(updateRequest.title, newsId);
         }
 
-
         const news = await prismaClient.news.update({
-            where: {
-                id: newsId
-            },
+            where: { id: newsId },
             data: {
                 ...(updateRequest.title && {
                     title: updateRequest.title,
-                    slug
+                    slug,
                 }),
-
                 ...(updateRequest.isPublished !== undefined && {
-                    isPublished: updateRequest.isPublished
-                })
+                    isPublished: updateRequest.isPublished,
+                }),
             },
             include: {
-                sections: true
-            }
+                sections: true,
+                author: true,
+            },
         });
 
         return toNewsDetailResponse(news);
@@ -280,12 +274,8 @@ export class NewsService {
     
     static async deleteNews(newsId: number): Promise<void> {
         const news = await prismaClient.news.findUnique({
-            where: {
-                id: newsId
-            },
-            include: {
-                sections:true
-            }
+            where: { id: newsId },
+            include: { sections: true },
         });
 
         if (!news) {
@@ -300,10 +290,8 @@ export class NewsService {
         await StorageService.deleteMany(imagePaths);
 
         await prismaClient.news.delete({
-            where: {
-                id: newsId,
-            }
-        })
+            where: { id: newsId },
+        });
     }
 
     static async createSection(request: CreateSectionRequest, newsId: number, file?: Express.Multer.File): Promise<AdminNewsDetailResponse> {

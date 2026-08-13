@@ -18,8 +18,6 @@ export class SchoolTest {
                 name: "TK Persiapan",
                 vision: "Menjadi sekolah terbaik",
                 address: "Jl. Pendidikan No. 1",
-                latitude: -6.235336,
-                longitude: 106.882385,
                 googleMapsUrl: "https://maps.google.com",
                 phone: "08123456789",
                 email: "tk@persiapan.com",

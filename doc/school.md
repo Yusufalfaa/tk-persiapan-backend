@@ -21,8 +21,6 @@ GET /api/school
         "name": "TK ABC",
         "vision": "Menjadi sekolah terbaik",
         "address": "Jl. Pendidikan No. 1",
-        "latitude": -6.235336,
-        "longitude": 106.882385,
         "googleMapsUrl": "https://maps.google.com/...",
         "phone": "08123456789",
         "email": "tkabc@email.com",
@@ -56,7 +54,7 @@ GET /api/school
 **Endpoint**
 
 ```
-PUT /api/school
+PUT /api/admin/school
 ```
 
 ## Headers
@@ -72,8 +70,6 @@ Authorization: Bearer <access_token>
     "name": "TK ABC Updated",
     "vision": "Updated vision",
     "address": "Updated address",
-    "latitude": -6.235336,
-    "longitude": 106.882385,
     "googleMapsUrl": "https://maps.google.com/...",
     "phone": "08123456789",
     "email": "updated@email.com",
@@ -94,8 +90,6 @@ Authorization: Bearer <access_token>
         "name": "TK ABC Updated",
         "vision": "Updated vision",
         "address": "Updated address",
-        "latitude": -6.235336,
-        "longitude": 106.882385,
         "googleMapsUrl": "https://maps.google.com/...",
         "phone": "08123456789",
         "email": "updated@email.com",

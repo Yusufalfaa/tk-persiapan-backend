@@ -1,13 +1,19 @@
-import type { News, NewsSection, NewsSectionType } from "../generated/prisma/client.js";
+import type { News, NewsSection, NewsSectionType, Admin } from "../generated/prisma/client.js";
 import { StorageService } from "../services/storage-service.js";
+
+export type NewsAuthorResponse = {
+    id: number;
+    name: string;
+} | null;
 
 export type NewsListResponse = {
     id: number;
     title: string;
     slug: string;
-    thumbnailUrl?: string | null;
-    excerpt?: string| null;
+    thumbnailUrl: string | null;
+    excerpt: string | null;
     isPublished: boolean;
+    author: NewsAuthorResponse;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -17,6 +23,7 @@ export type NewsDetailResponse = {
     title: string;
     slug: string;
     isPublished: boolean;
+    author: NewsAuthorResponse;
     sections: NewsSectionResponse[];
     createdAt: Date;
     updatedAt: Date;
@@ -26,12 +33,20 @@ export type NewsSectionResponse = {
     id: number;
     type: NewsSectionType;
     order: number;
-    text?: string | null;
-    imageUrl?: string | null;
-    youtubeUrl?: string | null;
+    text: string | null;
+    imageUrl: string | null;
+    youtubeUrl: string | null;
 }
 
-export function toNewsListResponse(newsList: News[]) : NewsListResponse[] {
+function toAuthorResponse(author: Admin | null): NewsAuthorResponse {
+    if (!author) return null;
+    return {
+        id: author.id,
+        name: author.name,
+    };
+}
+
+export function toNewsListResponse(newsList: (News & { author: Admin | null })[]): NewsListResponse[] {
     return newsList.map((news) => ({
         id: news.id,
         title: news.title,
@@ -41,28 +56,29 @@ export function toNewsListResponse(newsList: News[]) : NewsListResponse[] {
             : null,
         excerpt: news.excerpt,
         isPublished: news.isPublished,
+        author: toAuthorResponse(news.author),
         createdAt: news.createdAt,
         updatedAt: news.updatedAt
     }));
 }
 
-export function toNewsDetailResponse(news: News & { sections: NewsSection[] }): NewsDetailResponse {
+export function toNewsDetailResponse(
+    news: News & { sections: NewsSection[]; author: Admin | null }
+): NewsDetailResponse {
     return {
         id: news.id,
         title: news.title,
         slug: news.slug,
         isPublished: news.isPublished,
+        author: toAuthorResponse(news.author),
         sections: news.sections.map((section) => ({
             id: section.id,
             type: section.type,
             order: section.order,
             text: section.text,
             imageUrl: section.imagePath
-                ? StorageService.getPublicUrlFromPath(
-                    section.imagePath
-                )
+                ? StorageService.getPublicUrlFromPath(section.imagePath)
                 : null,
-
             youtubeUrl: section.youtubeUrl,
         })),
         createdAt: news.createdAt,
@@ -76,12 +92,12 @@ export type AdminNewsDetailResponse = NewsDetailResponse & {
 }
 
 export type CreateNewsRequest = {
-    title: string,
+    title: string;
 }
 
 export type UpdateNewsRequest = {
-    title?: string | undefined,
-    isPublished?: boolean | undefined,
+    title?: string | undefined;
+    isPublished?: boolean | undefined;
 }
 
 export type CreateSectionRequest = {
