@@ -327,7 +327,7 @@ export class NewsService {
                 data = {
                     type: NewsSectionType.TEXT,
                     text: sanitizeHtml(createRequest.text!, {
-                        allowedTags: ["b", "strong", "i", "em", "u", "ul", "ol", "li", "a"],
+                        allowedTags: ["b", "p", "strong", "i", "em", "u", "ul", "ol", "li", "a"],
                         allowedAttributes: {
                             a: ["href", "target", "rel"],
                         },
@@ -404,7 +404,7 @@ export class NewsService {
 
                 data = {
                     text: sanitizeHtml(updateRequest.text, {
-                        allowedTags: ["b", "strong", "i", "em", "u", "ul", "ol", "li", "a"],
+                        allowedTags: ["b", "p", "strong", "i", "em", "u", "ul", "ol", "li", "a"],
                         allowedAttributes: {
                             a: ["href", "target", "rel"],
                         },
