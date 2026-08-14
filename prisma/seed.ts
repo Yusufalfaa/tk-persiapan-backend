@@ -31,8 +31,6 @@ async function main() {
             videoUrl: "https://www.youtube.com/embed/NtlzaWr4gpU?si=kms8ou78mQALlp8n"
         },
     });
-
-    console.log("Seeding selesai.");
 }
 
 main()
