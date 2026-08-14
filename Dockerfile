@@ -7,6 +7,7 @@ COPY package*.json ./
 RUN npm ci
 
 COPY prisma ./prisma
+COPY prisma.config.ts ./
 COPY src ./src
 COPY tsconfig.json ./
 COPY tsconfig.build.json ./
@@ -29,8 +30,8 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src/generated ./src/generated
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./
 
 EXPOSE 3000
 
 CMD ["node", "dist/main.js"]
-
