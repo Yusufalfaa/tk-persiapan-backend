@@ -7,10 +7,12 @@ import path from "path";
 
 export const web = express();
 
-web.use(cors({
-    origin: "http://localhost:3001",
-    credentials: true,
-}));
+web.use(
+    cors({
+        origin: process.env.FRONTEND_URL,
+        credentials: true,
+    })
+);
 
 web.use(express.json());
 

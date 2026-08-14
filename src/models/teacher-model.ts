@@ -40,9 +40,7 @@ export function toTeacherListResponse(teachers: Teacher[]): TeacherListResponse[
         name: teacher.name,
         position: teacher.position,
         photoUrl: teacher.photoPath
-            ? StorageService.getPublicUrlFromPath(
-                teacher.photoPath
-            )
+            ? teacher.photoPath
             : null,
         order: teacher.order,
         createdAt: teacher.createdAt,
@@ -58,11 +56,8 @@ export function toTeacherResponse(teacher: Teacher): TeacherResponse {
         name: teacher.name,
         position: teacher.position,
         photoUrl: teacher.photoPath
-            ? StorageService.getPublicUrlFromPath(
-                teacher.photoPath
-            )
+            ? teacher.photoPath
             : null,
-
         order: teacher.order,
         createdAt: teacher.createdAt,
         updatedAt: teacher.updatedAt,

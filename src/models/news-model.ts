@@ -52,7 +52,7 @@ export function toNewsListResponse(newsList: (News & { author: Admin | null })[]
         title: news.title,
         slug: news.slug,
         thumbnailUrl: news.thumbnail
-            ? StorageService.getPublicUrlFromPath(news.thumbnail)
+            ? news.thumbnail
             : null,
         excerpt: news.excerpt,
         isPublished: news.isPublished,
@@ -77,7 +77,7 @@ export function toNewsDetailResponse(
             order: section.order,
             text: section.text,
             imageUrl: section.imagePath
-                ? StorageService.getPublicUrlFromPath(section.imagePath)
+                ? section.imagePath
                 : null,
             youtubeUrl: section.youtubeUrl,
         })),

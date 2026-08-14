@@ -62,14 +62,6 @@ export class StorageService {
     static getStoragePath(folder: StorageFolder, filename: string): string {
         return `/storage/${folder}/${filename}`;
     }
-        
-    static getPublicUrl(folder: StorageFolder, filename: string): string {
-        return `${process.env.APP_URL}/storage/${folder}/${filename}`;
-    }
-
-    static getPublicUrlFromPath(filePath: string): string {
-        return `${process.env.APP_URL}${filePath}`;
-    }
 
     static async deleteAllInFolder(folder: StorageFolder): Promise<void> {
         const folderPath = path.join(
