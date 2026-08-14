@@ -125,6 +125,9 @@ export class NewsService {
             include: {
                 author: true,
             },
+            orderBy: {
+                createdAt: "desc",
+            },
             skip,
             take: size,
         });
